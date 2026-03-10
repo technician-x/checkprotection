@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Security Report</title>
+    <link rel="stylesheet" href="../css/secure.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextdns.svg" type="image/x-icon">
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <div class="header-content">
+                <h1>Email Security Report</h1>
+                <p class="timestamp">Generated on: <span id="current-date"></span></p>
+            </div>
+            <div class="severity-indicator secure">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Status</span>
+            </div>
+        </header>
+
+        <main class="report-content">
+            <section class="summary-section">
+                <h2>Executive Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Security Status</h3>
+                        <p class="status secure">Protected</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email Protection</h3>
+                        <p class="status secure">Active</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-filter"></i>
+                        <h3>Spam Filtering</h3>
+                        <p class="status secure">Enabled</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="details-section">
+                <h2>Detailed Analysis</h2>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>Security Status</h3>
+                        <ul class="security-list">
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Email Account Protected</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Multi-Factor Authentication Active</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Data Encryption Enabled</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Malware Protection Active</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Protection Status</h3>
+                        <div class="threat-list">
+                            <div class="threat-item secure">
+                                <span class="threat-type">Phishing Protection</span>
+                                <span class="threat-severity secure">Active</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Attachment Scanning</span>
+                                <span class="threat-severity secure">Active</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Link Protection</span>
+                                <span class="threat-severity secure">Active</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Data Protection</span>
+                                <span class="threat-severity secure">Enabled</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Data Protection</h3>
+                        <div class="compromise-list">
+                            <div class="compromise-item secure">
+                                <i class="fas fa-envelope"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Email Content</span>
+                                    <span class="compromise-status">Encrypted</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item secure">
+                                <i class="fas fa-paperclip"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Attachments</span>
+                                    <span class="compromise-status">Scanned</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item secure">
+                                <i class="fas fa-address-book"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Contacts</span>
+                                    <span class="compromise-status">Protected</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item secure">
+                                <i class="fas fa-calendar-alt"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Calendar Events</span>
+                                    <span class="compromise-status">Secure</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Security Features</h3>
+                        <div class="threat-list">
+                            <div class="threat-item secure">
+                                <span class="threat-type">Credential Protection</span>
+                                <span class="threat-severity secure">Active</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Email Forwarding</span>
+                                <span class="threat-severity secure">Controlled</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Auto-Reply Rules</span>
+                                <span class="threat-severity secure">Secure</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Account Settings</span>
+                                <span class="threat-severity secure">Protected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recommendations-section">
+                <h2>Maintenance Recommendations</h2>
+                <div class="recommendations-list">
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Regularly update email security settings</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Maintain current security protocols</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Regular security audits</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Monitor security logs</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="report-footer">
+            <p>This report indicates a secure system status. Continue following security best practices.</p>
+            <button onclick="window.location.href='../../index.html'" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Portal
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    </script>
+</body>
+</html> 

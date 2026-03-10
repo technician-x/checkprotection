@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Windows Update</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style>
+        body {
+            background: #006dae;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-family: Segoe UI Light, Segoe UI, Arial;
+            color: #ffffff;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .CT {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            transform: translateY(-50%);
+            font-size: 23px;
+        }
+
+        #bottom {
+            position: fixed;
+            bottom: 10%;
+            width: 100%;
+            font-size: 18px;
+        }
+
+        /* ===================== */
+        /* Modern spinner loader */
+        /* ===================== */
+        .loader {
+            width: 50px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: 
+                radial-gradient(farthest-side, #ffffff 94%, #0000) top/8px 8px no-repeat,
+                conic-gradient(#0000 30%, #ffffff);
+            -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+            mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+            animation: l13 1s infinite linear;
+            margin: 0 auto 25px;
+        }
+
+        @keyframes l13 {
+            100% { transform: rotate(1turn); }
+        }
+
+        /* Fade-out loader */
+        .fade-out {
+            animation: fadeOut 3s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="CT">
+    <div id="loaderBox" class="loader"></div>
+
+    <div>
+        <span id="ref">Working on updates</span>
+        &nbsp;
+        <span id="timer">0%</span>
+        <br><br>
+        <span id="message">Don't turn off your PC. This will take a while.</span>
+    </div>
+</div>
+
+<div id="bottom">Your PC will restart several times</div>
+
+<script>
+    /* ===================== */
+    /* Progress configuration */
+    /* ===================== */
+    var TOTAL_TIME = 600;   // 10 minutes total
+    var HOLD_AT_99 = 45;    // hold at 99% (seconds)
+
+    var elapsed = 0;
+
+    var interval = setInterval(function () {
+        elapsed++;
+
+        var progressPhase = TOTAL_TIME - HOLD_AT_99;
+        var percent;
+
+        if (elapsed < progressPhase) {
+            percent = Math.floor((elapsed / progressPhase) * 99);
+        } 
+        else if (elapsed < TOTAL_TIME) {
+            percent = 99;
+        } 
+        else {
+            percent = 100;
+            clearInterval(interval);
+            finishUpdate();
+        }
+
+        document.getElementById("timer").innerHTML = percent + "%";
+    }, 1000);
+
+    function finishUpdate() {
+        document.getElementById("timer").innerHTML = "100%";
+        document.getElementById("ref").innerHTML = "You're all set.";
+        document.getElementById("message").innerHTML = "Your PC is up to date.";
+        document.getElementById("bottom").innerHTML = "";
+
+        document.getElementById("loaderBox").classList.add("fade-out");
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Driver Installation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0078d4;
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        .installation-container {
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            margin: 0;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .status {
+            font-size: 16px;
+            margin: 10px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .details {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 5px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .completion-message {
+            display: none;
+            color: #4CAF50;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .warning {
+            color: #ffd700;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="installation-container">
+        <div class="header">
+            <h1>System Driver Installation</h1>
+        </div>
+        
+        <div class="progress-container">
+            <div class="status">Preparing to install system drivers...</div>
+            <div class="details">Please do not turn off your computer</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="spinner" id="spinner"></div>
+            <div class="completion-message" id="completion">
+                Installation completed successfully!
+            </div>
+            <div class="warning">
+                This process may take up to 10 minutes. Please be patient.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progress = document.getElementById('progress');
+            const status = document.querySelector('.status');
+            const details = document.querySelector('.details');
+            const spinner = document.getElementById('spinner');
+            const completion = document.getElementById('completion');
+            
+            // Total time in milliseconds (10 minutes)
+            const totalTime = 10 * 60 * 1000;
+            const startTime = Date.now();
+            
+            // Show spinner
+            spinner.style.display = 'block';
+            
+            // Update progress
+            function updateProgress() {
+                const currentTime = Date.now();
+                const elapsed = currentTime - startTime;
+                const percentage = Math.min((elapsed / totalTime) * 100, 100);
+                
+                progress.style.width = percentage + '%';
+                
+                // Update status messages based on progress
+                if (percentage < 20) {
+                    status.textContent = 'Downloading system drivers...';
+                    details.textContent = 'Please wait while we download the necessary files';
+                } else if (percentage < 40) {
+                    status.textContent = 'Verifying downloaded files...';
+                    details.textContent = 'Checking file integrity';
+                } else if (percentage < 60) {
+                    status.textContent = 'Installing system drivers...';
+                    details.textContent = 'This may take several minutes';
+                } else if (percentage < 80) {
+                    status.textContent = 'Configuring system settings...';
+                    details.textContent = 'Almost complete';
+                } else if (percentage < 100) {
+                    status.textContent = 'Finalizing installation...';
+                    details.textContent = 'Please wait';
+                } else {
+                    status.textContent = 'Installation complete!';
+                    details.textContent = 'Your system drivers have been successfully installed';
+                    spinner.style.display = 'none';
+                    completion.style.display = 'block';
+                    return;
+                }
+                
+                if (percentage < 100) {
+                    requestAnimationFrame(updateProgress);
+                }
+            }
+            
+            // Start the progress
+            updateProgress();
+        });
+    </script>
+</body>
+</html> 

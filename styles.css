@@ -1,0 +1,478 @@
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --background-color: #f8fafc;
+    --text-color: #1e293b;
+    --error-color: #dc2626;
+    --success-color: #16a34a;
+    --border-radius: 16px;
+    --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --gradient: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.video-blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
+}
+
+.login-box {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2.5rem;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1.5rem;
+    background: var(--gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.logo i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-group i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: var(--gradient);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.report-options-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.report-option {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.report-option:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--box-shadow);
+    transform: translateY(-2px);
+}
+
+.report-option i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.25rem;
+}
+
+.report-option h4 {
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.report-option p {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.footer {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.footer p {
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.footer .small {
+    margin-top: 0.25rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-step.active {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Scanning Styles */
+.scanning-container {
+    text-align: center;
+}
+
+.scanning-header {
+    margin-bottom: 2rem;
+}
+
+.scanning-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: block;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.scanning-header h3 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.scanning-email {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.scanning-progress {
+    margin-bottom: 2rem;
+}
+
+.progress-bar {
+    background: #e2e8f0;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.progress-fill {
+    background: var(--gradient);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.scanning-processes {
+    text-align: left;
+    background: #f8fafc;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.process-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    font-size: 0.875rem;
+    color: #64748b;
+    position: relative;
+}
+
+.process-item i {
+    font-size: 0.75rem;
+    width: 20px;
+    text-align: center;
+    color: #cbd5e1;
+    transition: all 0.3s ease;
+}
+
+.process-item.active i {
+    animation: spin 1s linear infinite;
+    color: var(--primary-color);
+}
+
+.process-item.completed i {
+    animation: none;
+    color: var(--success-color);
+    font-size: 1rem;
+}
+
+.process-item.completed span {
+    color: var(--success-color);
+}
+
+/* Scan Complete Styles */
+.scan-complete-container {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: var(--success-color);
+    margin-bottom: 1.5rem;
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.scan-complete-container h3 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.scan-complete-container p {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+}
+
+/* Admin Login Button Styles */
+.admin-login-btn {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.25s ease;
+    z-index: 100;
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    backdrop-filter: blur(10px);
+    transform: translateX(150px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.admin-sidebar-container:hover .admin-login-btn {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.admin-login-btn:hover {
+    transform: translateX(0) translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+    border-color: rgba(37, 99, 235, 0.3);
+    background: rgba(255, 255, 255, 1);
+}
+
+.admin-sidebar-container:hover .admin-login-btn:hover {
+    transform: translateX(0) translateY(-2px);
+}
+
+.admin-login-btn:active {
+    transform: translateX(0) translateY(0);
+}
+
+.admin-login-btn i {
+    font-size: 0.95rem;
+}
+
+/* Admin Sidebar Trigger Area */
+.admin-sidebar-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 100px;
+    z-index: 99;
+    cursor: pointer;
+}
+
+.admin-trigger-area {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive Design for Admin Button */
+@media (max-width: 768px) {
+    .admin-login-btn {
+        top: 20px;
+        right: 20px;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        transform: translateX(100px);
+    }
+
+    .admin-login-btn i {
+        font-size: 0.85rem;
+    }
+
+    .admin-login-btn span {
+        display: none;
+    }
+
+    .admin-sidebar-container {
+        width: 100px;
+        height: 80px;
+    }
+}

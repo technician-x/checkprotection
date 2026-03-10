@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>McAfee Total Protection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="shortcut icon" href="../ico/mcafee.ico" type="image/x-icon">
+  
+  <style>
+    /* =========================================================
+       ROOT TOKENS & GLOBALS
+       ========================================================= */
+    :root {
+      --mcafee-red: #c01818;
+      --mcafee-red-hover: #a11414;
+      --mcafee-red-light: #fef2f2;
+      --mcafee-green: #0a7d3c;
+      --mcafee-green-light: #e6fced;
+      --mcafee-blue: #005eb8;
+      --bg-body: #f4f6f8;
+      --bg-surface: #ffffff;
+      --text-primary: #1e1e1e;
+      --text-secondary: #5e656b;
+      --border-color: #d8dee4;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --transition-fast: 150ms ease;
+      --transition-smooth: 300ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-primary); display: flex; height: 100vh; overflow: hidden; }
+    button { border: none; outline: none; cursor: pointer; background: none; }
+    
+    /* Input Shared */
+    .form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; outline: none; }
+    .form-input:focus { border-color: var(--mcafee-blue); }
+
+    /* Buttons */
+    .btn-primary { background: var(--mcafee-red); color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(192, 24, 24, 0.2); transition: var(--transition-fast); }
+    .btn-primary:hover { background: var(--mcafee-red-hover); }
+    .btn-primary:disabled { background: var(--text-secondary); cursor: not-allowed; box-shadow: none; }
+    
+    .btn-secondary { background: white; color: var(--text-primary); border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 15px; transition: var(--transition-fast); }
+    .btn-secondary:hover { background: var(--bg-body); }
+
+    /* =========================================================
+       ACTIVATION OVERLAY
+       ========================================================= */
+    #activationOverlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+    .activation-card { background: white; width: 100%; max-width: 500px; border-radius: 16px; padding: 40px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); text-align: center; }
+    .activation-logo { width: 60px; height: 60px; fill: var(--mcafee-red); margin-bottom: 24px; }
+    .activation-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .activation-card p { font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; }
+    .input-group { text-align: left; margin-bottom: 20px; }
+    .input-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+    .error-msg { color: var(--mcafee-red); font-size: 13px; font-weight: 600; margin-top: 8px; display: none; }
+    
+    .app-container { display: none; width: 100%; height: 100%; }
+
+    /* =========================================================
+       SIDEBAR & TOPBAR
+       ========================================================= */
+    .sidebar { width: 80px; background: var(--bg-surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; padding: 16px 0 24px; z-index: 10; }
+    .logo-container { margin-bottom: 32px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
+    .logo-container svg { width: 36px; height: 36px; fill: var(--mcafee-red); }
+    
+    .nav-items { display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; flex: 1; }
+    .nav-item { width: 56px; height: 56px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); position: relative; cursor: pointer; transition: all var(--transition-fast); }
+    .nav-item i { font-size: 20px; transition: transform var(--transition-fast); }
+    .nav-item span { font-size: 10px; font-weight: 600; opacity: 0; position: absolute; bottom: 6px; transition: opacity var(--transition-fast); }
+    .nav-item:hover, .nav-item.active { color: var(--mcafee-red); background-color: var(--mcafee-red-light); }
+    .nav-item:hover i, .nav-item.active i { transform: translateY(-8px); }
+    .nav-item:hover span, .nav-item.active span { opacity: 1; }
+    .nav-item.active::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); height: 24px; width: 4px; background-color: var(--mcafee-red); border-radius: 0 4px 4px 0; }
+    .nav-bottom { display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; }
+
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg-body); }
+    .topbar { height: 72px; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); background: var(--bg-surface); position: sticky; top: 0; z-index: 5; }
+    .page-title { font-size: 20px; font-weight: 600; }
+    .topbar-actions { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 18px; position: relative; }
+    .icon-btn:hover { background: #f0f2f5; color: var(--text-primary); }
+    .notification-badge { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; background: var(--mcafee-red); border-radius: 50%; border: 2px solid var(--bg-surface); display: none; }
+    .user-profile-btn { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 16px 6px 6px; border-radius: 30px; border: 1px solid transparent; }
+    .user-profile-btn:hover { background: var(--bg-body); border-color: var(--border-color); }
+    .user-avatar-initial { width: 32px; height: 32px; border-radius: 50%; background: var(--mcafee-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; }
+    .user-email-text { font-size: 14px; font-weight: 600; }
+
+    /* =========================================================
+       DASHBOARD SHARED 
+       ========================================================= */
+    .dashboard-container { padding: 32px 40px 48px; max-width: 1400px; margin: 0 auto; width: 100%; display: none; animation: fadeIn 0.3s ease-out; }
+    .dashboard-container.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+
+    /* =========================================================
+       TAB 1: HOME (Hero & Toggles)
+       ========================================================= */
+    .hero-status { background: var(--bg-surface); border-radius: 16px; padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 32px; position: relative; transition: all var(--transition-smooth); }
+    .hero-status::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--mcafee-green); transition: var(--transition-smooth); }
+    .hero-status.at-risk { background: var(--mcafee-red-light); border-color: #fecaca; }
+    .hero-status.at-risk::before { background: var(--mcafee-red); }
+    .hero-status.scanning::before { background: var(--mcafee-blue); animation: scan-pulse 1.5s infinite; }
+    @keyframes scan-pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+    .status-left { display: flex; align-items: center; gap: 24px; }
+    .status-icon-wrapper { position: relative; width: 72px; height: 72px; }
+    .status-monitor { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 56px; color: var(--border-color); }
+    .status-badge { position: absolute; bottom: -4px; right: -4px; width: 32px; height: 32px; background: var(--mcafee-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid var(--bg-surface); transition: var(--transition-smooth); }
+    .hero-status.at-risk .status-badge { background: var(--mcafee-red); border-color: var(--mcafee-red-light); }
+    
+    .status-text h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; transition: color var(--transition-smooth); }
+    .hero-status.at-risk .status-text h1 { color: var(--mcafee-red); }
+    .status-text p { font-size: 15px; color: var(--text-secondary); max-width: 500px; }
+    .hero-status.at-risk .status-text p { color: #991b1b; }
+
+    .btn-fix-issue { display: none; background: var(--mcafee-red); color: white; padding: 10px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-top: 16px; box-shadow: 0 4px 12px rgba(192,24,24,0.2); }
+    .hero-status.at-risk .btn-fix-issue { display: inline-block; }
+    .hero-status.at-risk .hero-scan-btn { display: none; }
+
+    .scan-progress-container { display: none; flex-direction: column; gap: 12px; width: 300px; }
+    .scan-progress-bar-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+    .scan-progress-fill { height: 100%; background: var(--mcafee-blue); width: 0%; transition: width 0.2s ease; }
+    .scan-progress-text { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+
+    /* Feature Cards */
+    .feature-card { background: var(--bg-surface); border-radius: 12px; padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); display: flex; flex-direction: column; cursor: pointer; transition: all var(--transition-fast); }
+    .feature-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: #cbd5e1; }
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+    .card-icon-title { display: flex; align-items: flex-start; gap: 16px; }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .card-title h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .card-title p { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+    .card-action { margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid #f1f5f9; }
+    
+    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background: #cbd5e1; border-radius: 24px; transition: .3s; }
+    .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: .3s; }
+    input:checked + .slider { background: var(--mcafee-green); }
+    input:checked + .slider:before { transform: translateX(20px); }
+    .status-text-toggle { font-size: 14px; font-weight: 600; color: var(--mcafee-green); }
+    .status-text-toggle.off { color: var(--text-secondary); }
+
+    /* =========================================================
+       SUB-TABS: Inner Layout Utilities
+       ========================================================= */
+    .split-layout { display: flex; gap: 32px; align-items: flex-start; }
+    .side-menu { width: 260px; background: white; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+    .side-menu-item { padding: 16px 20px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background var(--transition-fast); }
+    .side-menu-item:last-child { border-bottom: none; }
+    .side-menu-item:hover { background: var(--bg-body); color: var(--text-primary); }
+    .side-menu-item.active { background: var(--mcafee-red-light); color: var(--mcafee-red); border-left: 4px solid var(--mcafee-red); padding-left: 16px; }
+
+    .content-panel { flex: 1; background: white; border-radius: 12px; border: 1px solid var(--border-color); padding: 32px; min-height: 400px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+    .panel-header h2 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+    .panel-header i { color: var(--mcafee-blue); }
+
+    /* =========================================================
+       PROTECTION CONTENT (History Table)
+       ========================================================= */
+    .history-table { width: 100%; border-collapse: collapse; }
+    .history-table th, .history-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+    .history-table th { font-weight: 600; color: var(--text-secondary); background: #f8fafc; }
+    .history-table tr:hover td { background: #f8fafc; }
+    .status-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .status-tag.safe { background: var(--mcafee-green-light); color: var(--mcafee-green); }
+    .status-tag.warning { background: #fef3c7; color: #d97706; }
+
+    /* =========================================================
+       PRIVACY CONTENT (VPN & Tracker UI)
+       ========================================================= */
+    .vpn-hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 40px 0; }
+    .vpn-hero .status-circle { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--text-secondary); margin-bottom: 24px; transition: all 0.5s ease; position: relative; }
+    .vpn-hero.connected .status-circle { border-color: var(--mcafee-green); color: var(--mcafee-green); background: var(--mcafee-green-light); box-shadow: 0 0 0 10px rgba(10, 125, 60, 0.1); }
+    .vpn-hero.connecting .status-circle { border-color: var(--mcafee-blue); color: var(--mcafee-blue); animation: vpnPulse 1s infinite alternate; }
+    
+    @keyframes vpnPulse { from { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 94, 184, 0.4); } to { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 94, 184, 0); } }
+
+    .vpn-hero h3 { font-size: 24px; margin-bottom: 8px; }
+    .vpn-hero p { color: var(--text-secondary); margin-bottom: 32px; }
+    .vpn-details { background: var(--bg-body); border-radius: 8px; padding: 16px; width: 100%; max-width: 400px; display: flex; justify-content: space-between; margin-bottom: 32px; font-size: 14px; }
+
+    .tracker-circle { width: 180px; height: 180px; border-radius: 50%; background: conic-gradient(var(--mcafee-blue) 0% 100%, white 100% 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 32px auto; position: relative; }
+    .tracker-circle-inner { width: 160px; height: 160px; background: white; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: 700; font-size: 32px; color: var(--text-primary); }
+    .tracker-circle-inner span { font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 4px; }
+    
+    /* =========================================================
+       PERFORMANCE CONTENT (PC Boost)
+       ========================================================= */
+    .perf-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+    .perf-card { background: var(--bg-body); border-radius: 12px; padding: 24px; text-align: center; border: 1px solid transparent; transition: border-color var(--transition-fast); }
+    .perf-card.active-boost { border-color: var(--mcafee-blue); background: #f0f8ff; }
+    .perf-card i { font-size: 32px; color: var(--mcafee-blue); margin-bottom: 16px; }
+    .perf-card h4 { font-size: 18px; margin-bottom: 8px; }
+    .perf-card .metric { font-size: 28px; font-weight: 700; color: var(--mcafee-green); margin: 12px 0; }
+
+    /* =========================================================
+       MODALS
+       ========================================================= */
+    .profile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1001; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .profile-overlay.active { display: flex; }
+    .profile-modal { background: white; border-radius: 16px; padding: 32px; width: 400px; box-shadow: var(--shadow-lg); text-align: center; }
+    .profile-modal .avatar-large { width: 64px; height: 64px; border-radius: 50%; background: var(--mcafee-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; margin: 0 auto 16px; }
+    .profile-modal h2 { margin-bottom: 8px; font-size: 20px; }
+    .profile-modal p { margin-bottom: 24px; color: var(--text-secondary); font-size: 13px; }
+    .profile-modal hr { border: none; border-top: 1px solid var(--border-color); margin-bottom: 24px; }
+    .logout-btn { background: var(--mcafee-red-light); color: var(--mcafee-red); font-weight: 600; border-radius: 30px; padding: 12px; width: 100%; margin-bottom: 12px; }
+    .logout-btn:hover { background: #fee2e2; }
+
+    .notification-panel { position: absolute; top: 60px; right: 80px; width: 340px; background: white; border-radius: 12px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); display: none; flex-direction: column; overflow: hidden; }
+    .notification-panel.active { display: flex; animation: slideDown 0.2s ease-out; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .notif-header { padding: 16px; border-bottom: 1px solid var(--border-color); font-weight: 600; display: flex; justify-content: space-between; }
+    .notif-body { max-height: 300px; overflow-y: auto; }
+    .notif-item { padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; cursor: pointer; }
+    .notif-item:hover { background: var(--bg-body); }
+    .notif-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--mcafee-green-light); color: var(--mcafee-green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .notif-icon.warn { background: #fef3c7; color: #d97706; }
+    .notif-content h4 { font-size: 14px; margin-bottom: 4px; }
+    .notif-content p { font-size: 12px; color: var(--text-secondary); }
+    
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       ACTIVATION OVERLAY
+       ========================================== -->
+  <div id="activationOverlay">
+    <div class="activation-card">
+      <svg class="activation-logo" viewBox="0 0 24 24"><path d="M12 4.823 1.58 0v19.177L12 24l10.42-4.823V0zm6.172 11.626-6.143 2.843-6.144-2.843V6.69l6.144 2.842 6.143-2.842z"/></svg>
+      <h1>Activate Your Protection</h1>
+      <p>Enter your McAfee account email and activation key to continue.</p>
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="emailInput" class="form-input" placeholder="you@example.com" required>
+      </div>
+      <div class="input-group">
+        <label>Activation Key</label>
+        <input type="text" id="keyInput" class="form-input" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" required>
+        <div id="activationError" class="error-msg"><i class="fas fa-exclamation-circle"></i> Invalid Activation Key. Try: XKFH9-GJJYK-KKYY3-K7C3W-PKJMM</div>
+      </div>
+      <button id="activateBtn" class="btn-primary" style="width:100%; font-size: 16px;">Activate & Secure Device</button>
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+       APP CONTAINER
+       ========================================== -->
+  <div class="app-container" id="appContainer">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo-container"><svg viewBox="0 0 24 24"><path d="M12 4.823 1.58 0v19.177L12 24l10.42-4.823V0zm6.172 11.626-6.143 2.843-6.144-2.843V6.69l6.144 2.842 6.143-2.842z"/></svg></div>
+      <nav class="nav-items">
+        <div class="nav-item active" data-tab="tab-home" title="Home"><i class="fas fa-home"></i><span>Home</span></div>
+        <div class="nav-item" data-tab="tab-protection" title="Protection"><i class="fas fa-shield-alt"></i><span>Protection</span></div>
+        <div class="nav-item" data-tab="tab-privacy" title="Privacy"><i class="fas fa-user-secret"></i><span>Privacy</span></div>
+        <div class="nav-item" data-tab="tab-performance" title="Performance"><i class="fas fa-tachometer-alt"></i><span>Performance</span></div>
+      </nav>
+      <div class="nav-bottom">
+        <div class="nav-item" id="sidebarSettingsBtn" title="Settings"><i class="fas fa-cog"></i><span>Settings</span></div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="page-title" id="greetingTitle">Good evening</div>
+        <div class="topbar-actions">
+          <button class="icon-btn" title="Help"><i class="far fa-question-circle"></i></button>
+          <button class="icon-btn" id="notifBtn" title="Notifications">
+            <i class="far fa-bell"></i>
+            <span class="notification-badge" id="notifBadge"></span>
+          </button>
+          <div class="user-profile-btn" id="profileBtn" title="Account">
+            <div class="user-avatar-initial" id="navAvatar">U</div>
+            <div class="user-email-text" id="navEmailText">User</div>
+          </div>
+        </div>
+        
+        <!-- Hover Notification Panel -->
+        <div class="notification-panel" id="notifPanel">
+            <div class="notif-header">Notifications <span><a href="#" style="font-size:12px; color:var(--mcafee-blue);">Clear all</a></span></div>
+            <div class="notif-body" id="notifList">
+                <div class="notif-item">
+                    <div class="notif-icon"><i class="fas fa-check"></i></div>
+                    <div class="notif-content"><h4>McAfee is active</h4><p>Your subscription is running to protect you.</p></div>
+                </div>
+            </div>
+        </div>
+      </header>
+
+
+      <!-- TAB 1: HOME -->
+      <div class="dashboard-container active" id="tab-home">
+        <section class="hero-status" id="heroStatusSection">
+          <div class="status-left">
+            <div class="status-icon-wrapper">
+              <div class="status-monitor"><i class="fas fa-desktop"></i></div>
+              <div class="status-badge" id="statusBadge"><i class="fas fa-check"></i></div>
+            </div>
+            <div class="status-text" id="statusTextContainer">
+              <h1 id="statusHeading">Your connection and device are protected.</h1>
+              <p id="statusSubheading">We haven't found any threats since your last scan.</p>
+              <button class="btn-fix-issue" id="fixIssueBtn">Turn On Protection</button>
+            </div>
+            <div class="scan-progress-container" id="scanProgressContainer">
+              <div class="scan-progress-text"><span id="scanStatusText">Scanning system files...</span><span id="scanPercentage">0%</span></div>
+              <div class="scan-progress-bar-bg"><div class="scan-progress-fill" id="scanProgressFill"></div></div>
+            </div>
+          </div>
+          <button class="btn-primary hero-scan-btn" id="homeSmartScanBtn"><i class="fas fa-search"></i> Run Smart Scan</button>
+        </section>
+
+        <h2 class="section-title">Your quick actions</h2>
+        <section class="card-grid">
+          <div class="feature-card">
+            <div class="card-header">
+              <div class="card-icon-title">
+                <div class="card-icon" style="color: var(--mcafee-blue); background: #e0f2fe;"><i class="fas fa-shield-virus"></i></div>
+                <div class="card-title"><h3>Real-Time Scanning</h3><p>Guards against viruses & spyware</p></div>
+              </div>
+            </div>
+            <div class="card-action">
+              <span class="status-text-toggle" id="avStatusText">On</span>
+              <label class="toggle-switch"><input type="checkbox" checked id="avToggle"><span class="slider"></span></label>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">
+               <div class="card-icon-title">
+                <div class="card-icon" style="color: var(--mcafee-green); background: var(--mcafee-green-light);"><i class="fas fa-globe"></i></div>
+                <div class="card-title"><h3>Web Protection</h3><p>Block malicious websites</p></div>
+              </div>
+            </div>
+            <div class="card-action">
+              <span class="status-text-toggle" id="webStatusText">On</span>
+              <label class="toggle-switch"><input type="checkbox" checked id="webToggle"><span class="slider"></span></label>
+            </div>
+          </div>
+          
+          <!-- Identity Card (Links to Privacy Tab) -->
+           <div class="feature-card" id="homeIdentityCard">
+            <div class="card-header">
+               <div class="card-icon-title">
+                <div class="card-icon" style="color: #f59e0b; background: #fef3c7;"><i class="fas fa-id-card"></i></div>
+                <div class="card-title"><h3>Identity Protection</h3><p>Monitoring the dark web for info</p></div>
+              </div>
+            </div>
+            <div class="card-action" style="cursor:pointer">
+              <span style="font-size: 13px; color: var(--text-secondary);">Protecting 1 email</span>
+              <span style="color:var(--mcafee-blue); font-weight:600; font-size:14px;">View dashboard <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+
+      <!-- TAB 2: PROTECTION -->
+      <div class="dashboard-container" id="tab-protection">
+        <h2 class="section-title">Protection Details</h2>
+        <div class="split-layout">
+            <div class="side-menu">
+                <div class="side-menu-item active" data-subtab="prot-history"><i class="fas fa-history"></i> Scan History</div>
+                <div class="side-menu-item" data-subtab="prot-scans"><i class="fas fa-search"></i> Manual Scans</div>
+                <div class="side-menu-item" data-subtab="prot-quarantine"><i class="fas fa-box"></i> Quarantined Items</div>
+            </div>
+            
+            <div class="content-panel">
+                <!-- Subtab: History -->
+                <div id="prot-history" class="subtab-content">
+                    <div class="panel-header"><h2><i class="fas fa-shield-alt"></i> Protection History</h2></div>
+                    <p style="margin-bottom: 24px; color:var(--text-secondary)">Review recent background scans, manual scans, and blocked threats.</p>
+                    <table class="history-table">
+                        <thead><tr><th>Date & Time</th><th>Event Type</th><th>Status</th><th>Action taken</th></tr></thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td>Yesterday, 9:00 AM</td><td>Background Scan</td>
+                                <td><span class="status-tag safe"><i class="fas fa-check-circle"></i> No threats</span></td>
+                                <td>None needed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Subtab: Manual Scans -->
+                <div id="prot-scans" class="subtab-content" style="display:none;">
+                    <div class="panel-header"><h2><i class="fas fa-search"></i> Run a Scan</h2></div>
+                    <div class="card-grid">
+                        <div class="feature-card" style="align-items:center; text-align:center;">
+                            <i class="fas fa-bolt" style="font-size:32px; color:var(--mcafee-blue); margin-bottom:12px;"></i>
+                            <h3 style="margin-bottom:8px">Quick Scan</h3>
+                            <p style="color:var(--text-secondary); margin-bottom:24px; font-size:14px;">Checks areas of your PC most prone to threats.</p>
+                            <button class="btn-primary" id="protQuickScanBtn">Run Quick Scan</button>
+                        </div>
+                        <div class="feature-card" style="align-items:center; text-align:center;">
+                            <i class="fas fa-database" style="font-size:32px; color:var(--text-secondary); margin-bottom:12px;"></i>
+                            <h3 style="margin-bottom:8px">Full Scan</h3>
+                            <p style="color:var(--text-secondary); margin-bottom:24px; font-size:14px;">Checks your entire PC. This may take a while.</p>
+                            <button class="btn-secondary" id="protFullScanBtn">Run Full Scan</button>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- Subtab: Quarantine -->
+                 <div id="prot-quarantine" class="subtab-content" style="display:none;">
+                    <div class="panel-header"><h2><i class="fas fa-box"></i> Quarantined Items</h2></div>
+                    <div style="text-align:center; padding: 40px;">
+                        <i class="fas fa-box-open" style="font-size:48px; color:var(--border-color); margin-bottom:16px;"></i>
+                        <h3 style="margin-bottom:8px">Your quarantine is empty</h3>
+                        <p style="color:var(--text-secondary);">We haven't quarantined any files recently. You're completely safe.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+      <!-- TAB 3: PRIVACY -->
+      <div class="dashboard-container" id="tab-privacy">
+        <h2 class="section-title">Privacy Tools</h2>
+        <div class="split-layout">
+            <div class="side-menu">
+                <div class="side-menu-item active" data-subtab="priv-vpn"><i class="fas fa-wifi"></i> Secure VPN</div>
+                <div class="side-menu-item" data-subtab="priv-tracker"><i class="fas fa-broom"></i> Tracker Remover</div>
+                <div class="side-menu-item" data-subtab="priv-identity"><i class="fas fa-id-card"></i> Identity Monitoring</div>
+            </div>
+            
+            <div class="content-panel">
+                <!-- Subtab: VPN -->
+                <div id="priv-vpn" class="subtab-content">
+                    <div class="panel-header"><h2><i class="fas fa-wifi"></i> Secure VPN</h2></div>
+                    <div class="vpn-hero" id="vpnHeroState">
+                        <div class="status-circle"><i class="fas fa-shield-alt"></i></div>
+                        <h3 id="vpnHeading">VPN is Disconnected</h3>
+                        <p id="vpnSubText">Your IP address is visible. Connect to protect your network.</p>
+                        
+                        <div class="vpn-details">
+                            <div><strong>Virtual IP:</strong> <span id="vpnIpAddress">Not hidden</span></div>
+                            <div><strong>Location:</strong> <span id="vpnLocation">Auto-select (Fastest)</span></div>
+                        </div>
+
+                        <button class="btn-primary" id="vpnControlBtn" style="width: 200px;">Connect VPN</button>
+                    </div>
+                </div>
+
+                <!-- Subtab: Tracker Remover -->
+                <div id="priv-tracker" class="subtab-content" style="display:none;">
+                    <div class="panel-header"><h2><i class="fas fa-broom"></i> Tracker Remover</h2></div>
+                    <div style="text-align:center;">
+                        <p style="color:var(--text-secondary); max-width:500px; margin:0 auto;">Ad networks install tracking cookies on your PC. We can securely sweep them away to keep your browsing habits private.</p>
+                        
+                        <div class="tracker-circle">
+                            <div class="tracker-circle-inner">
+                                <span id="trackerCount" style="font-size:32px; font-weight:700; color:var(--mcafee-blue); margin:0;">0</span>
+                                <span>Trackers Removed</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary" id="runTrackerBtn">Clean Now</button>
+                    </div>
+                </div>
+                
+                 <!-- Subtab: Identity -->
+                 <div id="priv-identity" class="subtab-content" style="display:none;">
+                    <div class="panel-header"><h2><i class="fas fa-id-card"></i> Identity Monitoring</h2></div>
+                    <div style="background:#f8fafc; padding:24px; border-radius:12px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                        <div>
+                            <h3 style="margin-bottom:4px;">Monitoring Active</h3>
+                            <p style="color:var(--text-secondary); font-size:14px;">We are scanning the dark web for your email: <strong id="privacyEmailText">user@email.com</strong></p>
+                        </div>
+                        <span class="status-tag safe" style="font-size:14px;"><i class="fas fa-check-circle"></i> No Breaches Found</span>
+                    </div>
+                    <p style="text-align:center; color:var(--text-secondary); margin-top:40px;">Add more emails, phone numbers, or credit cards in your advanced McAfee web portal.</p>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+      <!-- TAB 4: PERFORMANCE -->
+      <div class="dashboard-container" id="tab-performance">
+        <h2 class="section-title">PC Performance</h2>
+        <div class="content-panel">
+            <div class="panel-header"><h2><i class="fas fa-tachometer-alt"></i> App Boost & Optimizer</h2></div>
+            <p style="color:var(--text-secondary); margin-bottom:32px;">Give your resource-heavy apps the power they need to get the job done faster. Clean up junk files slowing down your system.</p>
+            
+            <div class="perf-metrics">
+                <div class="perf-card" id="perfMemoryCard">
+                    <i class="fas fa-microchip"></i>
+                    <h4>Memory Freed</h4>
+                    <div class="metric" id="perfMemoryVal">0 MB</div>
+                    <p style="color:var(--text-secondary); font-size:13px;">from background apps</p>
+                </div>
+                <div class="perf-card" id="perfJunkCard">
+                    <i class="fas fa-trash-alt"></i>
+                    <h4>Junk Cleared</h4>
+                    <div class="metric" id="perfJunkVal">0 GB</div>
+                    <p style="color:var(--text-secondary); font-size:13px;">of temporary system files</p>
+                </div>
+            </div>
+
+            <div style="text-align:center;">
+                <button class="btn-primary" id="runBoostBtn" style="font-size: 16px; padding: 14px 40px;"><i class="fas fa-rocket"></i> Boost PC Speed</button>
+            </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ==========================================
+       PROFILE & SETTINGS MODAL 
+       ========================================== -->
+  <div class="profile-overlay" id="profileOverlay">
+      <div class="profile-modal">
+          <div class="avatar-large" id="modalAvatarInit">U</div>
+          <h2 id="modalEmailTitle" style="word-break: break-all;">user@example.com</h2>
+          <p id="modalActivationCodeDisplay" style="letter-spacing: 0px; font-family: monospace;">XXXXX-XXXXX-XXXXX</p>
+          <hr>
+          <div style="text-align:left; font-size:14px; margin-bottom:24px;">
+            <p style="margin-bottom:12px;"><strong>Subscription:</strong> McAfee Total Protection</p>
+            <p style="margin-bottom:12px;"><strong>Version:</strong> v24.2.0.12</p>
+            <p><strong>Status:</strong> <span style="color:var(--mcafee-green); font-weight:bold;">Active</span></p>
+          </div>
+          <button class="logout-btn" id="logoutBtn">Log out</button>
+          <button class="btn-secondary" id="closeProfileBtn" style="width:100%;">Close</button>
+      </div>
+  </div>
+
+
+  <!-- ==========================================
+       ADVANCED JAVASCRIPT LOGIC
+       ========================================== -->
+  <script>
+    // --- 1. ACTIVATION FLOW ---
+    const VALID_KEY = "XKFH9-GJJYK-KKYY3-K7C3W-PKJMM";
+    const activationOverlay = document.getElementById('activationOverlay');
+    const appContainer = document.getElementById('appContainer');
+    const emailInput = document.getElementById('emailInput');
+    const keyInput = document.getElementById('keyInput');
+    const activateBtn = document.getElementById('activateBtn');
+    const activationError = document.getElementById('activationError');
+
+    // UI elements dependent on identity
+    const navAvatar = document.getElementById('navAvatar');
+    const navEmailText = document.getElementById('navEmailText');
+    const modalEmailTitle = document.getElementById('modalEmailTitle');
+    const modalActivationCodeDisplay = document.getElementById('modalActivationCodeDisplay');
+    const modalAvatarInit = document.getElementById('modalAvatarInit');
+    const privacyEmailText = document.getElementById('privacyEmailText');
+
+    function checkActivationStatus() {
+        const isActive = localStorage.getItem('mcafee_activated');
+        const userEmail = localStorage.getItem('mcafee_email');
+
+        if (isActive === "true" && userEmail) {
+            activationOverlay.style.display = 'none';
+            appContainer.style.display = 'flex';
+            
+            navEmailText.textContent = userEmail;
+            modalEmailTitle.textContent = userEmail;
+            modalActivationCodeDisplay.textContent = "Activation key: " + VALID_KEY;
+            privacyEmailText.textContent = userEmail;
+            
+            const initial = userEmail.charAt(0).toUpperCase();
+            navAvatar.textContent = initial;
+            modalAvatarInit.textContent = initial;
+            
+            setDateGreeting();
+        } else {
+            activationOverlay.style.display = 'flex';
+            appContainer.style.display = 'none';
+        }
+    }
+
+    activateBtn.addEventListener('click', () => {
+        const email = emailInput.value.trim();
+        const key = keyInput.value.trim().toUpperCase();
+
+        if (email === '' || !email.includes('@')) {
+            activationError.textContent = "Please enter a valid email.";
+            activationError.style.display = 'block';
+            return;
+        }
+
+        if (key === VALID_KEY) {
+            activationError.style.display = 'none';
+            localStorage.setItem('mcafee_activated', 'true');
+            localStorage.setItem('mcafee_email', email);
+            checkActivationStatus();
+            addNotification("Account Activated", "Your device is now securely protected by McAfee.");
+        } else {
+            activationError.textContent = "Invalid Activation Key. Try: " + VALID_KEY;
+            activationError.style.display = 'block';
+        }
+    });
+
+    function setDateGreeting() {
+        const hour = new Date().getHours();
+        let greeting = "Good evening";
+        if (hour < 12) greeting = "Good morning";
+        else if (hour < 18) greeting = "Good afternoon";
+        document.getElementById('greetingTitle').textContent = greeting;
+    }
+    checkActivationStatus();
+
+    // --- 2. GLOBAL NAVIGATION CONTROLS ---
+    // Main Sidebar Tabs
+    const tabs = document.querySelectorAll('.nav-items .nav-item');
+    const dashboardSections = document.querySelectorAll('.dashboard-container');
+
+    function switchTab(targetId) {
+        tabs.forEach(t => t.classList.remove('active'));
+        document.querySelector(`.nav-item[data-tab="${targetId}"]`).classList.add('active');
+        dashboardSections.forEach(section => section.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetId = tab.getAttribute('data-tab');
+            switchTab(targetId);
+        });
+    });
+
+    // Sidebar Inner Menus (Protection & Privacy subtabs)
+    document.querySelectorAll('.side-menu-item').forEach(item => {
+        item.addEventListener('click', function() {
+            // Find parent split-layout
+            const layout = this.closest('.split-layout');
+            // Deactivate siblings
+            layout.querySelectorAll('.side-menu-item').forEach(i => i.classList.remove('active'));
+            layout.querySelectorAll('.subtab-content').forEach(c => c.style.display = 'none');
+            // Activate target
+            this.classList.add('active');
+            const target = this.getAttribute('data-subtab');
+            document.getElementById(target).style.display = 'block';
+        });
+    });
+
+    // Shortcut from Home to Identity
+    document.getElementById('homeIdentityCard').addEventListener('click', () => {
+        switchTab('tab-privacy');
+        document.querySelector('.side-menu-item[data-subtab="priv-identity"]').click();
+    });
+
+    // --- 3. PROFILE & NOTIFICATIONS ---
+    const profileBtn = document.getElementById('profileBtn');
+    const sidebarSettingsBtn = document.getElementById('sidebarSettingsBtn');
+    const profileOverlay = document.getElementById('profileOverlay');
+    const closeProfileBtn = document.getElementById('closeProfileBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function openProfile() { profileOverlay.classList.add('active'); }
+    profileBtn.addEventListener('click', openProfile);
+    sidebarSettingsBtn.addEventListener('click', openProfile);
+    closeProfileBtn.addEventListener('click', () => profileOverlay.classList.remove('active'));
+    
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('mcafee_activated');
+        localStorage.removeItem('mcafee_email');
+        profileOverlay.classList.remove('active');
+        emailInput.value = '';
+        keyInput.value = '';
+        checkActivationStatus();
+    });
+
+    // Notifications
+    const notifBtn = document.getElementById('notifBtn');
+    const notifPanel = document.getElementById('notifPanel');
+    const notifBadge = document.getElementById('notifBadge');
+    const notifList = document.getElementById('notifList');
+
+    notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifPanel.classList.toggle('active');
+        notifBadge.style.display = 'none'; // Clear badge on view
+    });
+
+    document.addEventListener('click', (e) => {
+        if(!notifPanel.contains(e.target) && !notifBtn.contains(e.target)) {
+            notifPanel.classList.remove('active');
+        }
+    });
+
+    function addNotification(title, message, isWarn=false) {
+        const iconClass = isWarn ? 'warn' : '';
+        const iconSym = isWarn ? 'fa-exclamation' : 'fa-check';
+        const html = `
+            <div class="notif-item">
+                <div class="notif-icon ${iconClass}"><i class="fas ${iconSym}"></i></div>
+                <div class="notif-content"><h4>${title}</h4><p>${message}</p></div>
+            </div>`;
+        notifList.insertAdjacentHTML('afterbegin', html);
+        notifBadge.style.display = 'block';
+    }
+
+
+    // --- 4. ENGINE: Dynamic Danger State (Toggles) ---
+    const avToggle = document.getElementById('avToggle');
+    const avStatusText = document.getElementById('avStatusText');
+    const webToggle = document.getElementById('webToggle');
+    const webStatusText = document.getElementById('webStatusText');
+    const heroStatusSection = document.getElementById('heroStatusSection');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusHeading = document.getElementById('statusHeading');
+    const statusSubheading = document.getElementById('statusSubheading');
+    const fixIssueBtn = document.getElementById('fixIssueBtn');
+
+    function bindMainToggle(toggle, textEl) {
+        toggle.addEventListener('change', (e) => {
+            textEl.textContent = e.target.checked ? 'On' : 'Off';
+            e.target.checked ? textEl.classList.remove('off') : textEl.classList.add('off');
+            evaluateSystemRisk();
+            
+            if(!e.target.checked) {
+                addNotification("Protection Disabled", `You turned off a critical protection tool.`, true);
+            }
+        });
+    }
+    bindMainToggle(avToggle, avStatusText);
+    bindMainToggle(webToggle, webStatusText);
+
+    function evaluateSystemRisk() {
+        if(heroStatusSection.classList.contains('scanning')) return;
+        let disabled = [];
+        if(!avToggle.checked) disabled.push("Real-Time Scanning");
+        if(!webToggle.checked) disabled.push("Web Protection");
+
+        if(disabled.length > 0) {
+            heroStatusSection.classList.add('at-risk');
+            statusBadge.innerHTML = '<i class="fas fa-exclamation"></i>';
+            statusHeading.textContent = 'Your device is at risk.';
+            statusSubheading.innerHTML = `You are not protected anymore. Turn on the following protection: <strong>${disabled.join(', ')}</strong>.`;
+        } else {
+            heroStatusSection.classList.remove('at-risk');
+            statusBadge.innerHTML = '<i class="fas fa-check"></i>';
+            statusHeading.textContent = 'Your connection and device are protected.';
+            statusSubheading.textContent = "We haven't found any threats since your last scan.";
+        }
+    }
+
+    fixIssueBtn.addEventListener('click', () => {
+        avToggle.checked = true; avStatusText.textContent = 'On'; avStatusText.classList.remove('off');
+        webToggle.checked = true; webStatusText.textContent = 'On'; webStatusText.classList.remove('off');
+        evaluateSystemRisk();
+        addNotification("Protection Restored", "All essential protections are safely active again.");
+    });
+
+
+    // --- 5. ENGINE: Unified Scan Controller ---
+    const homeSmartScanBtn = document.getElementById('homeSmartScanBtn');
+    const protQuickScanBtn = document.getElementById('protQuickScanBtn');
+    const protFullScanBtn = document.getElementById('protFullScanBtn');
+    const historyTableBody = document.getElementById('historyTableBody');
+    
+    const scanProgressContainer = document.getElementById('scanProgressContainer');
+    const scanProgressFill = document.getElementById('scanProgressFill');
+    const scanPercentage = document.getElementById('scanPercentage');
+    const statusTextContainer = document.getElementById('statusTextContainer');
+
+    let scanInterval = null;
+
+    function runScan(scanType, uiButtonRef) {
+        if(heroStatusSection.classList.contains('at-risk')) {
+            alert("Please fix your critical protection issues before scanning.");
+            return;
+        }
+
+        // Setup UI for scanning
+        heroStatusSection.classList.add('scanning');
+        statusTextContainer.style.display = 'none';
+        scanProgressContainer.style.display = 'flex';
+        
+        const originalBtnText = uiButtonRef.innerHTML;
+        uiButtonRef.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancel Scan';
+        uiButtonRef.disabled = true; // Protect from double clicks
+        
+        statusBadge.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
+
+        let progress = 0;
+        let timeMultiplier = scanType === 'Full' ? 1.5 : 1; // Full scan is slower
+
+        scanInterval = setInterval(() => {
+            progress += (Math.random() * 10 + 2) / timeMultiplier;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(scanInterval);
+                finishScan(scanType, uiButtonRef, originalBtnText);
+            }
+            scanProgressFill.style.width = Math.min(progress, 100) + '%';
+            scanPercentage.textContent = Math.floor(Math.min(progress, 100)) + '%';
+        }, 300);
+    }
+
+    function finishScan(scanType, uiButtonRef, originalBtnText) {
+        setTimeout(() => {
+            // Restore UI
+            heroStatusSection.classList.remove('scanning');
+            scanProgressContainer.style.display = 'none';
+            statusTextContainer.style.display = 'block';
+            uiButtonRef.innerHTML = originalBtnText;
+            uiButtonRef.disabled = false;
+            evaluateSystemRisk(); // Restores perfectly
+            
+            // Log History
+            const date = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const html = `
+                <tr>
+                    <td>Today, ${date}</td><td>${scanType} Scan</td>
+                    <td><span class="status-tag safe"><i class="fas fa-check-circle"></i> No threats</span></td>
+                    <td>None needed</td>
+                </tr>`;
+            historyTableBody.insertAdjacentHTML('afterbegin', html);
+            
+            // Notify
+            addNotification(`${scanType} Scan Complete`, `Scanned successfully. Your PC is clean.`);
+        }, 500);
+    }
+
+    homeSmartScanBtn.addEventListener('click', () => runScan('Smart', homeSmartScanBtn));
+    protQuickScanBtn.addEventListener('click', () => runScan('Quick', protQuickScanBtn));
+    protFullScanBtn.addEventListener('click', () => runScan('Full', protFullScanBtn));
+
+
+    // --- 6. PRIVACY TAB ENGINE ---
+    // VPN Controller
+    const vpnControlBtn = document.getElementById('vpnControlBtn');
+    const vpnHeroState = document.getElementById('vpnHeroState');
+    const vpnHeading = document.getElementById('vpnHeading');
+    const vpnSubText = document.getElementById('vpnSubText');
+    const vpnIpAddress = document.getElementById('vpnIpAddress');
+    
+    let isVpnActive = false;
+    let vpnTimeout;
+
+    vpnControlBtn.addEventListener('click', () => {
+        if(isVpnActive) {
+            // Disconnect immediately
+            isVpnActive = false;
+            vpnHeroState.classList.remove('connected');
+            vpnHeroState.classList.remove('connecting');
+            vpnHeading.textContent = "VPN is Disconnected";
+            vpnSubText.textContent = "Your IP address is visible. Connect to protect your network.";
+            vpnIpAddress.textContent = "Not hidden";
+            vpnControlBtn.textContent = "Connect VPN";
+            vpnControlBtn.classList.remove('btn-secondary');
+            vpnControlBtn.classList.add('btn-primary');
+            addNotification("VPN Disconnected", "Your browsing data is no longer encrypted.", true);
+        } else {
+            // Connect flow
+            vpnHeroState.classList.add('connecting');
+            vpnHeading.textContent = "Establishing Connection...";
+            vpnSubText.textContent = "Routing traffic through secure McAfee servers...";
+            vpnControlBtn.textContent = "Connecting...";
+            vpnControlBtn.disabled = true;
+
+            vpnTimeout = setTimeout(() => {
+                isVpnActive = true;
+                vpnHeroState.classList.remove('connecting');
+                vpnHeroState.classList.add('connected');
+                vpnHeading.textContent = "Connection Secured";
+                vpnSubText.textContent = "Your browsing is now encrypted and your real IP address is hidden.";
+                
+                // Gen Mock IP
+                const mockIp = `104.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.19`;
+                vpnIpAddress.textContent = mockIp;
+                
+                vpnControlBtn.textContent = "Disconnect";
+                vpnControlBtn.disabled = false;
+                vpnControlBtn.classList.add('btn-secondary');
+                vpnControlBtn.classList.remove('btn-primary');
+            }, 2000);
+        }
+    });
+
+    // Tracker Remover
+    const runTrackerBtn = document.getElementById('runTrackerBtn');
+    const trackerCount = document.getElementById('trackerCount');
+    let totalTrackers = 0;
+
+    runTrackerBtn.addEventListener('click', () => {
+        runTrackerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cleaning...';
+        runTrackerBtn.disabled = true;
+
+        let cycles = 0;
+        let foundThisRun = Math.floor(Math.random() * 150) + 50; // Find 50-200 trackers
+        
+        let trackAnim = setInterval(() => {
+            cycles++;
+            trackerCount.textContent = totalTrackers + Math.floor((foundThisRun/10) * cycles);
+            if(cycles >= 10) {
+                clearInterval(trackAnim);
+                totalTrackers += foundThisRun;
+                trackerCount.textContent = totalTrackers;
+                runTrackerBtn.innerHTML = 'Clean Again';
+                runTrackerBtn.disabled = false;
+                addNotification("Tracker Remover", `Successfully wiped ${foundThisRun} tracking cookies off your PC.`);
+            }
+        }, 150);
+    });
+
+    // --- 7. PERFORMANCE TAB ENGINE ---
+    const runBoostBtn = document.getElementById('runBoostBtn');
+    const perfMemoryCard = document.getElementById('perfMemoryCard');
+    const perfJunkCard = document.getElementById('perfJunkCard');
+    const perfMemoryVal = document.getElementById('perfMemoryVal');
+    const perfJunkVal = document.getElementById('perfJunkVal');
+
+    let totalMem = 0;
+    let totalJunk = 0;
+
+    runBoostBtn.addEventListener('click', () => {
+        runBoostBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing System...';
+        runBoostBtn.disabled = true;
+        perfMemoryCard.classList.add('active-boost');
+        perfJunkCard.classList.add('active-boost');
+
+        setTimeout(() => {
+            const memFreed = Math.floor(Math.random() * 300) + 100;
+            const junkFreed = (Math.random() * 1.5 + 0.1).toFixed(1);
+            
+            totalMem += memFreed;
+            totalJunk = parseFloat(totalJunk) + parseFloat(junkFreed);
+            
+            perfMemoryVal.textContent = totalMem + " MB";
+            perfJunkVal.textContent = totalJunk.toFixed(1) + " GB";
+            
+            runBoostBtn.innerHTML = '<i class="fas fa-check"></i> System Boosted';
+            setTimeout(() => { 
+                runBoostBtn.innerHTML = '<i class="fas fa-rocket"></i> Boost PC Speed Again'; 
+                runBoostBtn.disabled = false;
+                perfMemoryCard.classList.remove('active-boost');
+                perfJunkCard.classList.remove('active-boost');
+            }, 2000);
+            
+            addNotification("System Optimized", `Freed up ${memFreed}MB of RAM and deleted junk files.`);
+        }, 2500);
+    });
+
+  </script>
+</body>
+</html>

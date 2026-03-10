@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Avast Ultimate Security</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="https://www.avast.com/favicon.ico" type="image/x-icon">
+
+  <style>
+    :root {
+      --avast-orange: #ff7800;
+      --avast-orange-dark: #e56d00;
+      --avast-orange-glow: rgba(255, 120, 0, 0.35);
+      --bg-main: #0f1419;
+      --bg-sidebar: #1a1f2e;
+      --bg-card: #1e2535;
+      --bg-card-hover: #252d3f;
+      --green: #00d084;
+      --green-dark: #00a86b;
+      --red: #ff4757;
+      --red-dark: #ff3838;
+      --yellow: #ffc107;
+      --blue: #4a90e2;
+      --text-main: #ffffff;
+      --text-muted: #8b96b0;
+      --text-dim: #6b7894;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 32px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 64px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    body { margin: 0; background: linear-gradient(135deg, var(--bg-main) 0%, #1a1f2e 100%); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+
+    /* Sidebar – Modern design */
+    .sidebar {
+      width: 80px;
+      background: rgba(26, 31, 46, 0.8);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      border-right: 1px solid var(--border-subtle);
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+    }
+
+    .logo-wrap {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--avast-orange), var(--avast-orange-dark));
+      border-radius: 16px;
+      animation: float 3s ease-in-out infinite;
+      box-shadow: 0 8px 20px var(--avast-orange-glow);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .logo-wrap svg {
+      width: 36px;
+      height: 36px;
+      filter: brightness(1.1);
+    }
+
+    .nav-item {
+      width: 60px;
+      height: 56px;
+      margin-bottom: 8px;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 120, 0, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav-item:hover::before {
+      left: 100%;
+    }
+
+    .nav-item svg { margin-bottom: 4px; flex-shrink: 0; transition: all 0.3s ease; }
+    .nav-item.active { 
+      background: linear-gradient(135deg, rgba(255, 120, 0, 0.2), rgba(255, 120, 0, 0.1)); 
+      color: var(--avast-orange); 
+      box-shadow: 0 0 20px var(--avast-orange-glow);
+    }
+    .nav-item.active svg { color: var(--avast-orange); transform: scale(1.2); }
+    .nav-item:hover:not(.active) { 
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 24px 40px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(15, 20, 25, 0.5), rgba(30, 37, 53, 0.3));
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      flex-shrink: 0;
+      animation: slideDown 0.6s ease;
+    }
+    .topbar h1 { 
+      margin: 0; 
+      font-size: 24px; 
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-main), var(--avast-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .topbar-right { 
+      display: flex; 
+      align-items: center; 
+      gap: 28px; 
+      color: var(--text-muted); 
+      font-size: 13px; 
+      cursor: pointer; 
+    }
+    .topbar-right span:hover { 
+      color: var(--avast-orange);
+      transition: color 0.3s ease;
+    }
+
+    .page { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-right: 12px; }
+    .page.active { display: flex; animation: fadeInScale 0.5s ease; }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Status page – center content */
+    .status-page {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .ring {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 6px solid var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 40px rgba(0, 208, 132, 0.4), inset 0 0 40px rgba(0, 208, 132, 0.1);
+      background: radial-gradient(circle at 30% 30%, rgba(0, 208, 132, 0.1), transparent);
+      position: relative;
+    }
+
+    .ring::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 208, 132, 0.1);
+      top: -10px;
+      left: -10px;
+      animation: ringPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+    }
+
+    .ring.unprotected { 
+      border-color: var(--red); 
+      box-shadow: 0 0 40px rgba(255, 71, 87, 0.4), inset 0 0 40px rgba(255, 71, 87, 0.1);
+      background: radial-gradient(circle at 30% 30%, rgba(255, 71, 87, 0.1), transparent);
+    }
+
+    .ring.unprotected::after {
+      border-color: rgba(255, 71, 87, 0.1);
+      animation: ringPulseRed 2s ease-in-out infinite;
+    }
+
+    @keyframes ringPulseRed {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+    }
+
+    .ring.scanning { 
+      border-color: var(--avast-orange); 
+      box-shadow: 0 0 40px var(--avast-orange-glow), inset 0 0 40px rgba(255, 120, 0, 0.1); 
+      animation: ringScan 2s ease-in-out infinite;
+    }
+
+    .ring.scanning::after {
+      border-color: var(--avast-orange-glow);
+      animation: ringScanPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ringScan {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes ringScanPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.2; }
+    }
+
+    .ring.protected { border-color: var(--green); }
+    .ring svg { width: 88px; height: 88px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); }
+    .status-text { font-size: 28px; font-weight: 700; margin: 24px 0 12px; line-height: 1.3; }
+    .status-text .ok { color: var(--green); }
+    .status-text .bad { color: var(--red); }
+    .status-sub { color: var(--text-muted); font-size: 15px; margin-bottom: 28px; }
+
+    .btn {
+      background: linear-gradient(135deg, var(--avast-orange), var(--avast-orange-dark));
+      border: none;
+      padding: 14px 40px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 20px rgba(255, 120, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #ff8a1f, var(--avast-orange-dark));
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(255, 120, 0, 0.4);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled { 
+      opacity: 0.5; 
+      cursor: not-allowed; 
+      transform: none; 
+    }
+
+    .btn.scanning { animation: btnPulse 1.2s ease-in-out infinite; }
+
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 8px 20px rgba(255, 120, 0, 0.3); }
+      50% { box-shadow: 0 12px 28px rgba(255, 120, 0, 0.5); }
+    }
+
+    .btn-secondary { 
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main); 
+      border: 1px solid var(--border-subtle);
+      box-shadow: none;
+    }
+    .btn-secondary:hover { 
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 120, 0, 0.3);
+      box-shadow: 0 0 20px rgba(255, 120, 0, 0.15);
+    }
+
+    .protection-toggle {
+      margin-top: 24px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: all 0.3s ease;
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .protection-toggle:hover { 
+      color: var(--red);
+      text-underline-offset: 6px;
+    }
+
+    .link-btn { 
+      background: none; 
+      border: none; 
+      color: var(--text-muted); 
+      font-size: 13px; 
+      cursor: pointer; 
+      margin-top: 12px; 
+      text-decoration: underline; 
+      text-underline-offset: 4px;
+      transition: all 0.3s ease;
+    }
+    .link-btn:hover { 
+      color: var(--avast-orange);
+    }
+
+    /* Scan section on status */
+    .scan-actions { 
+      display: flex; 
+      gap: 14px; 
+      margin-top: 12px; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+    }
+
+    .scan-progress-wrap { 
+      width: 100%; 
+      max-width: 360px; 
+      margin-top: 24px; 
+      display: none; 
+    }
+    .scan-progress-wrap.active { display: block; animation: slideUp 0.5s ease; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scan-progress { 
+      height: 8px; 
+      background: rgba(255, 255, 255, 0.05); 
+      border-radius: 10px; 
+      overflow: hidden; 
+      margin-bottom: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+    .scan-progress-bar { 
+      height: 100%; 
+      background: linear-gradient(90deg, var(--avast-orange), #ff9d3d);
+      width: 0%; 
+      transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border-radius: 10px;
+      box-shadow: 0 0 16px var(--avast-orange-glow);
+    }
+    .scan-status { font-size: 13px; color: var(--text-muted); }
+
+    /* Protection page */
+    .section-title { 
+      font-size: 17px; 
+      font-weight: 700; 
+      margin: 0 0 20px; 
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cards { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+      gap: 20px; 
+    }
+
+    .card {
+      background: rgba(30, 37, 53, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 120, 0, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card:hover {
+      background: rgba(30, 37, 53, 0.8);
+      border-color: rgba(255, 120, 0, 0.2);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(255, 120, 0, 0.15);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header { 
+      display: flex; 
+      align-items: center; 
+      gap: 16px; 
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-icon { 
+      width: 48px; 
+      height: 48px; 
+      border-radius: 12px; 
+      background: linear-gradient(135deg, rgba(255, 120, 0, 0.2), rgba(255, 120, 0, 0.05));
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-icon svg { width: 24px; height: 24px; color: var(--avast-orange); }
+
+    .card h3 { 
+      margin: 0; 
+      font-size: 16px; 
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card p { 
+      margin: 6px 0 0; 
+      font-size: 13px; 
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .scan-type-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .scan-type-row:hover {
+      padding-left: 8px;
+      padding-right: -8px;
+    }
+
+    .scan-type-row:last-child { border-bottom: none; }
+    .scan-type-row span { font-size: 14px; }
+    .scan-type-row .btn { padding: 8px 20px; font-size: 13px; }
+
+    .shield-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .shield-row:hover {
+      padding-left: 8px;
+      background: rgba(255, 120, 0, 0.03);
+      border-radius: 8px;
+      padding: 16px 8px;
+    }
+
+    .shield-row:last-child { border-bottom: none; }
+    .shield-row > div { display: flex; align-items: center; gap: 12px; }
+    .shield-row .mini-icon { width: 30px; height: 30px; opacity: 0.8; transition: all 0.3s ease; }
+
+    .shield-row:hover .mini-icon {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .shield-row span { font-size: 14px; }
+
+    /* Switch – Modern style */
+    .switch {
+      width: 48px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .switch::after {
+      content: '';
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .switch.on { 
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      border-color: rgba(0, 208, 132, 0.3);
+      box-shadow: 0 0 16px rgba(0, 208, 132, 0.2);
+    }
+
+    .switch.on::after { 
+      transform: translateX(20px);
+      background: #fff;
+    }
+
+    .switch.off::after { transform: translateX(0); }
+
+    .switch:hover {
+      border-color: rgba(255, 120, 0, 0.3);
+    }
+
+    /* Settings page */
+    .settings-wrap { 
+      max-width: 520px;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .setting-row:hover {
+      padding-left: 8px;
+      background: rgba(255, 120, 0, 0.02);
+      border-radius: 8px;
+      padding: 18px 8px;
+    }
+
+    .setting-row:last-child { border-bottom: none; }
+    .setting-row > span { font-size: 15px; }
+
+    /* Privacy & Performance */
+    .feature-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+      gap: 20px;
+    }
+
+    .feature-tile {
+      background: rgba(30, 37, 53, 0.5);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .feature-tile::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 120, 0, 0.08), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .feature-tile:hover {
+      background: rgba(30, 37, 53, 0.7);
+      border-color: rgba(255, 120, 0, 0.2);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(255, 120, 0, 0.1);
+    }
+
+    .feature-tile:hover::before {
+      opacity: 1;
+    }
+
+    .feature-tile .icon-wrap { 
+      width: 48px; 
+      height: 48px; 
+      border-radius: 12px; 
+      background: linear-gradient(135deg, rgba(255, 120, 0, 0.2), rgba(255, 120, 0, 0.05));
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-tile:hover .icon-wrap {
+      transform: scale(1.15) rotate(-5deg);
+    }
+
+    .feature-tile .icon-wrap svg { 
+      width: 24px; 
+      height: 24px; 
+      color: var(--avast-orange); 
+    }
+
+    .feature-tile h4 { 
+      margin: 0 0 8px; 
+      font-size: 16px; 
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-tile p { 
+      margin: 0; 
+      font-size: 13px; 
+      color: var(--text-muted); 
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(30, 37, 53, 0.95), rgba(26, 31, 46, 0.95));
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-lg);
+      animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 24px; 
+    }
+
+    .modal-header h3 { 
+      margin: 0; 
+      font-size: 20px; 
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-main), var(--avast-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modal-close { 
+      background: none; 
+      border: none; 
+      color: var(--text-muted); 
+      font-size: 28px; 
+      cursor: pointer; 
+      padding: 0; 
+      line-height: 1;
+      transition: all 0.3s ease;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    .modal-close:hover { 
+      color: var(--avast-orange);
+      background: rgba(255, 120, 0, 0.1);
+    }
+
+    .scan-option { 
+      padding: 16px; 
+      border-radius: 12px; 
+      background: rgba(255, 255, 255, 0.04);
+      margin-bottom: 12px; 
+      cursor: pointer; 
+      border: 2px solid transparent; 
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .scan-option:hover { 
+      background: rgba(255, 120, 0, 0.1);
+      border-color: rgba(255, 120, 0, 0.3);
+    }
+
+    .scan-option.selected { 
+      border-color: var(--avast-orange); 
+      background: rgba(255, 120, 0, 0.12);
+      box-shadow: 0 0 20px rgba(255, 120, 0, 0.2);
+    }
+
+    .scan-option h4 { 
+      margin: 0 0 6px; 
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .scan-option p { 
+      margin: 0; 
+      font-size: 13px; 
+      color: var(--text-muted); 
+    }
+
+    /* Scan result / progress in modal */
+    .scan-progress-modal { 
+      margin: 24px 0; 
+      display: none; 
+    }
+
+    .scan-progress-modal.active { 
+      display: block;
+      animation: slideDown 0.4s ease;
+    }
+
+    .scan-progress-modal .scan-progress { margin-bottom: 16px; }
+    .scan-progress-modal .scan-status { font-size: 14px; }
+
+    .scan-result { 
+      display: none; 
+      margin-top: 20px; 
+      padding: 20px; 
+      border-radius: 12px; 
+      background: rgba(0, 208, 132, 0.08);
+      border: 1px solid rgba(0, 208, 132, 0.2);
+      animation: slideUp 0.4s ease;
+    }
+
+    .scan-result.active { display: block; }
+
+    .scan-result.error { 
+      background: rgba(255, 71, 87, 0.08); 
+      border-color: rgba(255, 71, 87, 0.2);
+    }
+
+    .scan-result h4 { 
+      margin: 0 0 10px; 
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--green); 
+    }
+
+    .scan-result.error h4 { color: var(--red); }
+
+    .scan-result p { 
+      margin: 0; 
+      font-size: 14px; 
+      color: var(--text-muted); 
+    }
+
+    .last-scan { 
+      font-size: 13px; 
+      color: var(--text-muted); 
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <svg width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        >
+        <path d="M32.6192 28.4969C32.6192 18.8811 31.7703 1.5802 18.2814 1.40618C5.23127 1.23782 2.41853 18.6505 3.33251 28.4267C3.85633 29.1629 4.43414 29.8578 5.05876 30.5058C8.30244 33.8629 17.8751 33.4687 17.8751 33.4687C17.8751 33.4687 28.5637 33.4795 31.892 29.4437C32.144 29.1377 32.387 28.8227 32.6192 28.4969Z" fill="white"/>
+        <path d="M15.4412 4.48617C17.7471 2.90573 20.9206 3.76435 22.1158 6.29162L32.6191 28.4988C34.7215 25.5773 35.9725 22.0006 35.9995 18.1287C36.0697 8.18527 28.0667 0.0706601 18.1251 0.000458343C8.18344 -0.0697434 0.0688343 7.93326 0.000432554 17.8749C-0.0265681 21.808 1.21186 25.4513 3.33232 28.4268L3.75353 28.335L10.6081 26.8229C10.8007 26.7797 10.9033 27.0407 10.7341 27.1415L5.05856 30.5058C8.30224 33.8629 12.8384 35.9654 17.8749 35.9996C23.5144 36.0392 28.5636 33.4795 31.8918 29.4438L14.714 11.3605C12.7898 9.33369 13.1336 6.06661 15.4412 4.48617ZM18.6651 24.8987L7.60562 25.8581C6.40859 25.9625 5.40237 24.9707 5.48877 23.7701C5.57517 22.5712 6.7146 21.7342 7.88463 22.0096L18.6903 24.5549C18.8829 24.6017 18.8613 24.8807 18.6651 24.8987ZM13.5458 15.173L26.9561 26.0219C27.1091 26.1461 26.9705 26.3891 26.7851 26.3189L10.6549 20.206C8.96286 19.5652 8.24824 17.5635 9.14826 15.9939C10.0501 14.426 12.1399 14.0354 13.5458 15.173Z" fill="#FF7800"/>
+        </svg>
+    </div>
+
+    <div class="nav-item active" data-page="status">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Status
+    </div>
+    <div class="nav-item" data-page="protection">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      Protection
+    </div>
+    <div class="nav-item" data-page="privacy">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Privacy
+    </div>
+    <div class="nav-item" data-page="performance">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      Performance
+    </div>
+    <div class="nav-item" data-page="settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9A1.65 1.65 0 0010 5V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1>Avast Ultimate Security</h1>
+      <div class="topbar-right">
+        <span>Notifications</span>
+        <span>Menu</span>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="page active status-page" id="status">
+      <div class="ring" id="statusRing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <div class="status-text" id="statusText">This computer is <span class="ok">protected</span></div>
+      <div class="status-sub" id="statusSub">All shields are active</div>
+      <button class="btn scan-trigger" id="smartScanBtn">RUN SMART SCAN</button>
+      <div class="scan-actions">
+        <button class="btn btn-secondary scan-trigger" id="quickScanBtn">Quick Scan</button>
+        <button class="btn btn-secondary scan-trigger" id="fullScanBtn">Full Scan</button>
+      </div>
+      <button class="link-btn" id="moreScanOptions">More scan options</button>
+      <div class="scan-progress-wrap" id="scanProgressWrap">
+        <div class="scan-progress"><div class="scan-progress-bar" id="scanProgressBar"></div></div>
+        <div class="scan-status" id="scanStatus">Scanning…</div>
+      </div>
+      <div class="protection-toggle" id="protectionToggle">Turn protection OFF</div>
+    </div>
+
+    <!-- Protection -->
+    <div class="page" id="protection">
+      <p class="section-title">Virus Scans</p>
+      <div class="cards" style="margin-bottom: 24px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v4M22 12h-4M12 22v-4M2 12h4"/></svg>
+            </div>
+            <div>
+              <h3>Smart Scan</h3>
+              <p>Malware, outdated apps, browser issues</p>
+            </div>
+          </div>
+          <div class="scan-type-row"><span>Run Smart Scan</span><button class="btn scan-trigger" data-scan="smart">Run</button></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div>
+              <h3>Quick Scan</h3>
+              <p>Critical areas, common threats</p>
+            </div>
+          </div>
+          <div class="scan-type-row"><span>Run Quick Scan</span><button class="btn scan-trigger" data-scan="quick">Run</button></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+            </div>
+            <div>
+              <h3>Full System Scan</h3>
+              <p>All drives, rootkits, startup</p>
+            </div>
+          </div>
+          <div class="scan-type-row"><span>Run Full Scan</span><button class="btn scan-trigger" data-scan="full">Run</button></div>
+        </div>
+      </div>
+      <p class="section-title">Core Shields</p>
+      <div class="card">
+        <div class="shield-row">
+          <div><svg class="mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg><span>File Shield</span></div>
+          <div class="switch on" data-shield="file"></div>
+        </div>
+        <div class="shield-row">
+          <div><svg class="mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Behavior Shield</span></div>
+          <div class="switch on" data-shield="behavior"></div>
+        </div>
+        <div class="shield-row">
+          <div><svg class="mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span>Web Shield</span></div>
+          <div class="switch on" data-shield="web"></div>
+        </div>
+        <div class="shield-row">
+          <div><svg class="mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg><span>Mail Shield</span></div>
+          <div class="switch on" data-shield="mail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy -->
+    <div class="page" id="privacy">
+      <p class="section-title">Privacy</p>
+      <div class="feature-grid">
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+          <div><h4>Password Protection</h4><p>Secure your sensitive data with master password.</p></div>
+        </div>
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div><h4>Webcam Shield</h4><p>Block unauthorized access to your webcam.</p></div>
+        </div>
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+          <div><h4>AntiTrack</h4><p>Prevent tracking and fingerprinting online.</p></div>
+        </div>
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></div>
+          <div><h4>SecureLine VPN</h4><p>Encrypt your connection and hide your IP.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance -->
+    <div class="page" id="performance">
+      <p class="section-title">Performance</p>
+      <div class="feature-grid">
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+          <div><h4>Speed Up</h4><p>Clean junk files and optimize startup.</p></div>
+        </div>
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><h4>Background Apps</h4><p>Manage apps that slow down your PC.</p></div>
+        </div>
+        <div class="feature-tile">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+          <div><h4>Driver Updater</h4><p>Keep drivers up to date for stability.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="page" id="settings">
+      <p class="section-title">Settings</p>
+      <div class="card settings-wrap">
+        <div class="setting-row">
+          <span>Real-time protection</span>
+          <div class="switch on" data-setting="rtp"></div>
+        </div>
+        <div class="setting-row">
+          <span>Web protection</span>
+          <div class="switch on" data-setting="web"></div>
+        </div>
+        <div class="setting-row">
+          <span>Ransomware shield</span>
+          <div class="switch on" data-setting="ransom"></div>
+        </div>
+        <div class="setting-row">
+          <span>Mail Shield</span>
+          <div class="switch on" data-setting="mail"></div>
+        </div>
+        <div class="setting-row">
+          <span>Behavior Shield</span>
+          <div class="switch on" data-setting="behavior"></div>
+        </div>
+        <div class="setting-row">
+          <span>Scan for PUP</span>
+          <div class="switch on" data-setting="pup"></div>
+        </div>
+        <div class="setting-row">
+          <span>CyberCapture</span>
+          <div class="switch on" data-setting="cyber"></div>
+        </div>
+        <div class="last-scan">Last scan: <span id="lastScanDisplay">Never</span></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scan modal (optional flow) -->
+  <div class="modal" id="scanModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Run scan</h3>
+        <button class="modal-close" id="scanModalClose">&times;</button>
+      </div>
+      <div class="scan-option selected" data-type="smart">
+        <h4>Smart Scan</h4>
+        <p>Malware, outdated software, browser add-ons, network issues</p>
+      </div>
+      <div class="scan-option" data-type="quick">
+        <h4>Quick Scan</h4>
+        <p>Critical areas and common threat locations</p>
+      </div>
+      <div class="scan-option" data-type="full">
+        <h4>Full Virus Scan</h4>
+        <p>All drives, rootkits, startup programs</p>
+      </div>
+      <div class="scan-progress-modal" id="scanProgressModal">
+        <div class="scan-progress"><div class="scan-progress-bar" id="modalProgressBar"></div></div>
+        <div class="scan-status" id="modalScanStatus">Preparing…</div>
+      </div>
+      <div class="scan-result" id="scanResult">
+        <h4>No threats found</h4>
+        <p>Your computer is secure.</p>
+      </div>
+      <button class="btn" id="runScanBtn" style="margin-top: 16px; width: 100%;">Run scan</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = document.querySelectorAll('.page');
+      const protectionToggle = document.getElementById('protectionToggle');
+      const statusRing = document.getElementById('statusRing');
+      const statusText = document.getElementById('statusText');
+      const statusSub = document.getElementById('statusSub');
+      const smartScanBtn = document.getElementById('smartScanBtn');
+      const quickScanBtn = document.getElementById('quickScanBtn');
+      const fullScanBtn = document.getElementById('fullScanBtn');
+      const scanProgressWrap = document.getElementById('scanProgressWrap');
+      const scanProgressBar = document.getElementById('scanProgressBar');
+      const scanStatus = document.getElementById('scanStatus');
+      const lastScanDisplay = document.getElementById('lastScanDisplay');
+      const scanModal = document.getElementById('scanModal');
+      const scanModalClose = document.getElementById('scanModalClose');
+      const scanOptions = document.querySelectorAll('.scan-option');
+      const runScanBtn = document.getElementById('runScanBtn');
+      const scanProgressModal = document.getElementById('scanProgressModal');
+      const modalProgressBar = document.getElementById('modalProgressBar');
+      const modalScanStatus = document.getElementById('modalScanStatus');
+      const scanResult = document.getElementById('scanResult');
+
+      let protectedState = JSON.parse(localStorage.getItem('avast_protected')) ?? true;
+      let shields = JSON.parse(localStorage.getItem('avast_shields')) ?? { file: true, behavior: true, web: true, mail: true };
+      let settings = JSON.parse(localStorage.getItem('avast_settings')) ?? { rtp: true, web: true, ransom: true, mail: true, behavior: true, pup: true, cyber: true };
+      let lastScan = localStorage.getItem('avast_lastScan') || null;
+      let scanInterval = null;
+      let selectedScanType = 'smart';
+
+      function allShieldsOn() {
+        return Object.values(shields).every(Boolean);
+      }
+
+      function updateProtectionUI() {
+        if (protectedState && allShieldsOn()) {
+          statusRing.classList.remove('unprotected');
+          statusRing.classList.add('protected');
+          statusText.innerHTML = 'This computer is <span class="ok">protected</span>';
+          statusSub.textContent = 'All shields are active';
+          protectionToggle.textContent = 'Turn protection OFF';
+        } else {
+          statusRing.classList.add('unprotected');
+          statusRing.classList.remove('protected');
+          statusText.innerHTML = 'This computer is <span class="bad">not protected</span>';
+          statusSub.textContent = 'Some shields are off';
+          protectionToggle.textContent = 'Turn protection ON';
+        }
+        localStorage.setItem('avast_protected', JSON.stringify(protectedState));
+      }
+
+      protectionToggle.onclick = function() {
+        protectedState = !protectedState;
+        if (!protectedState) {
+          document.querySelectorAll('[data-shield]').forEach(function(s) {
+            s.classList.remove('on');
+            s.classList.add('off');
+            const k = s.dataset.shield;
+            shields[k] = false;
+          });
+          document.querySelectorAll('[data-setting]').forEach(function(s) {
+            s.classList.remove('on');
+            s.classList.add('off');
+            const k = s.dataset.setting;
+            settings[k] = false;
+          });
+        } else {
+          document.querySelectorAll('[data-shield]').forEach(function(s) {
+            s.classList.add('on');
+            s.classList.remove('off');
+            shields[s.dataset.shield] = true;
+          });
+          document.querySelectorAll('[data-setting]').forEach(function(s) {
+            s.classList.add('on');
+            s.classList.remove('off');
+            settings[s.dataset.setting] = true;
+          });
+        }
+        localStorage.setItem('avast_shields', JSON.stringify(shields));
+        localStorage.setItem('avast_settings', JSON.stringify(settings));
+        updateProtectionUI();
+      };
+
+      function runScan(type, btn, useModal) {
+        if (btn && (btn.disabled || btn.classList.contains('scanning'))) return;
+        const durations = { smart: 3800, quick: 2200, full: 6500 };
+        const labels = { smart: 'Smart', quick: 'Quick', full: 'Full system' };
+        const dur = durations[type] || 3000;
+
+        function updateProgress(barEl, statusEl, pct, msg) {
+          if (barEl) barEl.style.width = pct + '%';
+          if (statusEl) statusEl.textContent = msg;
+        }
+
+        if (useModal) {
+          scanResult.classList.remove('active', 'error');
+          scanProgressModal.classList.add('active');
+          runScanBtn.disabled = true;
+          runScanBtn.textContent = 'Scanning…';
+          let progress = 0;
+          const step = 100 / (dur / 120);
+          const steps = [
+            'Scanning system files…',
+            'Checking startup programs…',
+            'Scanning browsers…',
+            'Analyzing threats…',
+            'Finalizing…'
+          ];
+          let stepIndex = 0;
+          scanInterval = setInterval(function() {
+            progress += step;
+            if (progress > 100) progress = 100;
+            const si = Math.min(Math.floor((progress / 100) * steps.length), steps.length - 1);
+            updateProgress(modalProgressBar, modalScanStatus, progress, steps[si]);
+            if (progress >= 100) {
+              clearInterval(scanInterval);
+              scanProgressModal.classList.remove('active');
+              modalProgressBar.style.width = '0%';
+              scanResult.classList.add('active');
+              scanResult.classList.remove('error');
+              scanResult.querySelector('h4').textContent = 'No threats found';
+              scanResult.querySelector('p').textContent = 'Your computer is secure.';
+              runScanBtn.disabled = false;
+              runScanBtn.textContent = 'Run scan';
+              finishScan();
+            }
+          }, 120);
+          return;
+        }
+
+        statusRing.classList.add('scanning');
+        scanProgressWrap.classList.add('active');
+        scanProgressBar.style.width = '0%';
+        scanStatus.textContent = labels[type] + ' scan in progress…';
+        if (btn) { btn.disabled = true; btn.classList.add('scanning'); btn.textContent = 'Scanning…'; }
+
+        let progress = 0;
+        const step = 100 / (dur / 100);
+        scanInterval = setInterval(function() {
+          progress += step;
+          if (progress > 100) progress = 100;
+          scanProgressBar.style.width = progress + '%';
+          if (progress >= 100) {
+            clearInterval(scanInterval);
+            scanStatus.textContent = 'Scan complete – No threats found';
+            statusRing.classList.remove('scanning');
+            scanProgressWrap.classList.remove('active');
+            scanProgressBar.style.width = '0%';
+            setTimeout(function() {
+              scanProgressWrap.classList.remove('active');
+              resetScanButtons();
+              finishScan();
+            }, 1500);
+          }
+        }, 100);
+      }
+
+      function resetScanButtons() {
+        smartScanBtn.disabled = false;
+        smartScanBtn.classList.remove('scanning');
+        smartScanBtn.textContent = 'RUN SMART SCAN';
+        quickScanBtn.disabled = false;
+        quickScanBtn.classList.remove('scanning');
+        quickScanBtn.textContent = 'Quick Scan';
+        fullScanBtn.disabled = false;
+        fullScanBtn.classList.remove('scanning');
+        fullScanBtn.textContent = 'Full Scan';
+        document.querySelectorAll('.scan-trigger[data-scan]').forEach(function(b) {
+          b.disabled = false;
+          b.classList.remove('scanning');
+          b.textContent = 'Run';
+        });
+      }
+
+      function finishScan() {
+        const now = new Date();
+        lastScan = now.toLocaleString();
+        localStorage.setItem('avast_lastScan', lastScan);
+        const el = document.getElementById('lastScanDisplay');
+        if (el) el.textContent = lastScan;
+      }
+
+      smartScanBtn.onclick = function() { runScan('smart', smartScanBtn, false); };
+      quickScanBtn.onclick = function() {
+        quickScanBtn.disabled = true;
+        quickScanBtn.classList.add('scanning');
+        quickScanBtn.textContent = 'Scanning…';
+        runScan('quick', null, false);
+      };
+      fullScanBtn.onclick = function() {
+        fullScanBtn.disabled = true;
+        fullScanBtn.classList.add('scanning');
+        fullScanBtn.textContent = 'Scanning…';
+        runScan('full', null, false);
+      };
+
+      document.querySelectorAll('.scan-trigger[data-scan]').forEach(function(b) {
+        b.onclick = function() {
+          const t = b.dataset.scan;
+          b.disabled = true;
+          b.classList.add('scanning');
+          b.textContent = 'Scanning…';
+          runScan(t, b, false);
+        };
+      });
+
+      scanOptions.forEach(function(opt) {
+        opt.onclick = function() {
+          scanOptions.forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          selectedScanType = opt.dataset.type;
+        };
+      });
+
+      runScanBtn.onclick = function() {
+        if (runScanBtn.classList.contains('scanning') || runScanBtn.disabled) return;
+        runScan(selectedScanType, null, true);
+      };
+
+      document.getElementById('moreScanOptions').onclick = function() { scanModal.classList.add('active'); };
+      scanModalClose.onclick = function() {
+        scanModal.classList.remove('active');
+        if (scanInterval) clearInterval(scanInterval);
+        scanProgressModal.classList.remove('active');
+        modalProgressBar.style.width = '0%';
+        scanResult.classList.remove('active');
+        runScanBtn.disabled = false;
+        runScanBtn.textContent = 'Run scan';
+      };
+
+      document.querySelectorAll('.switch').forEach(function(sw) {
+        const key = sw.dataset.shield || sw.dataset.setting;
+        const store = sw.dataset.shield ? shields : settings;
+        if (store[key] === false) { sw.classList.remove('on'); sw.classList.add('off'); }
+
+        sw.onclick = function() {
+          if (sw.dataset.shield) {
+            shields[key] = !shields[key];
+            localStorage.setItem('avast_shields', JSON.stringify(shields));
+          } else {
+            settings[key] = !settings[key];
+            localStorage.setItem('avast_settings', JSON.stringify(settings));
+          }
+          sw.classList.toggle('on');
+          sw.classList.toggle('off');
+          updateProtectionUI();
+        };
+      });
+
+      navItems.forEach(function(item) {
+        item.onclick = function() {
+          navItems.forEach(function(i) { i.classList.remove('active'); });
+          pages.forEach(function(p) { p.classList.remove('active'); });
+          item.classList.add('active');
+          document.getElementById(item.dataset.page).classList.add('active');
+        };
+      });
+
+      if (lastScan) lastScanDisplay.textContent = lastScan;
+      updateProtectionUI();
+    })();
+  </script>
+
+</body>
+</html>

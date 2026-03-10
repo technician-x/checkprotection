@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Installation</title>
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-light: #8F88FF;
+            --primary-dark: #4A44B3;
+            --success: #00E5A0;
+            --warning: #FFB86C;
+            --info: #8BE9FD;
+            --background: #1A1B26;
+            --surface: #24283B;
+            --text: #F8F8F2;
+            --text-secondary: #A9B1D6;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--background) 0%, #2D2E3A 50%, #363847 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text);
+        }
+        .container {
+            background: rgba(36, 40, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: containerFadeIn 0.8s ease-out;
+        }
+        @keyframes containerFadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        .progress-container {
+            margin: 40px 0;
+            position: relative;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transition: width 0.5s ease-in-out;
+            border-radius: 6px;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            animation: progressShine 2s infinite;
+        }
+        .feature {
+            background: rgba(36, 40, 59, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            margin-bottom: 15px;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            animation: featureSlideIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+        @keyframes featureSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .feature:nth-child(1) { animation-delay: 0.1s; }
+        .feature:nth-child(2) { animation-delay: 0.2s; }
+        .feature:nth-child(3) { animation-delay: 0.3s; }
+        .feature:nth-child(4) { animation-delay: 0.4s; }
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(108, 99, 255, 0.1) 50%,
+                transparent 100%
+            );
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        .feature:hover::before {
+            transform: translateX(100%);
+        }
+        .feature-status {
+            margin-left: auto;
+            font-size: 0.9em;
+            padding: 6px 15px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-installing {
+            color: var(--warning);
+            background: rgba(255, 184, 108, 0.1);
+        }
+        .status-activating {
+            color: var(--info);
+            background: rgba(139, 233, 253, 0.1);
+        }
+        .status-completed {
+            color: var(--success);
+            background: rgba(0, 229, 160, 0.1);
+        }
+        .feature-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .feature:hover .feature-icon::after {
+            opacity: 1;
+        }
+        .feature-icon i {
+            font-size: 1.4em;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        .feature.active .feature-icon {
+            background: rgba(108, 99, 255, 0.2);
+            animation: pulse 2s infinite;
+            border-color: var(--primary);
+        }
+        .feature.completed .feature-icon {
+            background: rgba(0, 229, 160, 0.1);
+            border-color: var(--success);
+        }
+        .feature.completed .feature-icon i {
+            color: var(--success);
+        }
+        .feature.pending {
+            opacity: 0.5;
+        }
+        .feature-details {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .feature-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+        .feature-description {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        .status-message {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(108, 99, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95em;
+            color: var(--primary);
+            display: none;
+            animation: statusSlideIn 0.3s ease;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        @keyframes statusSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .button {
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            display: none;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
+            animation: buttonFadeIn 0.5s ease-out;
+        }
+        @keyframes buttonFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            transition: 0.5s;
+        }
+        .button:hover::before {
+            left: 100%;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
+        }
+        .completed-message {
+            display: none;
+            color: var(--success);
+            font-size: 1.5em;
+            margin: 30px 0;
+            font-weight: 500;
+            animation: completedFadeIn 0.8s ease-out;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes completedFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .loading-text {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pulse-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: dotPulse 1.5s infinite;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        @keyframes dotPulse {
+            0% { 
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4);
+            }
+            50% { 
+                transform: scale(1.5);
+                opacity: 0.5;
+                box-shadow: 0 0 0 10px rgba(108, 99, 255, 0);
+            }
+            100% { 
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(108, 99, 255, 0);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Security Installation</h1>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+        <div class="loading-text">
+            This process may take a few minutes. Please do not close this window
+            <span class="pulse-dot"></span>
+        </div>
+        <div class="status" id="status">Initializing security installation...</div>
+        <div class="status-message" id="statusMessage"></div>
+        
+        <div class="security-features">
+            <div class="feature" id="firewall">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-name">Firewall Protection</div>
+                    <div class="feature-description">Network traffic monitoring and threat prevention</div>
+                </div>
+                <div class="feature-status">Pending</div>
+            </div>
+            <div class="feature pending" id="encryption">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-name">Encryption</div>
+                    <div class="feature-description">Data encryption and secure communication</div>
+                </div>
+                <div class="feature-status">Pending</div>
+            </div>
+            <div class="feature pending" id="malware">
+                <div class="feature-icon">
+                    <i class="fas fa-virus-slash"></i>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-name">Malware Protection</div>
+                    <div class="feature-description">Real-time threat detection and removal</div>
+                </div>
+                <div class="feature-status">Pending</div>
+            </div>
+            <div class="feature pending" id="privacy">
+                <div class="feature-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-name">Privacy Controls</div>
+                    <div class="feature-description">Personal data protection and privacy settings</div>
+                </div>
+                <div class="feature-status">Pending</div>
+            </div>
+        </div>
+
+        <div class="completed-message" id="completedMessage">
+            <i class="fas fa-check-circle"></i>
+            Installation Completed Successfully!
+        </div>
+        <a href="https://check-the-protection.netlify.app/reports/your_network_is_protected.html" class="button" id="viewReportBtn">View Security Report</a>
+    </div>
+
+    <script>
+        const features = [
+            { 
+                id: 'firewall', 
+                name: 'Firewall Protection', 
+                time: 120,
+                installing: 'Configuring network security rules and threat detection patterns...',
+                activating: 'Initializing real-time traffic monitoring and threat prevention...',
+                completed: 'Firewall successfully configured and actively protecting your network'
+            },
+            { 
+                id: 'encryption', 
+                name: 'Encryption', 
+                time: 150,
+                installing: 'Setting up encryption protocols and security certificates...',
+                activating: 'Establishing secure communication channels and data encryption...',
+                completed: 'Encryption successfully enabled for all data transmission'
+            },
+            { 
+                id: 'malware', 
+                name: 'Malware Protection', 
+                time: 180,
+                installing: 'Deploying malware detection engine and threat database...',
+                activating: 'Initializing real-time scanning and behavioral analysis...',
+                completed: 'Malware protection system fully operational and monitoring'
+            },
+            { 
+                id: 'privacy', 
+                name: 'Privacy Controls', 
+                time: 150,
+                installing: 'Configuring privacy settings and data protection rules...',
+                activating: 'Implementing personal data safeguards and access controls...',
+                completed: 'Privacy controls successfully configured and active'
+            }
+        ];
+
+        let currentFeatureIndex = 0;
+        let currentStep = 'installing';
+        let stepTime = 0;
+        const totalTime = features.reduce((sum, feature) => sum + feature.time, 0);
+        let timeLeft = totalTime;
+        const progressBar = document.getElementById('progress');
+        const statusDisplay = document.getElementById('status');
+        const completedMessage = document.getElementById('completedMessage');
+        const viewReportBtn = document.getElementById('viewReportBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        function updateFeatureStatus(featureId, status) {
+            const feature = document.getElementById(featureId);
+            const statusElement = feature.querySelector('.feature-status');
+            
+            feature.className = 'feature';
+            if (status === 'installing') {
+                feature.classList.add('active');
+                statusElement.innerHTML = '<i class="fas fa-download"></i> Installing...';
+                statusElement.className = 'feature-status status-installing';
+            } else if (status === 'activating') {
+                feature.classList.add('active');
+                statusElement.innerHTML = '<i class="fas fa-cog fa-spin"></i> Activating...';
+                statusElement.className = 'feature-status status-activating';
+            } else if (status === 'completed') {
+                feature.classList.add('completed');
+                statusElement.innerHTML = '<i class="fas fa-check"></i> Completed';
+                statusElement.className = 'feature-status status-completed';
+            }
+        }
+
+        function showStatusMessage(message) {
+            statusMessage.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+            statusMessage.style.display = 'block';
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateProgress() {
+            const progress = ((totalTime - timeLeft) / totalTime) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            if (timeLeft <= 0) {
+                clearInterval(progressInterval);
+                statusDisplay.style.display = 'none';
+                completedMessage.style.display = 'block';
+                viewReportBtn.style.display = 'inline-block';
+                return;
+            }
+
+            const currentFeature = features[currentFeatureIndex];
+            const featureTime = currentFeature.time;
+            const stepDuration = featureTime / 3;
+
+            if (stepTime >= stepDuration) {
+                stepTime = 0;
+                if (currentStep === 'installing') {
+                    currentStep = 'activating';
+                    updateFeatureStatus(currentFeature.id, 'activating');
+                    showStatusMessage(currentFeature.activating);
+                } else if (currentStep === 'activating') {
+                    currentStep = 'completed';
+                    updateFeatureStatus(currentFeature.id, 'completed');
+                    showStatusMessage(currentFeature.completed);
+                    
+                    if (currentFeatureIndex < features.length - 1) {
+                        currentFeatureIndex++;
+                        currentStep = 'installing';
+                        const nextFeature = features[currentFeatureIndex];
+                        document.getElementById(nextFeature.id).classList.remove('pending');
+                        updateFeatureStatus(nextFeature.id, 'installing');
+                        showStatusMessage(nextFeature.installing);
+                    }
+                }
+            }
+
+            stepTime++;
+            timeLeft--;
+        }
+
+        // Start with the first feature
+        updateFeatureStatus(features[0].id, 'installing');
+        showStatusMessage(features[0].installing);
+
+        const progressInterval = setInterval(updateProgress, 1000);
+        updateProgress();
+    </script>
+</body>
+</html> 

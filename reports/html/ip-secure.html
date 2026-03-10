@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Security Report</title>
+    <link rel="stylesheet" href="../css/secure.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextdns.svg" type="image/x-icon">
+
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <div class="header-content">
+                <h1>IP Security Report</h1>
+                <p class="timestamp">Generated on: <span id="current-date"></span></p>
+            </div>
+            <div class="severity-indicator secure">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Status</span>
+            </div>
+        </header>
+
+        <main class="report-content">
+            <section class="summary-section">
+                <h2>Executive Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Security Status</h3>
+                        <p class="status secure">Protected</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>IP Address</h3>
+                        <p>192.168.1.1</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-globe"></i>
+                        <h3>Location</h3>
+                        <p>Private Network</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="details-section">
+                <h2>Detailed Analysis</h2>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>Network Security</h3>
+                        <ul class="security-list">
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Windows Defender Protection: Enabled</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>End-to-End Encryption: Enabled</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Kernel DMA Protection: Enabled</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Firewall Protection: Active</span>
+                            </li>
+                            <li class="secure">
+                                <i class="fas fa-check-circle"></i>
+                                <span>VPN Connection: Active</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Connected Servers</h3>
+                        <div class="server-list">
+                            <div class="server-item secure">
+                                <span class="location">Local Network</span>
+                                <span class="ip">192.168.1.2</span>
+                            </div>
+                            <div class="server-item secure">
+                                <span class="location">Local Network</span>
+                                <span class="ip">192.168.1.3</span>
+                            </div>
+                            <div class="server-item secure">
+                                <span class="location">Local Network</span>
+                                <span class="ip">192.168.1.4</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Data Protection</h3>
+                        <div class="compromise-list">
+                            <div class="compromise-item secure">
+                                <i class="fas fa-user-shield"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Personal Information</span>
+                                    <span class="compromise-status">Protected</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item secure">
+                                <i class="fas fa-credit-card"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Financial Data</span>
+                                    <span class="compromise-status">Secure</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item secure">
+                                <i class="fas fa-lock"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Passwords</span>
+                                    <span class="compromise-status">Encrypted</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item secure">
+                                <i class="fas fa-laptop"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Device Access</span>
+                                    <span class="compromise-status">Authorized</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Security Status</h3>
+                        <div class="threat-list">
+                            <div class="threat-item secure">
+                                <span class="threat-type">Ransomware Protection</span>
+                                <span class="threat-severity secure">Active</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Keylogger Protection</span>
+                                <span class="threat-severity secure">Active</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Remote Access Control</span>
+                                <span class="threat-severity secure">Enabled</span>
+                            </div>
+                            <div class="threat-item secure">
+                                <span class="threat-type">Data Encryption</span>
+                                <span class="threat-severity secure">Enabled</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recommendations-section">
+                <h2>Maintenance Recommendations</h2>
+                <div class="recommendations-list">
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Regularly update security software</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Maintain current encryption protocols</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Continue monitoring network activity</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Regular security audits</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="report-footer">
+            <p>This report indicates a secure system status. Continue following security best practices.</p>
+            <button onclick="window.location.href='../../index.html'" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Portal
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Report Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextdns.svg" type="image/x-icon">
+</head>
+<body>
+    <video class="background-video" autoplay muted loop>
+        <source src="admin/bg.mp4" type="video/mp4">
+    </video>
+    <div class="video-blur-overlay"></div>
+    
+    <!-- Admin Login Sidebar -->
+    <div class="admin-sidebar-container">
+        <div class="admin-trigger-area"></div>
+        <a href="admin/admin.html" class="admin-login-btn">
+            <i class="fas fa-user-shield"></i>
+            <span>Admin</span>
+        </a>
+    </div>
+    
+    <div class="container">
+        <div class="login-box">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1>Security Report Portal</h1>
+                <p class="subtitle">Access your comprehensive security reports and analytics</p>
+            </div>
+
+            <div class="form-container">
+                <!-- Email Form -->
+                <div id="email-form" class="form-step active">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="userEmail" placeholder="Enter your email address" required>
+                    </div>
+                    <button onclick="verifyEmail()" class="btn-primary">
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <p id="email-message" class="error-message"></p>
+                </div>
+
+                <!-- Scanning Process -->
+                <div id="scanning-form" class="form-step">
+                    <div class="scanning-container">
+                        <div class="scanning-header">
+                            <i class="fas fa-spinner scanning-icon"></i>
+                            <h3>Running Security Scan</h3>
+                            <p class="scanning-email" id="scanning-email"></p>
+                        </div>
+                        <div class="scanning-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span id="progress-percentage">0%</span>
+                                <span id="time-remaining">2:00</span>
+                            </div>
+                        </div>
+                        <div class="scanning-processes">
+                            <div class="process-item" id="process-email">
+                                <i class="fas fa-circle-notch"></i>
+                                <span>Diagnosing email address</span>
+                            </div>
+                            <div class="process-item" id="process-ip">
+                                <i class="fas fa-circle-notch"></i>
+                                <span>Diagnosing IP location</span>
+                            </div>
+                            <div class="process-item" id="process-threats">
+                                <i class="fas fa-circle-notch"></i>
+                                <span>Scanning for threats</span>
+                            </div>
+                            <div class="process-item" id="process-malware">
+                                <i class="fas fa-circle-notch"></i>
+                                <span>Checking malware database</span>
+                            </div>
+                            <div class="process-item" id="process-security">
+                                <i class="fas fa-circle-notch"></i>
+                                <span>Analyzing security level</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan Complete -->
+                <div id="scan-complete-form" class="form-step">
+                    <div class="scan-complete-container">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Scan Complete!</h3>
+                        <p>Your security scan has finished. Click below to view your detailed reports.</p>
+                        <button onclick="prepareViewReports()" class="btn-primary">
+                            View Reports <i class="fas fa-file-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Security Key Form (for viewing reports) -->
+                <div id="security-key-form" class="form-step">
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="securityKey" placeholder="Enter your security key" required>
+                    </div>
+                    <button onclick="checkSecurityKey()" class="btn-primary">
+                        Verify <i class="fas fa-shield-alt"></i>
+                    </button>
+                    <p id="key-message" class="error-message"></p>
+                </div>
+
+                <!-- Report Selection -->
+                <div id="report-options" class="form-step">
+                    <h3>Select Report Type</h3>
+                    <div class="report-options-grid">
+                        <div class="report-option" onclick="viewIPReport()">
+                            <i class="fas fa-network-wired"></i>
+                            <h4>IP Security Report</h4>
+                            <p>Network and IP security analysis</p>
+                        </div>
+                        <div class="report-option" onclick="viewEmailReport()">
+                            <i class="fas fa-envelope-open-text"></i>
+                            <h4>Email Security Report</h4>
+                            <p>Email security and threat analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p><i class="fas fa-lock"></i> Your security is our priority</p>
+                <p class="small">All data is encrypted and protected</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html> 

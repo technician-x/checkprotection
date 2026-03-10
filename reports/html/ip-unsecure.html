@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Security Report</title>
+    <link rel="stylesheet" href="../css/unsecure.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextdns.svg" type="image/x-icon">
+
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <div class="header-content">
+                <h1>IP Security Report</h1>
+                <p class="timestamp">Generated on: <span id="current-date"></span></p>
+            </div>
+            <div class="severity-indicator critical">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Critical Security Alert</span>
+            </div>
+        </header>
+
+        <main class="report-content">
+            <section class="summary-section">
+                <h2>Executive Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Security Status</h3>
+                        <p class="status critical">Unprotected</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>IP Address</h3>
+                        <p>250.55.166.218</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-globe"></i>
+                        <h3>Location</h3>
+                        <p>Public Network</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="details-section">
+                <h2>Detailed Analysis</h2>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>Network Security</h3>
+                        <ul class="security-list">
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Windows Defender Protection: Disabled</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>End-to-End Encryption: Disabled</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Kernel DMA Protection: Disabled</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Firewall Protection: Compromised</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>VPN Connection: Not Detected</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Connected Servers</h3>
+                        <div class="server-list">
+                            <div class="server-item">
+                                <span class="location">Beijing, China</span>
+                                <span class="ip">218.107.132.68</span>
+                            </div>
+                            <div class="server-item">
+                                <span class="location">Moscow, Russia</span>
+                                <span class="ip">46.17.46.274</span>
+                            </div>
+                            <div class="server-item">
+                                <span class="location">United States</span>
+                                <span class="ip">170.171.1.0</span>
+                            </div>
+                            <div class="server-item">
+                                <span class="location">North Korea</span>
+                                <span class="ip">175.45.176.0</span>
+                            </div>
+                            <div class="server-item">
+                                <span class="location">Iran</span>
+                                <span class="ip">2.144.0.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Data Compromise</h3>
+                        <div class="compromise-list">
+                            <div class="compromise-item">
+                                <i class="fas fa-user-secret"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Personal Information</span>
+                                    <span class="compromise-status">Exposed</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item">
+                                <i class="fas fa-credit-card"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Financial Data</span>
+                                    <span class="compromise-status">At Risk</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item">
+                                <i class="fas fa-lock"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Passwords</span>
+                                    <span class="compromise-status">Compromised</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item">
+                                <i class="fas fa-laptop"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Device Access</span>
+                                    <span class="compromise-status">Unauthorized</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Active Threats</h3>
+                        <div class="threat-list">
+                            <div class="threat-item">
+                                <span class="threat-type">Ransomware Detected</span>
+                                <span class="threat-severity critical">Critical</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Keylogger Active</span>
+                                <span class="threat-severity critical">Critical</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Remote Access Trojan</span>
+                                <span class="threat-severity critical">Critical</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Data Exfiltration</span>
+                                <span class="threat-severity critical">In Progress</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recommendations-section">
+                <h2>Security Recommendations</h2>
+                <div class="recommendations-list">
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Enable Windows Defender Protection immediately</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Implement end-to-end encryption for all network communications</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Enable Kernel DMA Protection to prevent unauthorized memory access</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Review and secure all connected server connections</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="report-footer">
+            <p>This report is generated for security purposes only. Please take immediate action on the recommendations.</p>
+            <button onclick="window.location.href='../../index.html'" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Portal
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    </script>
+</body>
+</html> 

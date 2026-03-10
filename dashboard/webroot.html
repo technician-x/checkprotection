@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="https://www.webroot.com/favicon.ico" type="image/x-icon">
+<title>Webroot SecureAnywhere</title>
+
+<style>
+/* ================= VARIABLES ================= */
+:root {
+  --bg-main: #3A4434;
+  --bg-sidebar: #3C423B;
+  --bg-panel: #E0E0E0;
+  --bg-header: #3A4434;
+  --green-bright: #77AD4B;
+  --green-official: #7DCC26;
+  --green-dark: #6fa72f;
+  --red-warning: #E74C3C;
+  --red-dark: #C0392B;
+  --red-bg: #4A2E2E;
+  --red-sidebar: #4A2F2F;
+  --orange-warning: #F39C12;
+  --text-main: #E0E0E0;
+  --text-dark: #333333;
+  --text-muted: #999999;
+  --radius: 6px;
+  --shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+
+/* Red theme when unprotected */
+body.unprotected {
+  background: var(--red-bg);
+}
+
+body.unprotected .app {
+  background: var(--red-bg);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+body.unprotected .header {
+  background: var(--red-bg);
+  border-bottom-color: rgba(231, 76, 60, 0.3);
+}
+
+body.unprotected .sidebar {
+  background: var(--red-sidebar);
+  border-left-color: rgba(231, 76, 60, 0.3);
+}
+
+body.unprotected .content {
+  background: var(--red-bg);
+}
+
+body.unprotected .thanks-section {
+  background: var(--red-bg);
+}
+
+body.unprotected .nav-item:hover {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+body.unprotected .mac-security-header {
+  border-color: rgba(231, 76, 60, 0.2);
+}
+
+body.unprotected .mac-security-content {
+  border-top-color: rgba(231, 76, 60, 0.2);
+}
+
+body.unprotected .branding .logo-main,
+body.unprotected .branding .logo-sub {
+  color: #FFB3B3;
+}
+
+body.unprotected .nav-item svg path,
+body.unprotected .nav-item svg circle {
+  stroke: rgba(231, 76, 60, 0.6);
+}
+
+body.unprotected .mac-security-header .title svg path {
+  stroke: var(--red-warning);
+}
+
+/* ================= RESET ================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* ================= APP CONTAINER ================= */
+.app {
+  max-width: 1200px;
+  margin: 20px auto;
+  background: var(--bg-main);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* ================= HEADER ================= */
+.header {
+  background: var(--bg-header);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  transition: background 0.5s ease, border-bottom-color 0.5s ease;
+}
+
+.branding {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.branding .logo-main {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-main);
+  text-transform: uppercase;
+}
+
+.branding .logo-sub {
+  font-size: 18px;
+  font-style: italic;
+  color: var(--text-main);
+  font-weight: 300;
+}
+
+.header-btn {
+  background: linear-gradient(to bottom, #E0E0E0, #D0D0D0);
+  border: 1px solid #B0B0B0;
+  color: var(--text-dark);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.header-btn:hover {
+  background: linear-gradient(to bottom, #F0F0F0, #E0E0E0);
+}
+
+.header-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ================= LAYOUT ================= */
+.main {
+  display: flex;
+  min-height: 600px;
+}
+
+/* ================= CONTENT AREA ================= */
+.content {
+  flex: 2;
+  padding: 24px;
+  background: var(--bg-main);
+  transition: background 0.5s ease;
+}
+
+/* ================= PROTECTED CARD ================= */
+.protected-card {
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+
+.protected-header {
+  background: var(--green-bright);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.protected-header h2 {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.checkmark-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--green-bright);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+}
+
+.checkmark-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.protected-body {
+  padding: 20px;
+  display: flex;
+  gap: 24px;
+}
+
+.protected-left {
+  flex: 1.5;
+}
+
+.protected-left p {
+  color: var(--text-dark);
+  font-size: 14px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  transition: color 0.3s ease;
+}
+
+.protected-card.unprotected .protected-left p {
+  color: var(--red-warning);
+  font-weight: 500;
+}
+
+.view-scan-btn {
+  background: linear-gradient(to bottom, #F5F5F5, #E8E8E8);
+  border: 1px solid #D0D0D0;
+  color: var(--text-dark);
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+
+.view-scan-btn:hover {
+  background: linear-gradient(to bottom, #FFFFFF, #F5F5F5);
+}
+
+.protected-right {
+  flex: 1;
+  background: transparent;
+}
+
+.scan-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scan-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-dark);
+}
+
+.scan-detail-row .label {
+  color: var(--text-dark);
+}
+
+.scan-detail-row .value {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* ================= THANKS SECTION ================= */
+.thanks-section {
+  background: var(--bg-main);
+  padding: 24px 0;
+  transition: background 0.5s ease;
+}
+
+.thanks-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-main);
+}
+
+.thanks-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.webroot-logo {
+  width: 80px;
+  height: 80px;
+
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 8px;
+}
+
+.webroot-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.thanks-text {
+  flex: 1;
+  color: var(--text-main);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.user-guide-btn {
+  background: linear-gradient(to bottom, #F5F5F5, #E8E8E8);
+  border: 1px solid #D0D0D0;
+  color: var(--text-dark);
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.user-guide-btn:hover {
+  background: linear-gradient(to bottom, #FFFFFF, #F5F5F5);
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 320px;
+  background: var(--bg-sidebar);
+  padding: 20px;
+  border-left: 1px solid rgba(255,255,255,.1);
+}
+
+/* ================= MAC SECURITY SECTION ================= */
+.mac-security {
+  margin-bottom: 20px;
+}
+
+.mac-security-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mac-security-header .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.mac-security-header svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mac-security-content {
+  padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.toggle {
+  width: 48px;
+  height: 26px;
+  background: #666;
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: left 0.3s;
+}
+
+.toggle.on {
+  background: var(--green-bright);
+}
+
+.toggle.on::after {
+  left: 25px;
+}
+
+.quarantine-status {
+  padding: 10px 0;
+  color: var(--text-main);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sidebar-btn {
+  background: linear-gradient(to bottom, #F5F5F5, #E8E8E8);
+  border: 1px solid #D0D0D0;
+  color: var(--text-dark);
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  width: 100%;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+
+.sidebar-btn:hover {
+  background: linear-gradient(to bottom, #FFFFFF, #F5F5F5);
+}
+
+/* ================= NAV ITEMS ================= */
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,.05);
+}
+
+.nav-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-item .settings-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+
+/* ================= PROGRESS BAR ================= */
+.progress {
+  margin-top: 12px;
+  height: 6px;
+  background: rgba(0,0,0,.1);
+  border-radius: 3px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress.active {
+  display: block;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--green-bright);
+  transition: width 0.3s;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.5); }
+  50% { box-shadow: 0 0 15px rgba(231, 76, 60, 0.8); }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+.shake {
+  animation: shake 0.5s ease;
+}
+
+.glow {
+  animation: glow 1s ease-in-out infinite;
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease;
+}
+
+/* Status indicator */
+.status-indicator {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 8px;
+  transition: all 0.3s ease;
+}
+
+.status-indicator.protected {
+  background: rgba(119, 173, 75, 0.2);
+  color: var(--green-bright);
+}
+
+.status-indicator.unprotected {
+  background: rgba(231, 76, 60, 0.2);
+  color: var(--red-warning);
+  animation: pulse 2s infinite;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ================= HEADER ================= -->
+  <div class="header">
+    <div class="branding">
+      <span class="logo-main">WEBROOT</span>
+      <span class="logo-sub">SecureAnywhere.</span>
+    </div>
+    <button class="header-btn" onclick="openAdvancedSettings()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+      </svg>
+      Advanced Settings
+    </button>
+  </div>
+
+  <div class="main">
+
+    <!-- ================= CONTENT AREA ================= -->
+    <div class="content">
+
+      <!-- Protected Card -->
+      <div class="protected-card" id="protectedCard">
+        <div class="protected-header">
+          <h2 id="protectionStatus">Protected</h2>
+          <div class="checkmark-icon" id="statusIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="protected-body">
+          <div class="protected-left">
+            <p id="protectionMessage">Your computer is clean from infections. Realtime shield is protecting you against new threats.</p>
+            <button class="view-scan-btn" onclick="viewScanProgress()">View Scan Progress</button>
+            <div class="progress" id="scanProgress">
+              <span id="scanBar"></span>
+            </div>
+          </div>
+          <div class="protected-right">
+            <div class="scan-details">
+              <div class="scan-detail-row">
+                <span class="label">Last scan:</span>
+                <span class="value" id="lastScan">Less than 1 minute ago</span>
+              </div>
+              <div class="scan-detail-row">
+                <span class="label">Last scan duration:</span>
+                <span class="value" id="scanDuration">—</span>
+              </div>
+              <div class="scan-detail-row">
+                <span class="label">Next scan:</span>
+                <span class="value" id="nextScan">Starts in 3 hours</span>
+              </div>
+              <div class="scan-detail-row">
+                <span class="label">Total scans:</span>
+                <span class="value" id="scanCount">0</span>
+              </div>
+              <div class="scan-detail-row">
+                <span class="label">Subscription:</span>
+                <span class="value" id="subscription">365 days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thanks Section -->
+      <div class="thanks-section">
+        <h3>Thanks for choosing Webroot!</h3>
+        <div class="thanks-content">
+          <div class="webroot-logo">
+            <img src="../ico/Webroot.ico" alt="Webroot Logo" />
+          </div>
+          <p class="thanks-text">Want to schedule a scan? Have questions about your product? Check out our user guide!</p>
+        </div>
+        <button class="user-guide-btn" onclick="visitUserGuide()">Visit User Guide</button>
+      </div>
+
+    </div>
+
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+
+      <!-- Mac Security Section -->
+      <div class="mac-security">
+        <div class="mac-security-header" onclick="toggleMacSecurity()">
+          <div class="title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2">
+              <path d="M12 2L4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/>
+              <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Security Shield
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-main)" stroke-width="2" class="settings-icon">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+          </svg>
+        </div>
+        <div class="mac-security-content" id="macSecurityContent">
+          <div class="toggle-row">
+            <span>Realtime Shield <span class="status-indicator protected" id="realtimeStatus">ON</span></span>
+            <div class="toggle on" id="realtimeToggle" onclick="toggleSwitch(this, 'realtime')"></div>
+          </div>
+          <div class="toggle-row">
+            <span>Web Threat Shield <span class="status-indicator protected" id="webThreatStatus">ON</span></span>
+            <div class="toggle on" id="webThreatToggle" onclick="toggleSwitch(this, 'webthreat')"></div>
+          </div>
+          <div class="quarantine-status">
+            <span>Quarantine</span>
+            <span id="quarantineCount">0 Items</span>
+          </div>
+          <button class="sidebar-btn" onclick="viewScanProgress()">View Scan Progress</button>
+        </div>
+      </div>
+
+      <!-- Other Navigation Items -->
+      <div class="nav-item" onclick="navigateTo('identity')">
+        <div class="nav-item-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2">
+            <path d="M12 2L4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/>
+            <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Identity Protection
+        </div>
+      </div>
+
+      <div class="nav-item" onclick="navigateTo('utilities')">
+        <div class="nav-item-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2">
+            <path d="M12 2L4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/>
+            <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Utilities
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-main)" stroke-width="2" class="settings-icon">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+        </svg>
+      </div>
+
+      <div class="nav-item" onclick="navigateTo('account')">
+        <div class="nav-item-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2">
+            <path d="M12 2L4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/>
+            <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          My Account
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-main)" stroke-width="2" class="settings-icon">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+        </svg>
+      </div>
+
+      <div class="nav-item" onclick="navigateTo('support')">
+        <div class="nav-item-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="2">
+            <path d="M12 2L4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/>
+            <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Support / Community
+        </div>
+      </div>
+
+      <div class="nav-item" onclick="navigateTo('backup')">
+        <div class="nav-item-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v8M8 12h8" stroke="#4A90E2" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Backup & Sync
+        </div>
+      </div>
+
+      <div class="nav-item" onclick="navigateTo('password')">
+        <div class="nav-item-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v8M8 12h8" stroke="#4A90E2" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Password Manager
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let scanning = false;
+let scanProgress = 0;
+let totalScans = 0;
+let macSecurityExpanded = true;
+
+// Toggle Mac Security section
+function toggleMacSecurity() {
+  macSecurityExpanded = !macSecurityExpanded;
+  const content = document.getElementById('macSecurityContent');
+  content.style.display = macSecurityExpanded ? 'block' : 'none';
+}
+
+// Toggle switch with protected/unprotected functionality
+function toggleSwitch(el, shieldType) {
+  const wasOn = el.classList.contains('on');
+  el.classList.toggle('on');
+  const isNowOn = el.classList.contains('on');
+  
+  // Add click animation
+  el.style.transform = 'scale(0.95)';
+  setTimeout(() => {
+    el.style.transform = '';
+  }, 150);
+  
+  // Update status indicators
+  updateShieldStatus(shieldType, isNowOn);
+  
+  // Update overall protection status
+  updateProtectionStatus();
+  
+  // Add visual feedback
+  if (!isNowOn) {
+    el.parentElement.classList.add('shake');
+    setTimeout(() => {
+      el.parentElement.classList.remove('shake');
+    }, 500);
+  }
+}
+
+// Update individual shield status
+function updateShieldStatus(shieldType, isOn) {
+  const statusEl = document.getElementById(shieldType === 'realtime' ? 'realtimeStatus' : 'webThreatStatus');
+  if (statusEl) {
+    if (isOn) {
+      statusEl.textContent = 'ON';
+      statusEl.className = 'status-indicator protected';
+    } else {
+      statusEl.textContent = 'OFF';
+      statusEl.className = 'status-indicator unprotected';
+    }
+  }
+}
+
+// Update overall protection status
+function updateProtectionStatus() {
+  const realtimeToggle = document.getElementById('realtimeToggle');
+  const webThreatToggle = document.getElementById('webThreatToggle');
+  const protectedCard = document.getElementById('protectedCard');
+  const protectionStatus = document.getElementById('protectionStatus');
+  const protectionMessage = document.getElementById('protectionMessage');
+  const statusIcon = document.getElementById('statusIcon');
+  const body = document.body;
+  
+  const realtimeOn = realtimeToggle.classList.contains('on');
+  const webThreatOn = webThreatToggle.classList.contains('on');
+  const allProtected = realtimeOn && webThreatOn;
+  
+  if (allProtected) {
+    // Protected state - Green theme
+    body.classList.remove('unprotected');
+    protectedCard.classList.remove('unprotected');
+    protectionStatus.textContent = 'Protected';
+    protectionMessage.textContent = 'Your computer is clean from infections. Realtime shield is protecting you against new threats.';
+    protectionMessage.style.color = '';
+    protectedCard.style.animation = 'slideDown 0.3s ease';
+  } else {
+    // Unprotected state - Red theme
+    body.classList.add('unprotected');
+    protectedCard.classList.add('unprotected');
+    protectionStatus.textContent = 'Unprotected';
+    protectionMessage.textContent = 'Warning: Some security shields are disabled. Your computer may be vulnerable to threats.';
+    protectionMessage.style.color = 'var(--red-warning)';
+    protectedCard.style.animation = 'shake 0.5s ease';
+    
+    // Show which shields are off
+    const offShields = [];
+    if (!realtimeOn) offShields.push('Realtime Shield');
+    if (!webThreatOn) offShields.push('Web Threat Shield');
+    
+    setTimeout(() => {
+      protectedCard.style.animation = '';
+    }, 500);
+  }
+}
+
+// View scan progress
+function viewScanProgress() {
+  if (scanning) return;
+  
+  scanning = true;
+  scanProgress = 0;
+  const progressBar = document.getElementById('scanBar');
+  const progressContainer = document.getElementById('scanProgress');
+  const lastScanEl = document.getElementById('lastScan');
+  const scanDurationEl = document.getElementById('scanDuration');
+  const scanCountEl = document.getElementById('scanCount');
+  
+  progressContainer.classList.add('active');
+  
+  const interval = setInterval(() => {
+    scanProgress += 2;
+    progressBar.style.width = scanProgress + '%';
+    
+    if (scanProgress >= 100) {
+      clearInterval(interval);
+      scanning = false;
+      totalScans++;
+      scanCountEl.textContent = totalScans;
+      lastScanEl.textContent = 'Just now';
+      scanDurationEl.textContent = '15 seconds';
+      
+      setTimeout(() => {
+        progressContainer.classList.remove('active');
+        progressBar.style.width = '0%';
+      }, 2000);
+    }
+  }, 60);
+}
+
+// Navigation functions
+function navigateTo(page) {
+  console.log('Navigate to:', page);
+  // Add navigation logic here
+}
+
+function openAdvancedSettings() {
+  alert('Advanced Settings would open here');
+}
+
+function visitUserGuide() {
+  window.open('https://www.webroot.com/us/en/support/user-guides', '_blank');
+}
+
+// Update next scan countdown
+function updateNextScan() {
+  const nextScanEl = document.getElementById('nextScan');
+  let hours = 3;
+  let minutes = 0;
+  
+  setInterval(() => {
+    minutes--;
+    if (minutes < 0) {
+      hours--;
+      minutes = 59;
+    }
+    if (hours < 0) {
+      hours = 23;
+    }
+    nextScanEl.textContent = `Starts in ${hours} hours ${minutes} minutes`;
+  }, 60000);
+}
+
+// Initialize
+updateNextScan();
+// Set initial protection status
+updateProtectionStatus();
+</script>
+
+</body>
+</html>

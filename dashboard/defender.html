@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Defender</title>
+    <link rel="icon" type="image/x-icon" href="../ico/Defender.ico">
+    <style>
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-sidebar: #F9F9F9;
+            --text-primary: #000000;
+            --text-secondary: #5D5D5D;
+            --divider: #E5E5E5;
+            --hover: rgba(0, 0, 0, 0.04);
+            --pressed: rgba(0, 0, 0, 0.08);
+            --accent: #0067C0;
+            --accent-hover: #1975C9;
+            --green: #0F7B0F;
+            --yellow: #9D5D00;
+            --red: #C42B1C;
+            --title-bar: #F3F3F3;
+            --scrollbar: rgba(0, 0, 0, 0.3);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --card-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            --body-bg: #FFFFFF
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #2D2D2D;
+            --bg-card: #1E1E1E;
+            --bg-sidebar: #1C1C1C;
+            --text-primary: #FFFFFF;
+            --text-secondary: #9A9A9A;
+            --divider: #404040;
+            --hover: rgba(255, 255, 255, 0.06);
+            --pressed: rgba(255, 255, 255, 0.04);
+            --title-bar: #202020;
+            --scrollbar: rgba(255, 255, 255, 0.3);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --card-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            --body-bg: #000000
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: "Segoe UI Variable", "Segoe UI", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--body-bg);
+            overflow: hidden
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 3px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar)
+        }
+
+        .app {
+            width: 100vw;
+            height: 100vh;
+            max-width: 1400px;
+            max-height: 900px;
+            min-width: 1000px;
+            min-height: 700px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative
+        }
+
+        /* Title Bar */
+        .title-bar {
+            height: 60px;
+            background: var(--title-bar);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            user-select: none;
+            -webkit-app-region: drag;
+            flex-shrink: 0;
+            border-radius: 8px 8px 0 0
+        }
+
+        .title-bar-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            margin-left: 12px
+        }
+
+        .title-bar-text {
+            font-size: 18px;
+            color: var(--text-primary);
+            flex: 1;
+            font-weight: 500
+        }
+
+        .nav-icon svg,
+        .title-bar-icon img {
+            width: 100%;
+            height: 100%
+        }
+
+        /* User Avatar in Title Bar */
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 6px;
+            transition: background .15s;
+            -webkit-app-region: no-drag;
+            position: relative
+        }
+
+        .user-area:hover {
+            background: var(--hover)
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0
+        }
+
+        .user-name {
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            min-width: 260px;
+            z-index: 100;
+            display: none;
+            padding: 16px
+        }
+
+        .user-dropdown.open {
+            display: block
+        }
+
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--divider);
+            margin-bottom: 8px
+        }
+
+        .user-dropdown-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            flex-shrink: 0
+        }
+
+        .user-dropdown-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary)
+        }
+
+        .user-dropdown-email {
+            font-size: 12px;
+            color: var(--text-secondary)
+        }
+
+        .user-dropdown-item {
+            padding: 8px 0;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: color .15s
+        }
+
+        .user-dropdown-item:hover {
+            color: var(--accent)
+        }
+
+        /* Login Screen */
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--divider);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            max-width: 440px;
+            width: 90%;
+            padding: 40px 36px
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px
+        }
+
+        .login-logo img {
+            width: 32px;
+            height: 32px
+        }
+
+        .login-logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary)
+        }
+
+        .login-field {
+            margin-bottom: 16px
+        }
+
+        .login-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--divider);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color .15s
+        }
+
+        .login-field input:focus {
+            outline: none;
+            border-color: var(--accent)
+        }
+
+        .login-error {
+            color: var(--red);
+            font-size: 12px;
+            margin-top: 8px;
+            display: none
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .15s;
+            margin-top: 8px
+        }
+
+        .login-btn:hover {
+            background: var(--accent-hover)
+        }
+
+        .login-btn:active {
+            transform: scale(.98)
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--divider);
+            display: flex;
+            flex-direction: column;
+            transition: width .3s cubic-bezier(.4, 0, .2, 1);
+            overflow: hidden;
+            flex-shrink: 0
+        }
+
+        .sidebar.collapsed {
+            width: 48px
+        }
+
+        .sidebar-header {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            flex-shrink: 0
+        }
+
+        .hamburger {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .15s;
+            flex-shrink: 0
+        }
+
+        .hamburger:hover {
+            background: var(--hover)
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0
+        }
+
+        .nav-item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            cursor: pointer;
+            transition: background .15s;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            color: var(--text-primary);
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+            font-family: inherit
+        }
+
+        .nav-item:hover {
+            background: var(--hover)
+        }
+
+        .nav-item.active {
+            background: var(--pressed);
+            font-weight: 600
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 2px
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-primary)
+        }
+
+        .nav-text {
+            margin-left: 16px;
+            font-size: 14px;
+            opacity: 1;
+            transition: opacity .2s
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        .sidebar-bottom {
+            border-top: 1px solid var(--divider);
+            padding: 4px 0
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 36px;
+            position: relative
+        }
+
+        .page {
+            display: none;
+            animation: pageIn .2s ease
+        }
+
+        .page.active {
+            display: block
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            transition: transform .15s, box-shadow .15s;
+            border: 1px solid var(--divider)
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow)
+        }
+
+        .card-clickable {
+            cursor: pointer
+        }
+
+        /* Status Cards Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px
+        }
+
+        .status-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            padding-left: 20px
+        }
+
+        .status-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 6px 0 0 6px
+        }
+
+        .status-bar.green {
+            background: var(--green)
+        }
+
+        .status-bar.yellow {
+            background: var(--yellow)
+        }
+
+        .status-bar.red {
+            background: var(--red)
+        }
+
+        .status-bar.blue {
+            background: var(--accent)
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #fff;
+            flex-shrink: 0
+        }
+
+        .status-icon.green {
+            background: var(--green)
+        }
+
+        .status-icon.yellow {
+            background: var(--yellow)
+        }
+
+        .status-icon.red {
+            background: var(--red)
+        }
+
+        .status-icon.blue {
+            background: var(--accent)
+        }
+
+        .status-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .status-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary)
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: var(--text-secondary)
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--divider);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all .15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .btn:hover {
+            background: var(--hover)
+        }
+
+        .btn:active {
+            transform: scale(.98)
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent)
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover)
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--accent);
+            padding: 4px 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit
+        }
+
+        .btn-link:hover {
+            text-decoration: underline
+        }
+
+        /* Toggle */
+        .toggle-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--divider)
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none
+        }
+
+        .toggle {
+            width: 44px;
+            height: 22px;
+            border-radius: 11px;
+            background: #767676;
+            position: relative;
+            cursor: pointer;
+            transition: background .25s;
+            flex-shrink: 0;
+            border: none;
+            padding: 0
+        }
+
+        .toggle.on {
+            background: var(--accent)
+        }
+
+        .toggle::after {
+            content: '';
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            transition: transform .25s
+        }
+
+        .toggle.on::after {
+            transform: translateX(22px)
+        }
+
+        .toggle-info {
+            flex: 1
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px
+        }
+
+        .toggle-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4
+        }
+
+        /* Progress Bar */
+        .progress-wrap {
+            width: 100%;
+            height: 4px;
+            background: var(--divider);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 8px 0
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width .3s;
+            width: 0
+        }
+
+        /* Shield Animation */
+        .shield-large {
+            font-size: 64px;
+            text-align: center;
+            margin: 20px 0
+        }
+
+        .shield-large.scanning {
+            animation: pulse 1.5s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.05)
+            }
+        }
+
+        /* Scan file path display */
+        .scan-filepath {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: "Consolas", monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 16px
+        }
+
+        /* Sub-page */
+        .sub-page {
+            display: none
+        }
+
+        .sub-page.active {
+            display: block
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 14px;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 16px
+        }
+
+        .back-btn:hover {
+            background: var(--hover)
+        }
+
+        /* Network cards */
+        .net-cards {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            flex-wrap: wrap
+        }
+
+        .net-card {
+            flex: 1;
+            min-width: 200px
+        }
+
+        .net-card .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px
+        }
+
+        .badge-active {
+            background: rgba(15, 123, 15, 0.1);
+            color: var(--green)
+        }
+
+        .badge-inactive {
+            background: var(--hover);
+            color: var(--text-secondary)
+        }
+
+        /* History items */
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--divider);
+            cursor: pointer;
+            transition: background .15s
+        }
+
+        .history-item:hover {
+            background: var(--hover)
+        }
+
+        .history-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .history-details {
+            display: none;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--divider);
+            font-size: 13px;
+            color: var(--text-secondary)
+        }
+
+        .history-details.open {
+            display: block
+        }
+
+        /* Radio */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .15s;
+            border: 1px solid var(--divider)
+        }
+
+        .radio-item:hover {
+            background: var(--hover)
+        }
+
+        .radio-item.selected {
+            border-color: var(--accent);
+            background: rgba(0, 103, 192, 0.05)
+        }
+
+        .radio-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-secondary);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px
+        }
+
+        .radio-item.selected .radio-circle {
+            border-color: var(--accent)
+        }
+
+        .radio-item.selected .radio-circle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent)
+        }
+
+        /* Gauge */
+        .gauge-container {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            position: relative
+        }
+
+        .gauge-container svg {
+            width: 100%;
+            height: 100%
+        }
+
+        .gauge-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary)
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000
+        }
+
+        .modal-overlay.open {
+            display: flex
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            max-width: 480px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 24px
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px
+        }
+
+        .modal-body {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end
+        }
+
+        /* Toast */
+        .toast-container {
+            position: absolute;
+            top: 40px;
+            right: 16px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .toast {
+            padding: 12px 16px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: toastIn .3s ease;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+        }
+
+        .toast.success {
+            background: #0F7B0F
+        }
+
+        .toast.warning {
+            background: #9D5D00
+        }
+
+        .toast.error {
+            background: #C42B1C
+        }
+
+        .toast.info {
+            background: #0067C0
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: auto;
+            opacity: .8
+        }
+
+        .toast-close:hover {
+            opacity: 1
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        /* Input */
+        .input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent)
+        }
+
+        /* Checkbox */
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary)
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--text-secondary);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all .15s;
+            cursor: pointer
+        }
+
+        .checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent)
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: #fff;
+            font-size: 12px
+        }
+
+        /* Exclusion list */
+        .exclusion-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--divider)
+        }
+
+        .exclusion-del {
+            background: none;
+            border: none;
+            color: var(--red);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px
+        }
+
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap
+        }
+
+        .filter-select {
+            padding: 6px 12px;
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer
+        }
+
+        /* Section header */
+        .section {
+            margin-bottom: 24px
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.4
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--divider);
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            min-width: 160px;
+            z-index: 50;
+            display: none
+        }
+
+        .dropdown-menu.open {
+            display: block
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: background .15s
+        }
+
+        .dropdown-item:hover {
+            background: var(--hover)
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--divider);
+            margin-bottom: 16px
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: all .15s
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            font-weight: 600
+        }
+
+        .tab:hover {
+            color: var(--text-primary)
+        }
+
+        /* Select dropdown styled */
+        .select-dd {
+            padding: 8px 12px;
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer
+        }
+
+        /* Disk usage bar */
+        .disk-bar {
+            height: 20px;
+            background: var(--divider);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0
+        }
+
+        .disk-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 1s ease
+        }
+
+        /* App perm table */
+        .app-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .app-table th,
+        .app-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--divider)
+        }
+
+        .app-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 12px
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative
+        }
+
+        .tooltip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2D2D2D;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            z-index: 999
+        }
+
+        .tooltip:hover::after {
+            opacity: 1
+        }
+
+        .sidebar.collapsed .nav-item.tooltip::after {
+            left: 48px;
+            bottom: auto;
+            top: 50%;
+            transform: translateY(-50%)
+        }
+
+        /* Family member card */
+        .member-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app" id="app">
+        <!-- Title Bar -->
+        <div class="title-bar" id="titleBar">
+            <span class="title-bar-icon"><img src="../ico/Defender.ico" alt="Windows Security"></span>
+            <span class="title-bar-text">Windows Defender</span>
+            <div class="user-area" id="userArea" onclick="WS.toggleUserDropdown()">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span class="user-name" id="userName"></span>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown-header">
+                        <div class="user-dropdown-avatar" id="userDropdownAvatar"></div>
+                        <div>
+                            <div class="user-dropdown-name" id="userDropdownName"></div>
+                            <div class="user-dropdown-email" id="userDropdownEmail"></div>
+                        </div>
+                    </div>
+                    <div class="user-dropdown-item" onclick="WS.goPage('account')">Account settings</div>
+                    <div class="user-dropdown-item" onclick="WS.goPage('settings')">App settings</div>
+                    <div class="user-dropdown-item" style="color:var(--red)" onclick="WS.logoutUser()">Sign out</div>
+                </div>
+            </div>
+        </div>
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <nav class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <button class="hamburger" id="hamburgerBtn" title="Menu">☰</button>
+                </div>
+                <div class="sidebar-nav" id="sidebarNav"></div>
+                <div class="sidebar-bottom" id="sidebarBottom"></div>
+            </nav>
+            <!-- Content -->
+            <main class="content" id="content"></main>
+        </div>
+        <!-- Toast container -->
+        <div class="toast-container" id="toastContainer"></div>
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modal">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-actions" id="modalActions"></div>
+            </div>
+        </div>
+        <!-- Login Overlay -->
+        <div class="login-overlay" id="loginOverlay">
+            <div class="login-box">
+                <div class="login-logo"><img src="../ico/Defender.ico" alt=""><span class="login-logo-text">Microsoft
+                        Defender</span></div>
+                <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px">Sign in to activate Windows
+                    Security and protect your device.</p>
+                <div class="login-field"><label>Full Name</label><input type="text" id="loginName"
+                        placeholder="Enter your name"></div>
+                <div class="login-field"><label>Email Address</label><input type="email" id="loginEmail"
+                        placeholder="you@example.com"></div>
+                <div class="login-field"><label>Activation Key</label><input type="text" id="loginKey"
+                        placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" style="text-transform:uppercase;letter-spacing:1px">
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button class="login-btn" onclick="WS.activateLogin()">Activate & Sign In</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            /* ===== AUTH ===== */
+            const AUTH_KEY = 'winSecUser';
+            const VALID_KEY = 'XKFH9-GJJYK-KKYY3-K7C3W-PKJMM';
+            let user = loadUser();
+            function loadUser() { try { const u = localStorage.getItem(AUTH_KEY); return u ? JSON.parse(u) : null } catch (e) { return null } }
+            function saveUser() { localStorage.setItem(AUTH_KEY, JSON.stringify(user)) }
+            function getInitials(name) { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) }
+            function updateUserUI() {
+                const area = document.getElementById('userArea');
+                if (!user) { area.style.display = 'none'; return }
+                area.style.display = 'flex';
+                document.getElementById('userAvatar').textContent = getInitials(user.name);
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userDropdownAvatar').textContent = getInitials(user.name);
+                document.getElementById('userDropdownName').textContent = user.name;
+                document.getElementById('userDropdownEmail').textContent = user.email;
+            }
+            function toggleUserDropdown() { const dd = document.getElementById('userDropdown'); dd.classList.toggle('open') }
+            function activateLogin() {
+                const name = document.getElementById('loginName').value.trim();
+                const email = document.getElementById('loginEmail').value.trim();
+                const key = document.getElementById('loginKey').value.trim().toUpperCase();
+                const err = document.getElementById('loginError');
+                if (!name) { err.textContent = 'Please enter your name.'; err.style.display = 'block'; return }
+                if (!email || !email.includes('@')) { err.textContent = 'Please enter a valid email address.'; err.style.display = 'block'; return }
+                if (key !== VALID_KEY) { err.textContent = 'Invalid activation key. Please check and try again.'; err.style.display = 'block'; return }
+                err.style.display = 'none';
+                user = { name, email, key, activatedAt: new Date().toISOString() };
+                saveUser();
+                document.getElementById('loginOverlay').style.display = 'none';
+                updateUserUI();
+                showToast('Welcome, ' + user.name + '! Windows Security is now activated.', 'success');
+            }
+            function logoutUser() {
+                localStorage.removeItem(AUTH_KEY); user = null;
+                document.getElementById('userDropdown').classList.remove('open');
+                document.getElementById('loginOverlay').style.display = 'flex';
+                updateUserUI();
+            }
+            function checkAuth() {
+                if (user) { document.getElementById('loginOverlay').style.display = 'none'; updateUserUI() }
+                else { document.getElementById('loginOverlay').style.display = 'flex' }
+            }
+            // Close user dropdown when clicking outside
+            document.addEventListener('click', e => { const area = document.getElementById('userArea'); if (area && !area.contains(e.target)) { document.getElementById('userDropdown').classList.remove('open') } });
+
+            /* ===== STATE ===== */
+            const LS_KEY = 'winSecState';
+            const defaultState = { theme: 'system', currentPage: 'home', sidebarCollapsed: false, toggles: { realtime: true, cloud: true, autosample: true, tamper: true, controlled: false, memIntegrity: true, vulnDriver: true, kernelStack: true, checkApps: true, smartEdge: true, phishing: true, phishMalicious: true, phishReuse: true, phishUnsafe: true, puaBlock: true, puaApps: true, puaDownloads: true, smartStore: true, fwDomain: true, fwPrivate: true, fwPublic: true, notifAll: true, notifVirus: true, notifAccount: true, notifFirewall: true, notifApp: true, notifInfo: true, notifRecent: true, dynamicLock: false }, exclusions: [], scanHistory: [], familyMembers: [], lastScan: null, threatActive: false, scanType: 'quick' };
+            let state = loadState();
+            function loadState() { try { const s = localStorage.getItem(LS_KEY); return s ? { ...defaultState, ...JSON.parse(s) } : { ...defaultState } } catch (e) { return { ...defaultState } } }
+            function saveState() { localStorage.setItem(LS_KEY, JSON.stringify(state)) }
+            function getTheme() { if (state.theme === 'system') return window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'; return state.theme }
+            function applyTheme() { document.documentElement.setAttribute('data-theme', getTheme()) }
+            applyTheme();
+
+            /* ===== SVG ICONS ===== */
+            const SVG = {
+                home: '<svg viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>',
+                shield: '<svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>',
+                person: '<svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>',
+                globe: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',
+                appwindow: '<svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V7h18v12z"/></svg>',
+                laptop: '<svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>',
+                heart: '<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5 0 2.09-1.73 3.79-4.35 6.38L12 17l-.85-.82C8.57 13.29 6.5 11.59 6.5 9.5 6.5 7.57 8.07 6 10 6c.74 0 1.44.23 2 .63.56-.4 1.26-.63 2-.63z"/></svg>',
+                family: '<svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
+                history: '<svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>',
+                settings: '<svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>'
+            };
+            const navItems = [
+                { id: 'home', icon: SVG.home, label: 'Home' },
+                { id: 'virus', icon: SVG.shield, label: 'Virus & threat protection' },
+                { id: 'account', icon: SVG.person, label: 'Account protection' },
+                { id: 'firewall', icon: SVG.globe, label: 'Firewall & network protection' },
+                { id: 'appbrowser', icon: SVG.appwindow, label: 'App & browser control' },
+                { id: 'device', icon: SVG.laptop, label: 'Device security' },
+                { id: 'performance', icon: SVG.heart, label: 'Device performance & health' },
+                { id: 'family', icon: SVG.family, label: 'Family options' },
+                { id: 'history', icon: SVG.history, label: 'Protection history' }];
+            const bottomNav = [{ id: 'settings', icon: SVG.settings, label: 'Settings' }];
+
+            /* ===== RENDER SIDEBAR ===== */
+            function renderSidebar() {
+                const nav = document.getElementById('sidebarNav');
+                const bot = document.getElementById('sidebarBottom');
+                nav.innerHTML = navItems.map(n => `<button class="nav-item${state.currentPage === n.id ? ' active' : ''} tooltip" data-page="${n.id}" data-tip="${n.label}"><span class="nav-icon">${n.icon}</span><span class="nav-text">${n.label}</span></button>`).join('');
+                bot.innerHTML = bottomNav.map(n => `<button class="nav-item${state.currentPage === n.id ? ' active' : ''} tooltip" data-page="${n.id}" data-tip="${n.label}"><span class="nav-icon">${n.icon}</span><span class="nav-text">${n.label}</span></button>`).join('');
+                nav.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => goPage(b.dataset.page)));
+                bot.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => goPage(b.dataset.page)));
+                const sb = document.getElementById('sidebar');
+                if (state.sidebarCollapsed) sb.classList.add('collapsed'); else sb.classList.remove('collapsed');
+            }
+            document.getElementById('hamburgerBtn').addEventListener('click', () => { state.sidebarCollapsed = !state.sidebarCollapsed; saveState(); renderSidebar() });
+
+            /* ===== NAVIGATION ===== */
+            let subPage = null;
+            function goPage(id) { state.currentPage = id; subPage = null; saveState(); renderSidebar(); renderPage() }
+            function goSub(sub) { subPage = sub; renderPage() }
+            function goBack() { subPage = null; renderPage() }
+
+            /* ===== HELPERS ===== */
+            function fmtDate(d) { const dt = d || new Date(); return dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) + ' ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) }
+            function toggleEl(key) { state.toggles[key] = !state.toggles[key]; saveState(); renderPage(); showToast(state.toggles[key] ? 'Setting enabled' : 'Setting disabled', 'info') }
+            function toggleHTML(key, label, desc) { return `<div class="toggle-row"><button class="toggle${state.toggles[key] ? ' on' : ''}" onclick="WS.toggleEl('${key}')"></button><div class="toggle-info"><div class="toggle-label">${label}</div><div class="toggle-desc">${desc}</div></div></div>` }
+            function cardStatus(page, icon, color, name, text) { return `<div class="card card-clickable status-card" onclick="WS.goPage('${page}')"><div class="status-bar ${color}"></div><div class="status-icon ${color}">${icon}</div><div class="status-info"><div class="status-name">${name}</div><div class="status-text">${text}</div></div></div>` }
+
+            /* ===== TOAST ===== */
+            function showToast(msg, type = 'info') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = `<span>${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`; c.appendChild(t); setTimeout(() => t.remove(), 5000) }
+
+            /* ===== MODAL ===== */
+            function showModal(title, body, actions) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalBody').innerHTML = body; document.getElementById('modalActions').innerHTML = actions; document.getElementById('modalOverlay').classList.add('open') }
+            function closeModal() { document.getElementById('modalOverlay').classList.remove('open') }
+            document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal() });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() });
+
+            /* ===== SCAN SIMULATION ===== */
+            let scanning = false; let scanInterval = null;
+            const fakePaths = ['C:\\Windows\\System32\\drivers\\etc\\hosts', 'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe', 'C:\\Users\\User\\AppData\\Local\\Temp\\cache.dat', 'C:\\Windows\\SysWOW64\\ntdll.dll', 'C:\\Program Files\\WindowsApps\\Microsoft.WindowsStore', 'C:\\Users\\User\\Documents\\report.docx', 'C:\\Windows\\System32\\kernel32.dll', 'C:\\ProgramData\\Microsoft\\Windows Defender\\Platform', 'C:\\Users\\User\\Downloads\\setup.exe', 'C:\\Windows\\Boot\\EFI\\bootmgfw.efi'];
+            function startScan() {
+                if (scanning) return cancelScan();
+                scanning = true; saveState(); renderPage();
+                let progress = 0, files = 0, total = 45892;
+                const el = () => document.getElementById('scanArea');
+                scanInterval = setInterval(() => {
+                    progress += Math.random() * 3; files = Math.min(Math.floor(progress / 100 * total), total);
+                    const a = el(); if (!a) { cancelScan(); return }
+                    const fp = fakePaths[Math.floor(Math.random() * fakePaths.length)];
+                    a.innerHTML = `<div class="shield-large scanning">${SVG.shield.replace('<svg ', '<svg style="width:64px;height:64px;fill:var(--accent)" ')}</div><div style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--text-primary)">Running a quick scan...</div><div class="progress-wrap" style="max-width:400px;margin:12px auto"><div class="progress-fill" style="width:${Math.min(progress, 100)}%"></div></div><div style="font-size:14px;color:var(--text-secondary)">Scanning... ${files.toLocaleString()} / ${total.toLocaleString()} files checked</div><div class="scan-filepath">${fp}</div><br><button class="btn" onclick="WS.cancelScan()">Cancel scan</button></div>`;
+                    if (progress >= 100) { clearInterval(scanInterval); scanning = false; state.lastScan = { date: new Date().toISOString(), files: total, threats: 0, duration: Math.floor(10 + Math.random() * 5) }; state.scanHistory.unshift({ type: 'scan', title: 'Quick scan completed — no threats found', severity: 'info', date: new Date().toISOString(), desc: `Scanned ${total.toLocaleString()} files in ${state.lastScan.duration} seconds. No threats found.` }); saveState(); renderPage(); showToast('Quick scan completed. No threats found.', 'success') }
+                }, 200);
+            }
+            function cancelScan() { clearInterval(scanInterval); scanning = false; renderPage(); showToast('Scan cancelled', 'warning') }
+
+            /* ===== PROTECTION HISTORY DATA ===== */
+            function initHistory() {
+                if (state.scanHistory.length > 0) return;
+                const items = [
+                    { type: 'threat', title: 'PUA:Win32/Presenoker blocked', severity: 'low', date: new Date(Date.now() - 3600000).toISOString(), desc: 'Potentially unwanted application was blocked by SmartScreen.', action: 'Blocked' },
+                    { type: 'threat', title: 'Trojan:Win32/Wacatac.B!ml quarantined', severity: 'high', date: new Date(Date.now() - 86400000).toISOString(), desc: 'Trojan was detected and quarantined. File: C:\\Users\\User\\Downloads\\keygen.exe', action: 'Quarantined' },
+                    { type: 'scan', title: 'Quick scan completed — no threats found', severity: 'info', date: new Date(Date.now() - 172800000).toISOString(), desc: 'Scanned 45,892 files in 12 seconds.' },
+                    { type: 'setting', title: 'Real-time protection turned off and back on', severity: 'warning', date: new Date(Date.now() - 259200000).toISOString(), desc: 'Real-time protection was temporarily disabled by the user.' },
+                    { type: 'threat', title: 'Cloud-delivered protection blocked a threat', severity: 'medium', date: new Date(Date.now() - 345600000).toISOString(), desc: 'A suspicious file was blocked before it could execute.' },
+                    { type: 'threat', title: 'Behavior:Win32/Suspicious.gen!A removed', severity: 'high', date: new Date(Date.now() - 432000000).toISOString(), desc: 'Behavioral detection identified and removed a threat.' },
+                    { type: 'scan', title: 'Full scan completed — no threats found', severity: 'info', date: new Date(Date.now() - 518400000).toISOString(), desc: 'Scanned 1,245,891 files in 47 minutes.' },
+                    { type: 'threat', title: 'HackTool:Win32/AutoKMS blocked', severity: 'medium', date: new Date(Date.now() - 604800000).toISOString(), desc: 'A hack tool was prevented from running.' },
+                    { type: 'setting', title: 'Tamper Protection prevented a change', severity: 'warning', date: new Date(Date.now() - 691200000).toISOString(), desc: 'An unauthorized attempt to modify security settings was blocked.' },
+                    { type: 'threat', title: 'Adware:Win32/BrowserModifier blocked', severity: 'low', date: new Date(Date.now() - 777600000).toISOString(), desc: 'Adware that modifies browser settings was blocked.' },
+                    { type: 'scan', title: 'Scheduled quick scan — no threats', severity: 'info', date: new Date(Date.now() - 864000000).toISOString(), desc: 'Automatic scheduled scan completed.' },
+                    { type: 'threat', title: 'Ransom:Win32/Reveton.T blocked', severity: 'high', date: new Date(Date.now() - 950400000).toISOString(), desc: 'Ransomware attempt was blocked by controlled folder access.' },
+                    { type: 'setting', title: 'Cloud protection updated definitions', severity: 'info', date: new Date(Date.now() - 1036800000).toISOString(), desc: 'Security intelligence updated to version 1.401.598.0.' },
+                    { type: 'threat', title: 'Trojan:Script/Wacatac.H!ml detected', severity: 'high', date: new Date(Date.now() - 1123200000).toISOString(), desc: 'Script-based trojan detected in browser download.' },
+                    { type: 'threat', title: 'PUA:Win32/InstallCore blocked', severity: 'low', date: new Date(Date.now() - 1209600000).toISOString(), desc: 'Bundled installer was blocked from running.' }
+                ];
+                state.scanHistory = items; saveState()
+            }
+            initHistory();
+
+            /* ===== UPDATE SIMULATION ===== */
+            function simUpdate() {
+                const el = document.getElementById('updateArea'); if (!el) return;
+                let step = 0;
+                const steps = ['Checking for updates...', 'Downloading security intelligence...', 'Installing update...', 'Up to date!'];
+                const iv = setInterval(() => {
+                    el.innerHTML = `<div class="progress-wrap"><div class="progress-fill" style="width:${(step + 1) / steps.length * 100}%"></div></div><div style="font-size:14px;color:var(--text-secondary)">${steps[step]}</div>`;
+                    step++; if (step >= steps.length) { clearInterval(iv); showToast('Security intelligence is up to date', 'success') }
+                }, 1500)
+            }
+
+            /* ===== PAGE RENDERERS ===== */
+            function renderPage() {
+                const c = document.getElementById('content');
+                const p = state.currentPage;
+                const renderers = { home: pageHome, virus: pageVirus, account: pageAccount, firewall: pageFirewall, appbrowser: pageAppBrowser, device: pageDevice, performance: pagePerformance, family: pageFamily, history: pageHistory, settings: pageSettings };
+                c.innerHTML = ''; const div = document.createElement('div'); div.className = 'page active';
+                if (renderers[p]) div.innerHTML = renderers[p]();
+                c.appendChild(div)
+            }
+
+            function pageHome() {
+                const threatColor = state.threatActive ? 'red' : 'green';
+                const threatIcon = state.threatActive ? '✕' : '✓';
+                const threatText = state.threatActive ? 'Action needed' : 'No current threats';
+                return `<h1 class="page-title">Security at a glance</h1><p class="page-subtitle">View and manage the security and health of your device</p>
+<div class="status-grid">
+${cardStatus('virus', threatIcon, threatColor, 'Virus & threat protection', threatText)}
+${cardStatus('account', '✓', 'green', 'Account protection', 'No action needed')}
+${cardStatus('firewall', '✓', 'green', 'Firewall & network protection', 'No action needed')}
+${cardStatus('appbrowser', '✓', 'green', 'App & browser control', 'No action needed')}
+${cardStatus('device', '✓', 'green', 'Device security', 'Standard hardware security')}
+${cardStatus('performance', '✓', 'green', 'Device performance & health', 'No issues')}
+${cardStatus('family', 'ℹ', 'blue', 'Family options', 'View family settings')}
+${cardStatus('history', 'ℹ', 'blue', 'Protection history', 'Recent actions and recommendations')}
+</div>
+<div style="margin-top:16px"><button class="btn-link" onclick="WS.showModal('Protection providers','Microsoft Defender Antivirus is your current security provider. All protection features are managed by Windows Security.','<button class=\\'btn\\' onclick=\\'WS.closeModal()\\'>Close</button>')">Who's protecting me?</button></div>`}
+
+            function pageVirus() {
+                if (subPage === 'scanOptions') return pageScanOptions();
+                if (subPage === 'settings') return pageVirusSettings();
+                if (subPage === 'exclusions') return pageExclusions();
+                if (subPage === 'ransomware') return pageRansomware();
+                if (subPage === 'updates') return pageVirusUpdates();
+                const ls = state.lastScan; const dt = ls ? fmtDate(new Date(ls.date)) : fmtDate();
+                const scanArea = scanning ? '' : '';
+                return `<h1 class="page-title">Virus & threat protection</h1>
+<div class="section"><div class="card" style="text-align:center;padding:24px" id="scanArea">
+${state.threatActive ? `<div class="shield-large">${SVG.shield.replace('<svg ', '<svg style="width:64px;height:64px;fill:var(--green)" ')}</div><div style="font-size:20px;font-weight:600;color:var(--red)">Threats found!</div><div style="font-size:14px;color:var(--text-secondary);margin:8px 0">Trojan:Win32/Wacatac.B!ml was detected</div><div style="display:flex;gap:8px;justify-content:center;margin-top:12px"><button class="btn-primary btn" onclick="WS.quarantineThreat()">Quarantine</button><button class="btn" onclick="WS.removeThreat()">Remove</button><button class="btn" onclick="WS.allowThreat()">Allow on device</button></div>`
+                        : `<div class="shield-large">${SVG.shield.replace('<svg ', '<svg style="width:64px;height:64px;fill:var(--green)" ')}</div><div style="font-size:20px;font-weight:600;color:var(--text-primary)">No current threats.</div><div style="font-size:14px;color:var(--text-secondary);margin:4px 0">Last scan: ${dt} (quick scan)</div>${ls ? `<div style="font-size:13px;color:var(--text-secondary)">${ls.threats} threats found · Scan lasted ${ls.duration} seconds · ${ls.files.toLocaleString()} files scanned</div>` : ''}`}
+</div></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+<button class="btn btn-primary" onclick="WS.startScan()">Quick scan</button>
+<button class="btn-link" onclick="WS.goSub('scanOptions')">Scan options</button>
+<button class="btn-link" onclick="WS.goPage('history')">Protection history</button>
+</div>
+<div class="section"><div class="section-title">Virus & threat protection settings</div><button class="btn-link" onclick="WS.goSub('settings')">Manage settings</button></div>
+<div class="section"><div class="section-title">Virus & threat protection updates</div><div id="updateArea"><div style="font-size:13px;color:var(--text-secondary)">Security intelligence version: 1.401.598.0<br>Last update: ${fmtDate()}</div><button class="btn" style="margin-top:8px" onclick="WS.simUpdate()">Check for updates</button></div></div>
+<div class="section"><div class="section-title">Ransomware protection</div><button class="btn-link" onclick="WS.goSub('ransomware')">Manage ransomware protection</button></div>`}
+
+            function pageScanOptions() {
+                const types = [{ id: 'quick', label: 'Quick scan', desc: 'Checks folders in your system where threats are commonly found. Estimated time: ~1 minute' }, { id: 'full', label: 'Full scan', desc: 'Checks all files and running programs on your hard disk. This scan could take longer than one hour.' }, { id: 'custom', label: 'Custom scan', desc: 'Choose which files and locations you want to check.' }, { id: 'offline', label: 'Microsoft Defender Offline scan', desc: 'Some malicious software can be particularly difficult to remove. Microsoft Defender Offline can help find and remove them.' }];
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Scan options</h1><p class="page-subtitle">Select a scan type</p>
+<div class="radio-group">${types.map(t => `<div class="radio-item${state.scanType === t.id ? ' selected' : ''}" onclick="WS.selectScan('${t.id}')"><div class="radio-circle"></div><div><div style="font-weight:600;color:var(--text-primary)">${t.label}</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${t.desc}</div></div></div>`).join('')}</div>
+<button class="btn btn-primary" style="margin-top:16px" onclick="WS.runSelectedScan()">Scan now</button>`}
+
+            function pageVirusSettings() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Virus & threat protection settings</h1>
+${toggleHTML('realtime', 'Real-time protection', 'Locates and stops malware from installing or running on your device.')}
+${toggleHTML('cloud', 'Cloud-delivered protection', 'Provides increased and faster protection with access to the latest protection data in the cloud.')}
+${toggleHTML('autosample', 'Automatic sample submission', 'Send sample files to Microsoft to help protect you and others from potential threats.')}
+${toggleHTML('tamper', 'Tamper Protection', 'Prevents others from tampering with important security features.')}
+${toggleHTML('controlled', 'Controlled folder access', 'Protect files, folders, and memory areas on your device from unauthorized changes.')}
+<div style="margin-top:16px"><button class="btn-link" onclick="WS.goSub('exclusions')">Add or remove exclusions</button></div>`}
+
+            function pageExclusions() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Exclusions</h1><p class="page-subtitle">Microsoft Defender Antivirus won't scan items that you've excluded.</p>
+<div class="dropdown"><button class="btn" onclick="document.getElementById('exclDd').classList.toggle('open')">+ Add an exclusion</button>
+<div class="dropdown-menu" id="exclDd">
+<div class="dropdown-item" onclick="WS.addExclusion('File')">File</div>
+<div class="dropdown-item" onclick="WS.addExclusion('Folder')">Folder</div>
+<div class="dropdown-item" onclick="WS.addExclusion('File type')">File type</div>
+<div class="dropdown-item" onclick="WS.addExclusion('Process')">Process</div></div></div>
+<div style="margin-top:16px">${state.exclusions.length ? state.exclusions.map((e, i) => `<div class="exclusion-item"><span style="color:var(--text-primary);font-size:14px">${e.type}: ${e.value}</span><button class="exclusion-del" onclick="WS.removeExclusion(${i})">🗑️</button></div>`).join('') : '<div style="color:var(--text-secondary);font-size:14px;padding:16px">No exclusions added.</div>'}</div>`
+            }
+
+            function pageRansomware() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Ransomware protection</h1>
+${toggleHTML('controlled', 'Controlled folder access', 'Protect your files, folders, and memory areas from unauthorized changes by unfriendly applications.')}
+<div class="section" style="margin-top:16px"><div class="section-title">Protected folders</div><div style="font-size:14px;color:var(--text-secondary)">Your Documents, Pictures, Videos, Music, and Desktop folders are protected by default.</div></div>
+<div class="section"><div class="section-title">Ransomware data recovery</div><div style="font-size:14px;color:var(--text-secondary)">In the event of a ransomware attack, you may be able to recover your files using OneDrive.</div><button class="btn-link" style="margin-top:4px">Set up OneDrive</button></div>`}
+
+            function pageVirusUpdates() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Protection updates</h1>
+<div class="card" style="padding:20px"><div style="font-size:14px;color:var(--text-secondary)">Security intelligence version: 1.401.598.0<br>Created on: ${fmtDate()}<br>Last update: ${fmtDate()}</div><button class="btn" style="margin-top:12px" onclick="WS.simUpdate()">Check for updates</button><div id="updateArea" style="margin-top:8px"></div></div>`
+            }
+
+            function pageAccount() {
+                const uName = user ? user.name : 'User';
+                const uEmail = user ? user.email : 'user@example.com';
+                const uInitials = user ? getInitials(user.name) : 'U';
+                return `<h1 class="page-title">Account protection</h1><p class="page-subtitle">Security for your account and sign-in</p>
+<div class="card" style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:20px">
+<div style="width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600">${uInitials}</div>
+<div><div style="font-weight:600;font-size:16px;color:var(--text-primary)">${uName}</div><div style="font-size:13px;color:var(--text-secondary)">${uEmail}</div></div>
+<div style="margin-left:auto;display:flex;align-items:center;gap:4px;color:var(--green)"><span>✓</span><span style="font-size:13px">Signed in</span></div></div>
+<div class="section"><div class="section-title">Windows Hello</div><div class="card" style="margin-bottom:8px;padding:16px"><div style="font-weight:600;color:var(--text-primary)">Windows Hello is not set up</div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Use your face, fingerprint, or PIN for faster, more secure sign-in.</div>
+<div style="display:flex;gap:8px;margin-top:8px"><button class="btn" onclick="WS.showModal('Set up Windows Hello','<p>This is a simulated environment. Windows Hello setup requires hardware that is not available in a web browser.</p><p style=\\'margin-top:8px\\'>Supported methods:</p><ul style=\\'margin:8px 0 0 20px;color:var(--text-secondary)\\' ><li>Face recognition</li><li>Fingerprint</li><li>PIN</li></ul>','<button class=\\'btn\\' onclick=\\'WS.closeModal()\\'>OK</button>')">Set up</button></div></div></div>
+<div class="section"><div class="section-title">Dynamic lock</div><div class="card" style="padding:16px">
+<div class="checkbox-row" onclick="WS.toggleEl('dynamicLock');"><div class="checkbox${state.toggles.dynamicLock ? ' checked' : ''}"></div><span>Allow Windows to automatically lock your device when you're away</span></div>
+<div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Dynamic lock ${state.toggles.dynamicLock ? 'is on' : 'is off'}. Pair a Bluetooth device to use this feature.</div></div></div>`
+            }
+
+            function pageFirewall() {
+                if (subPage === 'fwDetail') return pageFWDetail();
+                if (subPage === 'appPerms') return pageAppPerms();
+                return `<h1 class="page-title">Firewall & network protection</h1><p class="page-subtitle">View network connections and Microsoft Defender Firewall settings</p>
+<div class="net-cards">
+<div class="card card-clickable net-card" onclick="WS.fwNet='domain';WS.goSub('fwDetail')"><div style="margin-bottom:8px">${SVG.globe.replace('<svg ', '<svg style="width:24px;height:24px;fill:var(--text-primary)" ')}</div><div class="status-name">Domain network</div><div style="font-size:13px;color:var(--text-secondary)">Firewall is ${state.toggles.fwDomain ? 'on' : 'off'}</div><span class="badge badge-inactive">Not connected</span></div>
+<div class="card card-clickable net-card" onclick="WS.fwNet='private';WS.goSub('fwDetail')"><div style="margin-bottom:8px">${SVG.home.replace('<svg ', '<svg style="width:24px;height:24px;fill:var(--text-primary)" ')}</div><div class="status-name">Private network</div><div style="font-size:13px;color:var(--text-secondary)">Firewall is ${state.toggles.fwPrivate ? 'on' : 'off'}</div><span class="badge badge-active">Active</span></div>
+<div class="card card-clickable net-card" onclick="WS.fwNet='public';WS.goSub('fwDetail')"><div style="margin-bottom:8px">${SVG.globe.replace('<svg ', '<svg style="width:24px;height:24px;fill:var(--text-primary)" ')}</div><div class="status-name">Public network</div><div style="font-size:13px;color:var(--text-secondary)">Firewall is ${state.toggles.fwPublic ? 'on' : 'off'}</div><span class="badge badge-inactive">Not connected</span></div>
+</div>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
+<button class="btn-link" onclick="WS.goSub('appPerms')">Allow an app through firewall</button>
+<button class="btn-link" onclick="WS.showToast('Network troubleshooter started','info')">Network and Internet troubleshooter</button>
+<button class="btn-link" onclick="WS.showToast('Opening advanced settings...','info')">Advanced settings</button>
+<button class="btn-link" onclick="WS.showModal('Restore defaults','Are you sure you want to restore firewall settings to their defaults? This will reset all firewall rules.','<button class=\\'btn\\' onclick=\\'WS.closeModal()\\'>Cancel</button><button class=\\'btn btn-primary\\' onclick=\\'WS.showToast(\\\"Firewall restored to defaults\\\",\\\"success\\\");WS.closeModal()\\'>Restore</button>')">Restore firewalls to default</button></div>`}
+
+            function pageFWDetail() {
+                const net = WS.fwNet || 'private'; const key = net === 'domain' ? 'fwDomain' : net === 'private' ? 'fwPrivate' : 'fwPublic';
+                const names = { domain: 'Domain network', private: 'Private network', public: 'Public network' };
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">${names[net]}</h1>
+<div class="card" style="padding:20px;margin-bottom:16px">
+${toggleHTML(key, 'Microsoft Defender Firewall', '${state.toggles[key]?"Firewall is active and protecting your network.":"WARNING: Turning off the firewall could make your device vulnerable."}')}
+</div>
+<div class="section"><div class="section-title">Incoming connections</div>
+<div class="checkbox-row" onclick=""><div class="checkbox"></div><span>Blocks all incoming connections, including those in the list of allowed apps</span></div></div>`}
+
+            function pageAppPerms() {
+                const apps = [{ name: 'Microsoft Edge', priv: true, pub: true }, { name: 'Windows Store', priv: true, pub: false }, { name: 'Remote Desktop', priv: true, pub: false }, { name: 'File and Printer Sharing', priv: true, pub: false }, { name: 'Core Networking', priv: true, pub: true }, { name: 'Network Discovery', priv: true, pub: false }, { name: 'Windows Defender Firewall', priv: true, pub: true }];
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Allowed apps</h1><p class="page-subtitle">Allow apps to communicate through Windows Defender Firewall</p>
+<table class="app-table"><thead><tr><th>App</th><th>Private</th><th>Public</th></tr></thead><tbody>${apps.map(a => `<tr><td style="color:var(--text-primary)">${a.name}</td><td><div class="checkbox${a.priv ? ' checked' : ''}" onclick="this.classList.toggle('checked')"></div></td><td><div class="checkbox${a.pub ? ' checked' : ''}" onclick="this.classList.toggle('checked')"></div></td></tr>`).join('')}</tbody></table>`
+            }
+
+            function pageAppBrowser() {
+                if (subPage === 'repSettings') return pageRepSettings();
+                if (subPage === 'exploitSettings') return pageExploitSettings();
+                return `<h1 class="page-title">App & browser control</h1><p class="page-subtitle">App and online security settings</p>
+<div class="card" style="padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:16px"><div style="color:var(--green)">${SVG.shield.replace('<svg ', '<svg style="width:32px;height:32px;fill:var(--green)" ')}</div><div><div class="status-name">Reputation-based protection</div><div style="font-size:13px;color:var(--text-secondary)">Reputation-based protection is on. Your device is being protected.</div><button class="btn-link" style="margin-top:4px" onclick="WS.goSub('repSettings')">Reputation-based protection settings</button></div></div>
+<div class="card" style="padding:20px;margin-bottom:16px"><div class="status-name">Isolated browsing</div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Microsoft Defender Application Guard opens Microsoft Edge in an isolated container.</div><button class="btn" style="margin-top:8px">Install Application Guard</button></div>
+<div class="card" style="padding:20px"><div class="status-name">Exploit protection</div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Exploit protection is built in to Windows to help protect your device against attacks.</div><button class="btn-link" style="margin-top:4px" onclick="WS.goSub('exploitSettings')">Exploit protection settings</button></div>`}
+
+            function pageRepSettings() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Reputation-based protection</h1>
+${toggleHTML('checkApps', 'Check apps and files', 'Microsoft Defender SmartScreen helps protect your device by checking for unrecognized apps and files from the web.')}
+${toggleHTML('smartEdge', 'SmartScreen for Microsoft Edge', 'Helps protect your device from dangerous sites and downloads.')}
+${toggleHTML('phishing', 'Phishing protection', 'Helps protect against phishing sites and malicious apps.')}
+<div style="padding-left:56px">${toggleHTML('phishMalicious', 'Warn me about malicious apps and sites', 'Shows warnings when you visit dangerous sites.')}
+${toggleHTML('phishReuse', 'Warn me about password reuse', 'Warns when you reuse your Microsoft password.')}
+${toggleHTML('phishUnsafe', 'Warn me about unsafe password storage', 'Warns about storing passwords in plain text.')}</div>
+${toggleHTML('puaBlock', 'Potentially unwanted app blocking', 'Protects against low-reputation apps that might cause unexpected behavior.')}
+${toggleHTML('smartStore', 'SmartScreen for Microsoft Store apps', 'Checks web content used by Microsoft Store apps.')}`
+            }
+
+            function pageExploitSettings() {
+                const mitigations = [{ name: 'Control flow guard (CFG)', val: 'On by default' }, { name: 'Data Execution Prevention (DEP)', val: 'On by default' }, { name: 'Force randomization for images (ASLR)', val: 'Off by default' }, { name: 'Randomize memory allocations (Bottom-up ASLR)', val: 'On by default' }, { name: 'High-entropy ASLR', val: 'On by default' }, { name: 'Validate exception chains (SEHOP)', val: 'On by default' }, { name: 'Validate heap integrity', val: 'On by default' }];
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Exploit protection</h1>
+<div class="tabs"><div class="tab active">System settings</div><div class="tab">Program settings</div></div>
+${mitigations.map(m => `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--divider)"><span style="font-size:14px;color:var(--text-primary)">${m.name}</span><select class="select-dd"><option>${m.val}</option><option>On by default</option><option>Off by default</option><option>Use default</option></select></div>`).join('')}`
+            }
+
+            function pageDevice() {
+                if (subPage === 'coreIsolation') return pageCoreIsolation();
+                if (subPage === 'tpmDetails') return pageTPM();
+                return `<h1 class="page-title">Device security</h1><p class="page-subtitle">Built-in security options to help protect your device</p>
+<div class="card card-clickable" style="padding:20px;margin-bottom:16px" onclick="WS.goSub('coreIsolation')"><div class="status-name">Core isolation</div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Protect device core parts with virtualization-based security.</div><button class="btn-link">Core isolation details</button></div>
+<div class="card card-clickable" style="padding:20px;margin-bottom:16px" onclick="WS.goSub('tpmDetails')"><div class="status-name">Security processor</div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Your security processor (TPM) provides additional encryption.</div><button class="btn-link">Security processor details</button></div>
+<div class="card" style="padding:20px;margin-bottom:16px"><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">✓</span><div class="status-name">Secure boot</div></div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Secure boot is on. Helps prevent malicious software from loading when your device starts up.</div></div>
+<div class="card" style="padding:20px"><div class="status-name">Hardware security capability</div><div style="font-size:13px;color:var(--text-secondary);margin:8px 0">Your device meets the requirements for standard hardware security.</div>
+<div style="margin-top:8px">${['TPM 2.0', 'Secure boot', 'DEP', 'UEFI MAT'].map(f => `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;color:var(--green)">✅ ${f}</div>`).join('')}</div></div>`
+            }
+
+            function pageCoreIsolation() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Core isolation</h1>
+${toggleHTML('memIntegrity', 'Memory integrity', 'Prevents attacks from inserting malicious code into high-security processes. Changing this setting requires a restart.')}
+${toggleHTML('vulnDriver', 'Microsoft Vulnerable Driver Blocklist', 'Block drivers with known vulnerabilities that can be exploited.')}
+${toggleHTML('kernelStack', 'Kernel-mode Hardware-enforced Stack Protection', 'Protects against ROP-based attacks in the kernel.')}`
+            }
+
+            function pageTPM() {
+                return `<button class="back-btn" onclick="WS.goBack()">← Back</button><h1 class="page-title">Security processor details</h1>
+<div class="card" style="padding:20px"><div style="font-size:14px;color:var(--text-primary);line-height:2">
+Specification version: <strong>2.0</strong><br>Status: <strong style="color:var(--green)">Ready for use</strong><br>Manufacturer: <strong>Simulated TPM Provider</strong><br>Manufacturer version: <strong>7.2.0.0</strong></div>
+<div style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="WS.showToast('Troubleshooter launched','info')">Troubleshoot</button>
+<button class="btn" style="color:var(--red)" onclick="WS.showModal('Clear TPM','<strong style=\\'color:var(--red)\\'>Warning:</strong> Clearing the TPM will remove all keys and data stored by the TPM. This action cannot be undone.','<button class=\\'btn\\' onclick=\\'WS.closeModal()\\'>Cancel</button><button class=\\'btn\\' style=\\'background:var(--red);color:#fff;border-color:var(--red)\\' onclick=\\'WS.showToast(\\\"TPM cleared (simulated)\\\",\\\"warning\\\");WS.closeModal()\\'>Clear</button>')">Clear TPM</button></div></div>`}
+
+            function pagePerformance() {
+                return `<h1 class="page-title">Device performance & health</h1><p class="page-subtitle">View report about the health of your device</p>
+<div style="text-align:center;margin:24px 0"><div class="gauge-container"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--divider)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--green)" stroke-width="8" stroke-dasharray="${2 * Math.PI * 52 * 0.98} ${2 * Math.PI * 52}" stroke-dashoffset="${2 * Math.PI * 52 * 0.25}" stroke-linecap="round" transform="rotate(-90 60 60)"/></svg><div class="gauge-text">98%</div></div><div style="color:var(--green);font-weight:600">✓ No issues</div><div style="font-size:13px;color:var(--text-secondary)">Last scan: ${fmtDate()}</div></div>
+<div class="card" style="padding:16px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;color:var(--green)"><span>✓</span><div class="status-name">Storage capacity</div></div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">231 GB free of 512 GB</div><div class="disk-bar"><div class="disk-fill" style="width:55%;background:var(--accent)"></div></div></div>
+<div class="card" style="padding:16px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;color:var(--green)"><span>✓</span><div class="status-name">Apps and software</div></div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">All apps are up to date</div></div>
+<div class="card" style="padding:16px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;color:var(--green)"><span>✓</span><div class="status-name">Windows Time service</div></div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Your device clock is synchronized</div></div>
+<div class="section" style="margin-top:20px"><div class="section-title">Fresh start</div><div style="font-size:14px;color:var(--text-secondary)">Start fresh with a clean installation of Windows while keeping your personal data.</div><button class="btn" style="margin-top:8px" onclick="WS.showModal('Fresh start','A fresh start will remove most of your apps but keep your personal files and some Windows settings. This is a simulated environment.','<button class=\\'btn\\' onclick=\\'WS.closeModal()\\'>Close</button>')">Additional info</button></div>`}
+
+            function pageFamily() {
+                return `<h1 class="page-title">Family options</h1><p class="page-subtitle">Manage how your family uses their devices</p>
+<div class="card" style="padding:20px;margin-bottom:16px"><div style="display:flex;align-items:center;gap:16px"><div>${SVG.family.replace('<svg ', '<svg style="width:40px;height:40px;fill:var(--accent)" ')}</div><div><div class="status-name">Parental controls</div><div style="font-size:13px;color:var(--text-secondary);margin:4px 0">Set good screen time habits and keep kids safer online with content filters and daily check-ins on their activity.</div><button class="btn" style="margin-top:8px" onclick="WS.showToast('Opening family settings...','info')">View family settings</button></div></div></div>
+<div class="section"><div class="section-title">Family members</div>
+${state.familyMembers.length ? state.familyMembers.map((m, i) => `<div class="card member-card" style="margin-bottom:8px"><div class="member-avatar">${m.name.charAt(0).toUpperCase()}</div><div><div style="font-weight:600;color:var(--text-primary)">${m.name}</div><div style="font-size:12px;color:var(--text-secondary)">${m.email} · ${m.role}</div></div><button class="exclusion-del" onclick="WS.removeMember(${i})">✕</button></div>`).join('') : '<div style="font-size:14px;color:var(--text-secondary);margin-bottom:12px">No family members added yet.</div>'}
+<button class="btn" onclick="WS.addMemberModal()">+ Add a family member</button></div>`}
+
+            function pageHistory() {
+                const sevColors = { high: '#C42B1C', medium: '#9D5D00', low: '#0067C0', warning: '#9D5D00', info: '#0F7B0F' };
+                const filtered = state.scanHistory;
+                return `<h1 class="page-title">Protection history</h1><p class="page-subtitle">View actions taken by Windows Security</p>
+<div class="filter-bar"><select class="filter-select" onchange="WS.filterHistory(this.value)" id="histFilter">
+<option value="all">All recent items</option><option value="high">Severity: High</option><option value="medium">Severity: Medium</option><option value="low">Severity: Low</option><option value="info">Info</option></select></div>
+<div id="histList">${filtered.map((h, i) => `<div class="history-item" onclick="document.getElementById('hd${i}').classList.toggle('open')"><div class="history-icon" style="background:${sevColors[h.severity] || '#666'}"></div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px;color:var(--text-primary)">${h.title}</div><div style="font-size:12px;color:var(--text-secondary)">${fmtDate(new Date(h.date))}${h.action ? ' · ' + h.action : ''}</div></div><span style="color:var(--text-secondary);font-size:18px">›</span></div><div class="history-details" id="hd${i}">${h.desc}</div>`).join('')}</div>`
+            }
+
+            function pageSettings() {
+                return `<h1 class="page-title">Settings</h1>
+<div class="section"><div class="section-title">Notifications</div>
+${toggleHTML('notifAll', 'Get notifications from Windows Security', 'Receive alerts about important security events.')}
+<div style="padding-left:28px">
+${toggleHTML('notifVirus', 'Virus & threat protection notifications', 'Alerts about threats and scan results.')}
+${toggleHTML('notifAccount', 'Account protection notifications', 'Alerts about your account security.')}
+${toggleHTML('notifFirewall', 'Firewall notifications', 'Alerts about firewall events.')}
+${toggleHTML('notifApp', 'App & browser control notifications', 'SmartScreen and app alerts.')}
+</div>
+${toggleHTML('notifInfo', 'Get informational notifications', 'Non-critical tips and updates.')}
+${toggleHTML('notifRecent', 'Recent activity and scan results', 'Show summaries of recent scans.')}</div>
+<div class="section"><div class="section-title">Appearance</div>
+<div style="display:flex;gap:8px;margin-top:8px">
+${['system', 'light', 'dark'].map(t => `<button class="btn${state.theme === t ? ' btn-primary' : ''}" onclick="WS.setTheme('${t}')">${t.charAt(0).toUpperCase() + t.slice(1)}</button>`).join('')}
+</div></div>
+<div class="section" style="margin-top:24px"><div class="section-title">About</div>
+<div style="font-size:13px;color:var(--text-secondary);line-height:2">Windows Security version: <strong>4.18.24090.11</strong><br>Antimalware Client Version: <strong>4.18.24090.11</strong><br>Engine Version: <strong>1.1.24080.9</strong><br>Antivirus Version: <strong>1.401.598.0</strong><br>Antispyware Version: <strong>1.401.598.0</strong><br>Network Inspection System Engine Version: <strong>1.1.24080.9</strong><br>Network Inspection System Definition Version: <strong>1.401.598.0</strong></div>
+<div style="margin-top:12px;display:flex;flex-direction:column;gap:4px"><button class="btn-link">Terms of use</button><button class="btn-link">Privacy statement</button><button class="btn-link">Microsoft Software License Terms</button></div></div>`}
+
+            /* ===== ACTIONS ===== */
+            function selectScan(t) { state.scanType = t; saveState(); renderPage() }
+            function runSelectedScan() { showToast(`Starting ${state.scanType} scan...`, 'info'); goBack(); setTimeout(startScan, 300) }
+            function addExclusion(type) { showModal('Add an exclusion', `<label style="display:block;margin-bottom:8px;font-weight:600;color:var(--text-primary)">${type} exclusion:</label><input class="input" id="exclInput" placeholder="Enter ${type.toLowerCase()} path or name" autofocus>`, `<button class="btn" onclick="WS.closeModal()">Cancel</button><button class="btn btn-primary" onclick="WS.saveExclusion('${type}')">Add</button>`); setTimeout(() => { const i = document.getElementById('exclInput'); if (i) i.focus() }, 100) }
+            function saveExclusion(type) { const v = document.getElementById('exclInput'); if (!v || !v.value.trim()) return; state.exclusions.push({ type, value: v.value.trim() }); saveState(); closeModal(); renderPage(); showToast('Exclusion added', 'success') }
+            function removeExclusion(i) { showModal('Remove exclusion', `Are you sure you want to remove this exclusion?<br><strong>${state.exclusions[i].type}: ${state.exclusions[i].value}</strong>`, `<button class="btn" onclick="WS.closeModal()">Cancel</button><button class="btn" style="background:var(--red);color:#fff;border-color:var(--red)" onclick="WS.confirmRemoveExcl(${i})">Remove</button>`) }
+            function confirmRemoveExcl(i) { state.exclusions.splice(i, 1); saveState(); closeModal(); renderPage(); showToast('Exclusion removed', 'info') }
+            function setTheme(t) { state.theme = t; saveState(); applyTheme(); renderPage(); showToast(`Theme set to ${t}`, 'info') }
+            function addMemberModal() { showModal('Add a family member', '<label style="display:block;margin-bottom:4px;font-weight:600;color:var(--text-primary)">Name:</label><input class="input" id="memName" placeholder="Name" style="margin-bottom:8px"><label style="display:block;margin-bottom:4px;font-weight:600;color:var(--text-primary)">Email:</label><input class="input" id="memEmail" placeholder="email@example.com">', `<button class="btn" onclick="WS.closeModal()">Cancel</button><button class="btn btn-primary" onclick="WS.saveMember()">Add</button>`) }
+            function saveMember() { const n = document.getElementById('memName'), e = document.getElementById('memEmail'); if (!n || !n.value.trim() || !e || !e.value.trim()) return; state.familyMembers.push({ name: n.value.trim(), email: e.value.trim(), role: 'Member' }); saveState(); closeModal(); renderPage(); showToast('Family member added', 'success') }
+            function removeMember(i) { state.familyMembers.splice(i, 1); saveState(); renderPage(); showToast('Member removed', 'info') }
+            function filterHistory(v) { const list = document.getElementById('histList'); if (!list) return; const items = list.querySelectorAll('.history-item'); const details = list.querySelectorAll('.history-details'); items.forEach((item, i) => { const h = state.scanHistory[i]; if (v === 'all' || h.severity === v) { item.style.display = ''; details[i].style.display = '' } else { item.style.display = 'none'; details[i].style.display = 'none' } }) }
+
+            /* ===== THREAT SIMULATION (Demo Mode) ===== */
+            function quarantineThreat() { state.threatActive = false; state.scanHistory.unshift({ type: 'threat', title: 'Trojan:Win32/Wacatac.B!ml quarantined', severity: 'high', date: new Date().toISOString(), desc: 'Threat was quarantined successfully.', action: 'Quarantined' }); saveState(); renderPage(); showToast('Threat quarantined successfully', 'success') }
+            function removeThreat() { state.threatActive = false; state.scanHistory.unshift({ type: 'threat', title: 'Trojan:Win32/Wacatac.B!ml removed', severity: 'high', date: new Date().toISOString(), desc: 'Threat was removed successfully.', action: 'Removed' }); saveState(); renderPage(); showToast('Threat removed successfully', 'success') }
+            function allowThreat() { state.threatActive = false; saveState(); renderPage(); showToast('Threat allowed on device', 'warning') }
+
+
+
+            /* ===== PUBLIC API ===== */
+            window.WS = { goPage, goSub, goBack, toggleEl, startScan, cancelScan, simUpdate, showToast, showModal, closeModal, selectScan, runSelectedScan, addExclusion, saveExclusion, removeExclusion, confirmRemoveExcl, setTheme, addMemberModal, saveMember, removeMember, filterHistory, quarantineThreat, removeThreat, allowThreat, toggleUserDropdown, activateLogin, logoutUser, fwNet: 'private' };
+
+            /* ===== INIT ===== */
+            renderSidebar(); renderPage(); checkAuth();
+            window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => { if (state.theme === 'system') applyTheme() });
+        })();
+    </script>
+</body>
+
+</html>

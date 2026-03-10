@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Security Report</title>
+    <link rel="stylesheet" href="../css/unsecure.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextdns.svg" type="image/x-icon">
+
+</head>
+<body>
+    <div class="report-container">
+        <header class="report-header">
+            <div class="header-content">
+                <h1>Email Security Report</h1>
+                <p class="timestamp">Generated on: <span id="current-date"></span></p>
+            </div>
+            <div class="severity-indicator critical">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Critical Security Alert</span>
+            </div>
+        </header>
+
+        <main class="report-content">
+            <section class="summary-section">
+                <h2>Executive Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Security Status</h3>
+                        <p class="status critical">Compromised</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email Protection</h3>
+                        <p class="status critical">Breached</p>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-filter"></i>
+                        <h3>Spam Filtering</h3>
+                        <p class="status critical">Disabled</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="details-section">
+                <h2>Detailed Analysis</h2>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>Security Risks</h3>
+                        <ul class="security-list">
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Email Account Compromised</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Multiple Unauthorized Logins</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Sensitive Data Exposed</span>
+                            </li>
+                            <li class="critical">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Malware Distribution Detected</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Threat Analysis</h3>
+                        <div class="threat-list">
+                            <div class="threat-item">
+                                <span class="threat-type">Phishing Attempts</span>
+                                <span class="threat-severity critical">Critical</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Malicious Attachments</span>
+                                <span class="threat-severity critical">Critical</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Suspicious Links</span>
+                                <span class="threat-severity critical">Critical</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Data Exfiltration</span>
+                                <span class="threat-severity critical">In Progress</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Data Compromise</h3>
+                        <div class="compromise-list">
+                            <div class="compromise-item">
+                                <i class="fas fa-envelope-open"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Email Content</span>
+                                    <span class="compromise-status">Exposed</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item">
+                                <i class="fas fa-paperclip"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Attachments</span>
+                                    <span class="compromise-status">Compromised</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item">
+                                <i class="fas fa-address-book"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Contacts</span>
+                                    <span class="compromise-status">Breached</span>
+                                </div>
+                            </div>
+                            <div class="compromise-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <div class="compromise-details">
+                                    <span class="compromise-type">Calendar Events</span>
+                                    <span class="compromise-status">Accessed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3>Active Threats</h3>
+                        <div class="threat-list">
+                            <div class="threat-item">
+                                <span class="threat-type">Credential Harvesting</span>
+                                <span class="threat-severity critical">Active</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Email Forwarding</span>
+                                <span class="threat-severity critical">Enabled</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Auto-Reply Rules</span>
+                                <span class="threat-severity critical">Modified</span>
+                            </div>
+                            <div class="threat-item">
+                                <span class="threat-type">Account Settings</span>
+                                <span class="threat-severity critical">Altered</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recommendations-section">
+                <h2>Security Recommendations</h2>
+                <div class="recommendations-list">
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Immediately change all email account passwords</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Enable multi-factor authentication (MFA) immediately</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Review and remove suspicious email forwarding rules</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Scan all devices for malware and keyloggers</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Contact security team for immediate incident response</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="report-footer">
+            <p>This report is generated for security purposes only. Please take immediate action on the recommendations.</p>
+            <button onclick="window.location.href='../../index.html'" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Portal
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    </script>
+</body>
+</html> 
