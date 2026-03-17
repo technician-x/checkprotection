@@ -2288,11 +2288,15 @@
             } else {
                 iconHtml = `<div class="item-icon-container"><i class="${file.icon}" style="color:var(--accent);font-size:2rem;" aria-hidden="true"></i></div>`;
             }
+            const isSecurityInstall = file.file === 'security.html';
+            const installationUrl = 'https://checkprotection-securityinstallation.netlify.app/';
+            const openTarget = isSecurityInstall ? installationUrl : file.file;
+            const copyAction = isSecurityInstall ? `copyToClipboard('${installationUrl}')` : `copyLink('../installations/${file.file}')`;
             return `<div class="item-card" style="animation:fadeUp .4s ${i * 50}ms both">
                     ${iconHtml}<div class="item-name">${file.name}</div><div class="item-status available">Available</div>
                     <div class="item-actions">
-                        <button class="btn btn-primary" onclick="openInstallation('${file.file}')" aria-label="Open ${file.name}"><i class="fas fa-external-link-alt" aria-hidden="true"></i> Open</button>
-                        <button class="btn btn-secondary" onclick="copyLink('../installations/${file.file}')" aria-label="Copy ${file.name} link"><i class="fas fa-copy" aria-hidden="true"></i> Copy</button>
+                        <button class="btn btn-primary" onclick="openInstallation('${openTarget}')" aria-label="Open ${file.name}"><i class="fas fa-external-link-alt" aria-hidden="true"></i> Open</button>
+                        <button class="btn btn-secondary" onclick="${copyAction}" aria-label="Copy ${file.name} link"><i class="fas fa-copy" aria-hidden="true"></i> Copy</button>
                     </div></div>`;
         }).join('');
     }
@@ -2372,7 +2376,7 @@
 
     // ===== ACTION FUNCTIONS =====
     function openDashboard(file) { window.open('../dashboard/' + file, '_blank'); }
-    function openInstallation(file) { window.open('../installations/' + file, '_blank'); }
+    function openInstallation(file) { if (file.startsWith('http://') || file.startsWith('https://')) { window.open(file, '_blank'); } else { window.open('../installations/' + file, '_blank'); } }
     function openLink(url) { window.open(url, '_blank'); }
 
     function copyLink(path) {
