@@ -1,1407 +1,2495 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Norton 360 - Premium Protection Dashboard</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="icon" href="https://static.nortoncdn.com/static/ngpcdn/static/ngp2026.1.1.789/dist/norton/favicon.ico">
-<style>
-/* =========================
-   PIXEL-PERFECT COLOR TOKENS & VARIABLES
-========================= */
-:root {
-  --sidebar-bg: #1a1b1e;
-  --sidebar-text: #b8bac3;
-  --sidebar-active: #ffffff;
-  --sidebar-hover: rgba(255,255,255,0.08);
-  --sidebar-border: rgba(255,255,255,0.1);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Norton 360</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="../ico/Norton.ico" type="image/x-icon">
+  <style>
+    :root {
+      --sidebar-bg: #1a1b1e;
+      --sidebar-text: #b8bac3;
+      --sidebar-active: #ffffff;
+      --sidebar-hover: rgba(255, 255, 255, 0.08);
+      --sidebar-border: rgba(255, 255, 255, 0.1);
+      --app-bg: #f0f2f5;
+      --card-bg: #ffffff;
+      --divider: #e4e6eb;
+      --divider-light: #f0f2f5;
+      --primary-text: #050505;
+      --secondary-text: #65676b;
+      --tertiary-text: #8a8d91;
+      --norton-yellow: #ffd100;
+      --norton-yellow-hover: #ffdc33;
+      --norton-yellow-active: #e6bc00;
+      --norton-yellow-light: #fff8cc;
+      --norton-yellow-bg: rgba(255, 209, 0, 0.1);
+      --green: #00c853;
+      --green-dark: #00a844;
+      --green-light: #e8f5e9;
+      --green-bg: rgba(0, 200, 83, 0.1);
+      --orange: #ff6f00;
+      --orange-dark: #e65100;
+      --orange-light: #fff3e0;
+      --red: #d32f2f;
+      --red-light: #ffebee;
+      --blue: #1976d2;
+      --blue-light: #e3f2fd;
+      --purple: #7b1fa2;
+      --purple-light: #f3e5f5;
+      --cyan: #00bcd4;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-fast: all 0.15s ease;
+      --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-  --app-bg: #f0f2f5;
-  --card-bg: #ffffff;
-  --divider: #e4e6eb;
-  --divider-light: #f0f2f5;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  --primary-text: #050505;
-  --secondary-text: #65676b;
-  --tertiary-text: #8a8d91;
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
 
-  --norton-yellow: #ffd100;
-  --norton-yellow-hover: #ffdc33;
-  --norton-yellow-active: #e6bc00;
-  --norton-yellow-light: #fff8cc;
-  --norton-yellow-bg: rgba(255, 209, 0, 0.1);
+    body {
+      background: var(--app-bg);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      color: var(--primary-text);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  --green: #00c853;
-  --green-dark: #00a844;
-  --green-light: #e8f5e9;
-  --green-bg: rgba(0, 200, 83, 0.1);
+    /* ===== LOGIN PAGE ===== */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #1a1b1e 0%, #2d2e33 50%, #1a1b1e 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease;
+      overflow-y: auto;
+      padding: 16px;
+    }
 
-  --orange: #ff6f00;
-  --orange-dark: #e65100;
-  --orange-light: #fff3e0;
-  
-  --red: #d32f2f;
-  --red-light: #ffebee;
-  --blue: #1976d2;
-  --blue-light: #e3f2fd;
-  --purple: #7b1fa2;
-  --purple-light: #f3e5f5;
-  --cyan: #00bcd4;
-  
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-  --shadow-xl: 0 12px 32px rgba(0,0,0,0.15);
+    .login-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-fast: all 0.15s ease;
-  --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+    .login-container {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      animation: loginSlideIn 0.6s var(--bounce);
+    }
 
-/* =========================
-   BASE RESET & TYPOGRAPHY
-========================= */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
-body {
-  background: var(--app-bg);
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-  color: var(--primary-text);
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
+    @keyframes loginSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+      }
 
-/* =========================
-   APP LAYOUT
-========================= */
-.app { display: flex; height: 100vh; overflow: hidden; }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
 
-/* =========================
-   SIDEBAR
-========================= */
-.sidebar {
-  width: 250px;
-  background: var(--sidebar-bg);
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid var(--sidebar-border);
-  flex-shrink: 0;
-  z-index: 50;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.2);
-}
+    .login-header {
+      background: linear-gradient(135deg, #1a1b1e, #2d2e33);
+      padding: 24px 28px 20px;
+      text-align: center;
+    }
 
-.logo {
-  display: flex; align-items: center; gap: 12px;
-  padding: 24px; border-bottom: 1px solid var(--sidebar-border);
-}
+    .login-header img {
+      height: 28px;
+      margin-bottom: 10px;
+      filter: brightness(10);
+    }
 
-.logo img { height: 35px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+    .login-header h2 {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
 
-.nav {
-  display: flex; flex-direction: column;
-  padding: 16px 0; flex: 1; overflow-y: auto; gap: 4px;
-}
+    .login-header p {
+      color: var(--sidebar-text);
+      font-size: 12px;
+    }
 
-.nav-item {
-  padding: 12px 24px;
-  display: flex; align-items: center; gap: 14px;
-  color: var(--sidebar-text); font-size: 15px; font-weight: 500;
-  cursor: pointer; transition: var(--transition);
-  position: relative; margin: 0 12px; border-radius: 10px;
-  overflow: hidden;
-}
+    .login-body {
+      padding: 24px 28px 28px;
+    }
 
-.nav-item::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 0; background: var(--norton-yellow);
-  transition: var(--transition); opacity: 0;
-}
+    .form-group {
+      margin-bottom: 14px;
+    }
 
-.nav-item:hover {
-  background: var(--sidebar-hover); color: var(--sidebar-active);
-  transform: translateX(4px);
-}
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--secondary-text);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-.nav-item.active {
-  color: var(--sidebar-active); background: rgba(255, 209, 0, 0.1);
-  font-weight: 600; box-shadow: inset 0 0 0 1px rgba(255, 209, 0, 0.2);
-}
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--divider);
+      border-radius: 8px;
+      outline: none;
+      font-size: 13px;
+      font-family: inherit;
+      transition: var(--transition-fast);
+      background: var(--app-bg);
+    }
 
-.nav-item.active::before { width: 4px; opacity: 1; border-radius: 0 4px 4px 0; }
-.nav-item i { width: 22px; text-align: center; font-size: 18px; flex-shrink: 0; transition: var(--transition); }
-.nav-item.active i { color: var(--norton-yellow); transform: scale(1.1); }
-.nav-item span { flex: 1; }
+    .form-group input:focus {
+      border-color: var(--norton-yellow);
+      box-shadow: 0 0 0 3px rgba(255, 209, 0, 0.15);
+      background: #fff;
+    }
 
-.sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid var(--sidebar-border);
-    display: flex; align-items: center; gap: 12px;
-    color: var(--sidebar-text); cursor: pointer;
-    transition: var(--transition); margin: 0 12px 12px 12px; border-radius: 10px;
-}
-.sidebar-footer:hover { background: var(--sidebar-hover); color: var(--sidebar-active); }
-.sidebar-footer i { font-size: 20px; color: var(--norton-yellow); }
-.sidebar-footer .user-info { display: flex; flex-direction: column; font-size: 13px; }
-.sidebar-footer .user-name { font-weight: 600; color: #fff; }
+    .form-group input.error-input {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+    }
 
-/* =========================
-   MAIN AREA & TABS
-========================= */
-.main {
-  flex: 1; position: relative;
-  background: var(--app-bg); overflow-x: hidden;
-}
+    .form-group input::placeholder {
+      color: var(--tertiary-text);
+      font-size: 12px;
+    }
 
-.tab-content {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  padding: 40px; overflow-y: auto; overflow-x: hidden;
-  opacity: 0; visibility: hidden; transform: translateY(15px) scale(0.98);
-  transition: all 0.4s var(--bounce); z-index: 1;
-}
+    .login-key-input {
+      font-family: 'Courier New', monospace !important;
+      letter-spacing: 1px;
+      font-size: 12px !important;
+    }
 
-.tab-content.active {
-  opacity: 1; visibility: visible; transform: translateY(0) scale(1);
-  z-index: 2;
-}
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--norton-yellow);
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--primary-text);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(255, 209, 0, 0.3);
+      margin-top: 20px;
+    }
 
-.view-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;
-    padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-.view-title { font-size: 28px; font-weight: 700; color: var(--primary-text); letter-spacing: -0.5px; }
+    .login-btn:hover {
+      background: var(--norton-yellow-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 209, 0, 0.4);
+    }
 
-/* =========================
-   GRID LAYOUTS
-========================= */
-.grid-2 { display: grid; grid-template-columns: 1fr 400px; gap: 32px; max-width: 1600px; margin: 0 auto; }
-.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .login-btn:active {
+      transform: translateY(0);
+    }
 
-/* =========================
-   CARDS
-========================= */
-.card {
-  background: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow);
-  padding: 32px; transition: var(--transition); border: 1px solid var(--divider);
-  position: relative; overflow: hidden;
-}
+    .login-error {
+      color: var(--red);
+      font-size: 12px;
+      text-align: center;
+      margin-top: 12px;
+      display: none;
+      animation: shake 0.4s ease;
+    }
 
-.card-top-gradient {
-  position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, var(--norton-yellow), var(--green));
-  opacity: 0; transition: var(--transition);
-}
-.card:hover .card-top-gradient { opacity: 1; }
-.card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: rgba(0,0,0,0.1); }
+    @keyframes shake {
 
-/* Feature Cards */
-.feature-card {
-  background: var(--card-bg); border-radius: 14px; box-shadow: var(--shadow-sm);
-  padding: 24px; transition: var(--transition); cursor: pointer;
-  border: 1px solid var(--divider); position: relative; overflow: hidden;
-  display: flex; flex-direction: column; height: 100%;
-}
-.feature-card::after {
-  content: ''; position: absolute; inset: 0; 
-  border-radius: 14px; box-shadow: inset 0 0 0 2px var(--norton-yellow);
-  opacity: 0; transition: var(--transition); pointer-events: none;
-}
-.feature-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
-.feature-card:hover::after { opacity: 1; }
+      0%,
+      100% {
+        transform: translateX(0);
+      }
 
-.feature-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
-.feature-icon {
-  width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  font-size: 20px; color: white; flex-shrink: 0; box-shadow: var(--shadow-sm);
-}
-.feature-title { font-size: 16px; font-weight: 600; color: var(--primary-text); margin-bottom: 4px; }
-.feature-desc { font-size: 13px; color: var(--secondary-text); line-height: 1.5; flex-grow: 1; }
-.feature-status { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+      25% {
+        transform: translateX(-6px);
+      }
 
-/* Status Badges */
-.badge {
-  padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 12px;
-  text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 6px;
-  transition: var(--transition-fast); user-select: none;
-}
-.badge i { font-size: 10px; }
-.badge.on { background: var(--green-light); color: var(--green-dark); }
-.badge.off { background: var(--red-light); color: var(--red); }
-.badge.warn { background: var(--orange-light); color: var(--orange-dark); }
+      75% {
+        transform: translateX(6px);
+      }
+    }
 
-/* Custom Toggle Switch */
-.toggle-switch {
-  position: relative; width: 44px; height: 24px; appearance: none;
-  background: var(--divider); border-radius: 24px; outline: none;
-  cursor: pointer; transition: var(--transition); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-.toggle-switch::after {
-  content: ''; position: absolute; top: 2px; left: 2px;
-  width: 20px; height: 20px; border-radius: 50%; background: white; box-shadow: var(--shadow-sm);
-  transition: all 0.3s var(--bounce); background-color: white;
-}
-.toggle-switch:checked { background: var(--green); }
-.toggle-switch:checked::after { transform: translateX(20px); }
+    .login-footer {
+      text-align: center;
+      padding: 0 28px 20px;
+      font-size: 11px;
+      color: var(--tertiary-text);
+    }
 
-/* =========================
-   HOME TAB SPECIFICS
-========================= */
-.status-hero { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; }
-.status-shield {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--green), var(--green-dark));
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3); position: relative;
-}
-.status-shield::before {
-  content: ''; position: absolute; inset: -8px; border-radius: 50%;
-  border: 2px solid var(--green); opacity: 0; animation: ripple 2s infinite;
-}
-.status-shield svg { width: 40px; height: 40px; fill: #fff; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-@keyframes ripple {
-  0% { transform: scale(0.9); opacity: 0.4; border-width: 4px; }
-  100% { transform: scale(1.3); opacity: 0; border-width: 0px; }
-}
+    .login-secure-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 10px;
+    }
 
-.status-hero h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 6px; color: var(--green-dark); }
-.status-sub { color: var(--secondary-text); font-size: 15px; display: flex; align-items: center; gap: 8px; }
-.status-sub i { color: var(--green); }
+    /* ===== APP LAYOUT ===== */
+    .app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-/* Buttons */
-.btn {
-  background: var(--norton-yellow); border: none; border-radius: 28px;
-  padding: 14px 32px; font-size: 15px; font-weight: 700; cursor: pointer;
-  transition: var(--transition); display: inline-flex; align-items: center; gap: 10px; justify-content: center;
-  color: var(--primary-text); box-shadow: 0 4px 12px rgba(255, 209, 0, 0.3);
-  position: relative; overflow: hidden;
-}
-.btn::before {
-  content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
-  border-radius: 50%; background: rgba(255, 255, 255, 0.4);
-  transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s;
-}
-.btn:hover::before { width: 300px; height: 300px; }
-.btn:hover { background: var(--norton-yellow-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 209, 0, 0.4); }
-.btn:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(255, 209, 0, 0.3); }
-.btn i, .btn span { position: relative; z-index: 1; }
-.btn-outline {
-  background: transparent; border: 2px solid var(--divider); box-shadow: none; color: var(--primary-text);
-}
-.btn-outline:hover { background: var(--app-bg); border-color: var(--norton-yellow); box-shadow: var(--shadow); }
-.btn-block { width: 100%; }
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--sidebar-border);
+      flex-shrink: 0;
+      z-index: 50;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+    }
 
-/* Score Meter */
-.protection-score { margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--divider); }
-.score-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
-.score-val-wrap { display: flex; align-items: baseline; gap: 4px; }
-.score-val {
-  font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -2px;
-  background: linear-gradient(135deg, var(--green), var(--green-dark));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.score-label { font-size: 16px; font-weight: 600; color: var(--secondary-text); margin-bottom: 4px; }
-.score-bar { height: 12px; background: var(--divider-light); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
-.score-fill {
-  height: 100%; background: linear-gradient(90deg, var(--green), var(--green-dark));
-  border-radius: 8px; width: 0%; transition: width 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 200, 83, 0.4); position: relative;
-}
-.score-fill::after {
-  content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: shimmer 2s infinite;
-}
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 24px;
+      border-bottom: 1px solid var(--sidebar-border);
+    }
 
-/* Activity List */
-.activity-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--divider); transition: var(--transition); }
-.activity-item:last-child { border-bottom: none; padding-bottom: 0; }
-.activity-item:hover { transform: translateX(4px); }
-.activity-icon {
-  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
-}
-.activity-content { flex: 1; }
-.activity-title { font-weight: 600; margin-bottom: 4px; }
-.activity-desc { font-size: 13px; color: var(--secondary-text); }
-.activity-time { font-size: 12px; color: var(--tertiary-text); margin-top: 4px; }
+    .logo img {
+      height: 35px;
+      width: auto;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
 
-/* =========================
-   PERFORMANCE & OTHER TABS
-========================= */
-.stat-box {
-    background: var(--app-bg); border-radius: 12px; padding: 20px;
-    display: flex; align-items: center; justify-content: space-between;
-}
-.stat-circle {
-    width: 60px; height: 60px; border-radius: 50%; border: 4px solid var(--blue);
-    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;
-    color: var(--blue);
-}
-.stat-info h3 { font-size: 16px; margin-bottom: 4px; }
-.stat-info p { font-size: 13px; color: var(--secondary-text); }
+    .nav {
+      display: flex;
+      flex-direction: column;
+      padding: 16px 0;
+      flex: 1;
+      overflow-y: auto;
+      gap: 4px;
+    }
 
-.list-row {
-    display: flex; justify-content: space-between; align-items: center; padding: 16px 0;
-    border-bottom: 1px solid var(--divider);
-}
-.list-row:last-child { border-bottom: none; }
-.row-left { display: flex; align-items: center; gap: 16px; }
-.row-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--norton-yellow-light); color: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.row-title { font-weight: 600; font-size: 15px; }
-.row-desc { font-size: 13px; color: var(--secondary-text); }
+    .nav-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--sidebar-text);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      margin: 0 12px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: var(--norton-yellow);
+      transition: var(--transition);
+      opacity: 0;
+    }
 
-/* =========================
-   SMART SCAN MODAL
-========================= */
-.modal-overlay {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-  z-index: 100; display: flex; align-items: center; justify-content: center;
-  opacity: 0; visibility: hidden; transition: var(--transition);
-}
-.modal-overlay.active { opacity: 1; visibility: visible; }
-.scan-modal {
-  background: var(--card-bg); width: 100%; max-width: 600px;
-  border-radius: 24px; box-shadow: var(--shadow-xl); padding: 40px;
-  transform: scale(0.9) translateY(20px); transition: all 0.4s var(--bounce);
-  position: relative; overflow: hidden;
-}
-.modal-overlay.active .scan-modal { transform: scale(1) translateY(0); }
+    .nav-item:hover {
+      background: var(--sidebar-hover);
+      color: var(--sidebar-active);
+      transform: translateX(4px);
+    }
 
-.scan-close {
-  position: absolute; top: 20px; right: 20px; width: 36px; height: 36px;
-  border-radius: 50%; background: var(--app-bg); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; font-size: 16px;
-  color: var(--secondary-text); transition: var(--transition);
-}
-.scan-close:hover { background: var(--red-light); color: var(--red); transform: rotate(90deg); }
+    .nav-item.active {
+      color: var(--sidebar-active);
+      background: rgba(255, 209, 0, 0.1);
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(255, 209, 0, 0.2);
+    }
 
-.scan-header { text-align: center; margin-bottom: 32px; }
-.scan-header h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-.scan-header p { color: var(--secondary-text); }
+    .nav-item.active::before {
+      width: 4px;
+      opacity: 1;
+      border-radius: 0 4px 4px 0;
+    }
 
-.scan-animation-container {
-  display: flex; justify-content: center; align-items: center; margin-bottom: 32px; position: relative;
-}
-.scan-circle {
-  width: 140px; height: 140px; border-radius: 50%;
-  border: 4px solid var(--divider); position: relative;
-  display: flex; align-items: center; justify-content: center;
-}
-.scan-progress-ring {
-  position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%;
-  border: 4px solid transparent; border-top-color: var(--norton-yellow); border-right-color: var(--orange);
-  animation: spin 1.5s linear infinite; opacity: 0; transition: opacity 0.3s;
-}
-.scanning .scan-progress-ring { opacity: 1; }
-.scan-center-icon { font-size: 48px; color: var(--norton-yellow); transition: var(--transition); }
-.scan-success .scan-center-icon { color: var(--green); transform: scale(1.1); }
-@keyframes spin { 100% { transform: rotate(360deg); } }
+    .nav-item i {
+      width: 22px;
+      text-align: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
 
-.scan-steps { display: flex; flex-direction: column; gap: 16px; }
-.scan-step { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--app-bg); border-radius: 12px; transition: var(--transition); }
-.scan-step.active { background: var(--norton-yellow-light); border-left: 4px solid var(--norton-yellow); transform: translateX(8px); }
-.scan-step.done { background: var(--green-light); border-left: 4px solid var(--green); }
-.step-left { display: flex; align-items: center; gap: 12px; }
-.step-icon { width: 32px; height: 32px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: var(--shadow-sm); }
-.scan-step.done .step-icon { color: var(--green); }
-.step-info { font-weight: 600; }
-.step-status { font-size: 13px; color: var(--secondary-text); font-weight: 500;}
-.scan-step.done .step-status { color: var(--green); }
-.scan-step.active .step-status { color: var(--orange); animation: pulse 1s infinite alternate; }
+    .nav-item.active i {
+      color: var(--norton-yellow);
+      transform: scale(1.1);
+    }
 
-@keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
+    .nav-item span {
+      flex: 1;
+    }
 
-/* Generic Animations */
-@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    /* ===== SIDEBAR FOOTER WITH USER MENU ===== */
+    .sidebar-footer-wrap {
+      border-top: 1px solid var(--sidebar-border);
+      margin: 0 12px 12px 12px;
+      padding-top: 8px;
+      position: relative;
+    }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .grid-2 { grid-template-columns: 1fr; }
-}
-@media (max-width: 768px) {
-  .sidebar { width: 80px; }
-  .nav-item span, .logo span, .user-info { display: none; }
-  .tab-content { padding: 20px; }
-  .card { padding: 20px; }
-}
-</style>
+    .sidebar-footer {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--sidebar-text);
+      cursor: pointer;
+      transition: var(--transition);
+      border-radius: 10px;
+    }
+
+    .sidebar-footer:hover {
+      background: var(--sidebar-hover);
+      color: var(--sidebar-active);
+    }
+
+    .sidebar-footer .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--norton-yellow), var(--norton-yellow-active));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--sidebar-bg);
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .sidebar-footer .user-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .sidebar-footer .user-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-footer .user-email {
+      font-size: 10px;
+      opacity: 0.6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--sidebar-text);
+    }
+
+    .sidebar-footer .footer-chevron {
+      font-size: 12px;
+      color: var(--sidebar-text);
+      transition: var(--transition);
+    }
+
+    .sidebar-footer-wrap.menu-open .footer-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* User Popup Menu */
+    .user-popup {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: #2d2e33;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--sidebar-border);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px) scale(0.96);
+      transition: all 0.25s var(--bounce);
+      z-index: 60;
+      overflow: hidden;
+    }
+
+    .sidebar-footer-wrap.menu-open .user-popup {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .user-popup-header {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--sidebar-border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .user-popup-header .popup-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--norton-yellow), var(--norton-yellow-active));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--sidebar-bg);
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .user-popup-header .popup-user-info {
+      min-width: 0;
+    }
+
+    .user-popup-header .popup-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-popup-header .popup-email {
+      font-size: 11px;
+      color: var(--sidebar-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-popup-header .popup-plan {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--norton-yellow-bg);
+      color: var(--norton-yellow);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .user-popup-menu {
+      padding: 8px;
+    }
+
+    .user-popup-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--sidebar-text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .user-popup-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .user-popup-item i {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .user-popup-divider {
+      height: 1px;
+      background: var(--sidebar-border);
+      margin: 4px 12px;
+    }
+
+    .user-popup-item.signout {
+      color: var(--red);
+    }
+
+    .user-popup-item.signout:hover {
+      background: rgba(211, 47, 47, 0.15);
+      color: #ff5252;
+    }
+
+    /* Sign Out Confirm Modal */
+    .signout-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      padding: 16px;
+    }
+
+    .signout-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .signout-modal {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xl);
+      padding: 32px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      transform: scale(0.9);
+      transition: all 0.3s var(--bounce);
+    }
+
+    .signout-overlay.active .signout-modal {
+      transform: scale(1);
+    }
+
+    .signout-modal .signout-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--red-light);
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+    }
+
+    .signout-modal h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .signout-modal p {
+      color: var(--secondary-text);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .signout-btns {
+      display: flex;
+      gap: 12px;
+    }
+
+    .signout-btns button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .signout-cancel {
+      background: var(--app-bg);
+      color: var(--primary-text);
+    }
+
+    .signout-cancel:hover {
+      background: var(--divider);
+    }
+
+    .signout-confirm {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .signout-confirm:hover {
+      background: #b71c1c;
+      transform: translateY(-1px);
+    }
+
+    .main {
+      flex: 1;
+      position: relative;
+      background: var(--app-bg);
+      overflow-x: hidden;
+    }
+
+    .tab-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 40px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(15px) scale(0.98);
+      transition: all 0.4s var(--bounce);
+      z-index: 1;
+    }
+
+    .tab-content.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      z-index: 2;
+    }
+
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .view-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-text);
+      letter-spacing: -0.5px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 32px;
+      transition: var(--transition);
+      border: 1px solid var(--divider);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-top-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--norton-yellow), var(--green));
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .card:hover .card-top-gradient {
+      opacity: 1;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-3px);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      transition: var(--transition);
+      cursor: pointer;
+      border: 1px solid var(--divider);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 2px var(--norton-yellow);
+      opacity: 0;
+      transition: var(--transition);
+      pointer-events: none;
+    }
+
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .feature-card:hover::after {
+      opacity: 1;
+    }
+
+    .feature-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-text);
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--secondary-text);
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .feature-status {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-fast);
+      user-select: none;
+    }
+
+    .badge i {
+      font-size: 10px;
+    }
+
+    .badge.on {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    .badge.off {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .badge.warn {
+      background: var(--orange-light);
+      color: var(--orange-dark);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      appearance: none;
+      background: var(--divider);
+      border-radius: 24px;
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s var(--bounce);
+    }
+
+    .toggle-switch:checked {
+      background: var(--green);
+    }
+
+    .toggle-switch:checked::after {
+      transform: translateX(20px);
+    }
+
+    .status-hero {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .status-shield {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .status-shield::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid var(--green);
+      opacity: 0;
+      animation: ripple 2s infinite;
+    }
+
+    .status-shield svg {
+      width: 40px;
+      height: 40px;
+      fill: #fff;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.4;
+        border-width: 4px;
+      }
+
+      100% {
+        transform: scale(1.3);
+        opacity: 0;
+        border-width: 0px;
+      }
+    }
+
+    .status-hero h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+      color: var(--green-dark);
+    }
+
+    .status-sub {
+      color: var(--secondary-text);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-sub i {
+      color: var(--green);
+    }
+
+    .btn {
+      background: var(--norton-yellow);
+      border: none;
+      border-radius: 28px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      color: var(--primary-text);
+      box-shadow: 0 4px 12px rgba(255, 209, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn:hover {
+      background: var(--norton-yellow-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 209, 0, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(255, 209, 0, 0.3);
+    }
+
+    .btn i,
+    .btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--divider);
+      box-shadow: none;
+      color: var(--primary-text);
+    }
+
+    .btn-outline:hover {
+      background: var(--app-bg);
+      border-color: var(--norton-yellow);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .protection-score {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--divider);
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .score-val-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .score-val {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .score-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--secondary-text);
+      margin-bottom: 4px;
+    }
+
+    .score-bar {
+      height: 12px;
+      background: var(--divider-light);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--green-dark));
+      border-radius: 8px;
+      width: 0%;
+      transition: width 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 200, 83, 0.4);
+      position: relative;
+    }
+
+    .score-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--divider);
+      transition: var(--transition);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .activity-item:hover {
+      transform: translateX(4px);
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .activity-desc {
+      font-size: 13px;
+      color: var(--secondary-text);
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: var(--tertiary-text);
+      margin-top: 4px;
+    }
+
+    .stat-box {
+      background: var(--app-bg);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 4px solid var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--blue);
+    }
+
+    .stat-info h3 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .stat-info p {
+      font-size: 13px;
+      color: var(--secondary-text);
+    }
+
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .list-row:last-child {
+      border-bottom: none;
+    }
+
+    .row-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .row-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--norton-yellow-light);
+      color: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .row-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .row-desc {
+      font-size: 13px;
+      color: var(--secondary-text);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .scan-modal {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 600px;
+      border-radius: 24px;
+      box-shadow: var(--shadow-xl);
+      padding: 40px;
+      transform: scale(0.9) translateY(20px);
+      transition: all 0.4s var(--bounce);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .scan-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .scan-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--app-bg);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--secondary-text);
+      transition: var(--transition);
+    }
+
+    .scan-close:hover {
+      background: var(--red-light);
+      color: var(--red);
+      transform: rotate(90deg);
+    }
+
+    .scan-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .scan-header h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .scan-header p {
+      color: var(--secondary-text);
+    }
+
+    .scan-animation-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .scan-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 4px solid var(--divider);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scan-progress-ring {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: var(--norton-yellow);
+      border-right-color: var(--orange);
+      animation: spin 1.5s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .scanning .scan-progress-ring {
+      opacity: 1;
+    }
+
+    .scan-center-icon {
+      font-size: 48px;
+      color: var(--norton-yellow);
+      transition: var(--transition);
+    }
+
+    .scan-success .scan-center-icon {
+      color: var(--green);
+      transform: scale(1.1);
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .scan-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .scan-step {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: var(--app-bg);
+      border-radius: 12px;
+      transition: var(--transition);
+    }
+
+    .scan-step.active {
+      background: var(--norton-yellow-light);
+      border-left: 4px solid var(--norton-yellow);
+      transform: translateX(8px);
+    }
+
+    .scan-step.done {
+      background: var(--green-light);
+      border-left: 4px solid var(--green);
+    }
+
+    .step-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .scan-step.done .step-icon {
+      color: var(--green);
+    }
+
+    .step-info {
+      font-weight: 600;
+    }
+
+    .step-status {
+      font-size: 13px;
+      color: var(--secondary-text);
+      font-weight: 500;
+    }
+
+    .scan-step.done .step-status {
+      color: var(--green);
+    }
+
+    .scan-step.active .step-status {
+      color: var(--orange);
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        opacity: 0.6;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .status-shield.at-risk {
+      background: linear-gradient(135deg, var(--red), #b71c1c) !important;
+      box-shadow: 0 8px 24px rgba(211, 47, 47, 0.3) !important;
+    }
+
+    .status-shield.at-risk::before {
+      border-color: var(--red) !important;
+    }
+
+    @media (max-width: 1200px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+      }
+
+      .nav-item span,
+      .logo span,
+      .user-info,
+      .footer-chevron {
+        display: none;
+      }
+
+      .user-popup {
+        left: -40px;
+        right: auto;
+        min-width: 240px;
+      }
+
+      .tab-content {
+        padding: 20px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .login-container {
+        max-width: 340px;
+      }
+
+      .login-header {
+        padding: 20px 20px 16px;
+      }
+
+      .login-body {
+        padding: 20px;
+      }
+    }
+
+    @media (max-height: 500px) {
+      .login-container {
+        max-width: 360px;
+      }
+
+      .login-header {
+        padding: 16px 24px 12px;
+      }
+
+      .login-header img {
+        height: 22px;
+        margin-bottom: 6px;
+      }
+
+      .login-header h2 {
+        font-size: 15px;
+      }
+
+      .login-body {
+        padding: 16px 24px 20px;
+      }
+
+      .form-group {
+        margin-bottom: 10px;
+      }
+
+      .form-group input {
+        padding: 8px 10px;
+      }
+
+      .login-btn {
+        padding: 10px;
+        margin-top: 14px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="app">
-
-  <!-- ================= SIDEBAR ================= -->
-  <aside class="sidebar">
-    <div class="logo">
-      <img src="https://static.nortoncdn.com/static/ngpcdn/static/ngp2026.1.1.789/dist/react/assets/ReactContent/assets/norton/logo.svg" alt="Norton">
+  <!-- ===== LOGIN OVERLAY ===== -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-container">
+      <div class="login-header">
+        <img
+          src="https://static.nortoncdn.com/static/ngpcdn/static/ngp2026.1.1.789/dist/react/assets/ReactContent/assets/norton/logo.svg"
+          alt="Norton">
+        <h2>Sign In & Activate</h2>
+        <p>Enter your details to access Norton 360 Dashboard</p>
+      </div>
+      <div class="login-body">
+        <form id="login-form" autocomplete="off">
+          <div class="form-group">
+            <label for="login-name">Full Name</label>
+            <input type="text" id="login-name" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" required placeholder="e.g. john@example.com">
+          </div>
+          <div class="form-group">
+            <label for="login-key">Product Activation Key</label>
+            <input type="text" id="login-key" class="login-key-input" required
+              placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
+          </div>
+          <button type="submit" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Sign In & Activate
+          </button>
+          <p class="login-error" id="login-error">
+            <i class="fas fa-exclamation-circle"></i> Invalid activation key. Please check and try again.
+          </p>
+        </form>
+      </div>
+      <div class="login-footer">
+        <div class="login-secure-badge"><i class="fas fa-lock"></i> Secured with 256-bit encryption</div>
+      </div>
     </div>
+  </div>
 
-    <div class="nav" id="sidebar-nav">
-      <div class="nav-item active" data-tab="home"><i class="fas fa-home"></i><span>Dashboard</span></div>
-      <div class="nav-item" data-tab="security"><i class="fas fa-shield-alt"></i><span>Security</span></div>
-      <div class="nav-item" data-tab="performance"><i class="fas fa-tachometer-alt"></i><span>Performance</span></div>
-      <div class="nav-item" data-tab="privacy"><i class="fas fa-user-ninja"></i><span>Privacy</span></div>
-      <div class="nav-item" data-tab="identity"><i class="fas fa-id-card"></i><span>Identity</span></div>
-      <div class="nav-item" data-tab="backup"><i class="fas fa-cloud-upload-alt"></i><span>Cloud Backup</span></div>
-      <div class="nav-item" data-tab="store"><i class="fas fa-shopping-cart"></i><span>Add-ons Store</span></div>
-      <div class="nav-item" data-tab="settings"><i class="fas fa-cog"></i><span>Settings</span></div>
+  <!-- ===== SIGN OUT CONFIRM MODAL ===== -->
+  <div class="signout-overlay" id="signout-overlay">
+    <div class="signout-modal">
+      <div class="signout-icon"><i class="fas fa-sign-out-alt"></i></div>
+      <h3>Sign Out?</h3>
+      <p>Are you sure you want to sign out of your Norton account? You'll need to re-enter your activation key to sign
+        back in.</p>
+      <div class="signout-btns">
+        <button class="signout-cancel" id="signout-cancel">Cancel</button>
+        <button class="signout-confirm" id="signout-confirm"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+      </div>
     </div>
-    
-    <div class="sidebar-footer">
-        <i class="fas fa-user-circle"></i>
-        <div class="user-info">
-            <span class="user-name">Premium User</span>
-            <span>My Account</span>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">
+        <img
+          src="https://static.nortoncdn.com/static/ngpcdn/static/ngp2026.1.1.789/dist/react/assets/ReactContent/assets/norton/logo.svg"
+          alt="Norton">
+      </div>
+      <div class="nav" id="sidebar-nav">
+        <div class="nav-item active" data-tab="home"><i class="fas fa-home"></i><span>Dashboard</span></div>
+        <div class="nav-item" data-tab="security"><i class="fas fa-shield-alt"></i><span>Security</span></div>
+        <div class="nav-item" data-tab="performance"><i class="fas fa-tachometer-alt"></i><span>Performance</span></div>
+        <div class="nav-item" data-tab="privacy"><i class="fas fa-user-ninja"></i><span>Privacy</span></div>
+        <div class="nav-item" data-tab="identity"><i class="fas fa-id-card"></i><span>Identity</span></div>
+        <div class="nav-item" data-tab="backup"><i class="fas fa-cloud-upload-alt"></i><span>Cloud Backup</span></div>
+        <div class="nav-item" data-tab="store"><i class="fas fa-shopping-cart"></i><span>Add-ons Store</span></div>
+        <div class="nav-item" data-tab="settings"><i class="fas fa-cog"></i><span>Settings</span></div>
+      </div>
+
+      <!-- Sidebar Footer with User Menu -->
+      <div class="sidebar-footer-wrap" id="sidebar-footer-wrap">
+        <div class="user-popup" id="user-popup">
+          <div class="user-popup-header">
+            <div class="popup-avatar" id="popup-avatar">P</div>
+            <div class="popup-user-info">
+              <div class="popup-name display-user-name">Premium User</div>
+              <div class="popup-email display-user-email">user@email.com</div>
+              <span class="popup-plan">Norton 360 Premium</span>
+            </div>
+          </div>
+          <div class="user-popup-menu">
+            <div class="user-popup-item" onclick="switchTab('settings')"><i class="fas fa-cog"></i> Account Settings
+            </div>
+            <div class="user-popup-item"><i class="fas fa-headset"></i> Support</div>
+            <div class="user-popup-divider"></div>
+            <div class="user-popup-item signout" id="btn-signout"><i class="fas fa-sign-out-alt"></i> Sign Out</div>
+          </div>
         </div>
-    </div>
-  </aside>
+        <div class="sidebar-footer" id="sidebar-footer">
+          <div class="user-avatar" id="user-avatar">P</div>
+          <div class="user-info">
+            <span class="user-name display-user-name">Premium User</span>
+            <span class="user-email display-user-email">user@email.com</span>
+          </div>
+          <i class="fas fa-chevron-up footer-chevron"></i>
+        </div>
+      </div>
+    </aside>
 
-  <!-- ================= MAIN CONTENT ================= -->
-  <main class="main">
-
-    <!-- TAB 1: HOME (DASHBOARD) -->
-    <div id="tab-home" class="tab-content active">
-      <div class="grid-2">
-        <!-- left col -->
-        <div>
-          <section class="card">
-            <div class="card-top-gradient"></div>
-            <div class="status-hero">
-              <div class="status-shield">
-                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-              </div>
-              <div>
-                <h1>You are protected, Premium User.</h1>
-                <div class="status-sub">
-                  <i class="fas fa-check-circle"></i>
-                  Last scan: Today at 2:30 PM • 3 threats blocked this week
+    <main class="main">
+      <!-- TAB: HOME -->
+      <div id="tab-home" class="tab-content active">
+        <div class="grid-2">
+          <div>
+            <section class="card">
+              <div class="card-top-gradient"></div>
+              <div class="status-hero">
+                <div class="status-shield">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 class="hero-greeting">You are protected, <span class="display-user-name">Premium User</span>.</h1>
+                  <div class="status-sub"><i class="fas fa-check-circle"></i> Last scan: Today at 2:30 PM • 3 threats
+                    blocked this week</div>
                 </div>
               </div>
-            </div>
-
-            <button class="btn" id="btn-smart-scan" style="font-size: 16px; padding: 16px 40px; margin-bottom: 24px;">
-              <i class="fas fa-fingerprint"></i>
-              <span>Run Smart Scan</span>
-            </button>
-
-            <!-- Protection Score -->
-            <div class="protection-score">
-              <div class="score-header">
-                <div>
-                  <div class="score-label">Global Protection Score</div>
-                  <div class="score-val-wrap">
-                      <div class="score-val" id="scoreValue">0</div><span style="font-size: 24px; font-weight:700; color:var(--green)">/100</span>
+              <button class="btn" id="btn-smart-scan" style="font-size:16px;padding:16px 40px;margin-bottom:24px;"><i
+                  class="fas fa-fingerprint"></i><span>Run Smart Scan</span></button>
+              <div class="protection-score">
+                <div class="score-header">
+                  <div>
+                    <div class="score-label">Global Protection Score</div>
+                    <div class="score-val-wrap">
+                      <div class="score-val" id="scoreValue">0</div><span
+                        style="font-size:24px;font-weight:700;color:var(--green)">/100</span>
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div class="badge on"><i class="fas fa-star"></i> Excellent</div>
+                    <div style="font-size:13px;color:var(--secondary-text);margin-top:8px;">All critical systems secure
+                    </div>
                   </div>
                 </div>
-                <div style="text-align: right;">
-                  <div class="badge on"><i class="fas fa-star"></i> Excellent</div>
-                  <div style="font-size: 13px; color: var(--secondary-text); margin-top:8px;">All critical systems secure</div>
+                <div class="score-bar">
+                  <div class="score-fill" id="scoreMeter"></div>
                 </div>
               </div>
-              <div class="score-bar">
-                <div class="score-fill" id="scoreMeter"></div>
-              </div>
+            </section>
+            <div style="margin-top:40px;margin-bottom:24px;">
+              <h2 style="font-size:22px;font-weight:700;">Security Layers</h2>
             </div>
-          </section>
-
-          <!-- Feature Quick Toggles -->
-          <div class="view-header" style="margin-top: 40px; border:none; padding-bottom: 0; margin-bottom: 24px;">
-              <h2 class="view-title" style="font-size: 22px;">Security Layers</h2>
-          </div>
-          
-          <div class="grid-cards">
-            <!-- Card 1 -->
-            <div class="feature-card" onclick="switchTab('security')">
-              <div class="feature-header">
-                <div class="feature-icon" style="background: linear-gradient(135deg, var(--green), var(--green-dark));">
-                  <i class="fas fa-shield-virus"></i>
+            <div class="grid-cards">
+              <div class="feature-card" onclick="switchTab('security')">
+                <div class="feature-header">
+                  <div class="feature-icon" style="background:linear-gradient(135deg,var(--green),var(--green-dark));">
+                    <i class="fas fa-shield-virus"></i>
+                  </div>
+                  <div>
+                    <div class="feature-title">Real-Time Threat Protection</div>
+                    <div class="feature-desc">Actively blocking malware & ransomware</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="feature-title">Real-Time Threat Protection</div>
-                  <div class="feature-desc">Actively blocking malware & ransomware</div>
-                </div>
+                <div class="feature-status"><span class="badge on">Active</span><i class="fas fa-chevron-right"
+                    style="color:var(--tertiary-text)"></i></div>
               </div>
-              <div class="feature-status">
-                <span class="badge on">Active</span>
-                <i class="fas fa-chevron-right" style="color: var(--tertiary-text)"></i>
-              </div>
-            </div>
-            
-            <!-- Card 2 -->
-            <div class="feature-card" onclick="switchTab('privacy')">
-              <div class="feature-header">
-                <div class="feature-icon" style="background: linear-gradient(135deg, var(--blue), #1565c0);">
-                  <i class="fas fa-network-wired"></i>
+              <div class="feature-card" onclick="switchTab('privacy')">
+                <div class="feature-header">
+                  <div class="feature-icon" style="background:linear-gradient(135deg,var(--blue),#1565c0);"><i
+                      class="fas fa-network-wired"></i></div>
+                  <div>
+                    <div class="feature-title">Secure VPN</div>
+                    <div class="feature-desc">Bank-grade encryption for your connection</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="feature-title">Secure VPN</div>
-                  <div class="feature-desc">Bank-grade encryption for your connection</div>
-                </div>
+                <div class="feature-status"><span class="badge on">Connected - US Data Center</span><i
+                    class="fas fa-chevron-right" style="color:var(--tertiary-text)"></i></div>
               </div>
-              <div class="feature-status">
-                <span class="badge on">Connected - US Data Center</span>
-                <i class="fas fa-chevron-right" style="color: var(--tertiary-text)"></i>
-              </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="feature-card" onclick="switchTab('identity')">
-              <div class="feature-header">
-                <div class="feature-icon" style="background: linear-gradient(135deg, var(--purple), #4a148c);">
-                  <i class="fas fa-eye-slash"></i>
+              <div class="feature-card" onclick="switchTab('identity')">
+                <div class="feature-header">
+                  <div class="feature-icon" style="background:linear-gradient(135deg,var(--purple),#4a148c);"><i
+                      class="fas fa-eye-slash"></i></div>
+                  <div>
+                    <div class="feature-title">Dark Web Monitoring</div>
+                    <div class="feature-desc">Scanning forums for your credentials</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="feature-title">Dark Web Monitoring</div>
-                  <div class="feature-desc">Scanning forums for your credentials</div>
-                </div>
+                <div class="feature-status"><span class="badge on"><i class="fas fa-check-circle"></i>
+                    Monitoring</span><i class="fas fa-chevron-right" style="color:var(--tertiary-text)"></i></div>
               </div>
-              <div class="feature-status">
-                <span class="badge on"><i class="fas fa-check-circle"></i> Monitoring</span>
-                <i class="fas fa-chevron-right" style="color: var(--tertiary-text)"></i>
-              </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="feature-card" onclick="switchTab('backup')">
-              <div class="feature-header">
-                <div class="feature-icon" style="background: linear-gradient(135deg, var(--orange), var(--orange-dark));">
-                  <i class="fas fa-cloud"></i>
+              <div class="feature-card" onclick="switchTab('backup')">
+                <div class="feature-header">
+                  <div class="feature-icon"
+                    style="background:linear-gradient(135deg,var(--orange),var(--orange-dark));"><i
+                      class="fas fa-cloud"></i></div>
+                  <div>
+                    <div class="feature-title">Cloud Backup</div>
+                    <div class="feature-desc">25GB / 50GB Used</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="feature-title">Cloud Backup</div>
-                  <div class="feature-desc">25GB / 50GB Used</div>
-                </div>
-              </div>
-              <div class="feature-status">
-                <span class="badge on">Synced 2h ago</span>
-                <i class="fas fa-chevron-right" style="color: var(--tertiary-text)"></i>
+                <div class="feature-status"><span class="badge on">Synced 2h ago</span><i class="fas fa-chevron-right"
+                    style="color:var(--tertiary-text)"></i></div>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- right col -->
-        <div>
-          <!-- Promotion / Alert -->
-          <section class="card" style="margin-bottom: 24px;">
-            <div class="card-top-gradient" style="background: linear-gradient(90deg, var(--blue), var(--cyan)); opacity:1"></div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                <h3 style="font-size: 18px; font-weight: 700;">Monthly Protection Report</h3>
-                <span class="badge on" style="background: var(--blue-light); color: var(--blue);">New</span>
-            </div>
-            <p style="color: var(--secondary-text); margin-bottom: 20px;">See detailed insights on passwords saved, trackers removed, and threats blocked in the last 30 days.</p>
-            <button class="btn btn-outline btn-block" id="btn-monthly-report"><i class="fas fa-chart-bar"></i> View Report</button>
-          </section>
-
-          <!-- Recent Activity -->
-          <section class="card">
-            <h3 style="font-size: 18px; font-weight: 700; border-bottom: 1px solid var(--divider); padding-bottom: 16px; margin-bottom: 16px;">Recent Activity</h3>
-            <div>
-              <div class="activity-item">
-                <div class="activity-icon" style="background: var(--green-light); color: var(--green-dark);"><i class="fas fa-shield-alt"></i></div>
-                <div class="activity-content">
-                  <div class="activity-title">Intrusion Attempt Blocked</div>
-                  <div class="activity-desc">IP: 192.168.1.104 blocked by Firewall</div>
-                  <div class="activity-time">Just now</div>
+          <div>
+            <section class="card" style="margin-bottom:24px;">
+              <div class="card-top-gradient"
+                style="background:linear-gradient(90deg,var(--blue),var(--cyan));opacity:1"></div>
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+                <h3 style="font-size:18px;font-weight:700;">Monthly Protection Report</h3><span class="badge on"
+                  style="background:var(--blue-light);color:var(--blue);">New</span>
+              </div>
+              <p style="color:var(--secondary-text);margin-bottom:20px;">See detailed insights on passwords saved,
+                trackers removed, and threats blocked in the last 30 days.</p>
+              <button class="btn btn-outline btn-block" id="btn-monthly-report"><i class="fas fa-chart-bar"></i> View
+                Report</button>
+            </section>
+            <section class="card">
+              <h3
+                style="font-size:18px;font-weight:700;border-bottom:1px solid var(--divider);padding-bottom:16px;margin-bottom:16px;">
+                Recent Activity</h3>
+              <div>
+                <div class="activity-item">
+                  <div class="activity-icon" style="background:var(--green-light);color:var(--green-dark);"><i
+                      class="fas fa-shield-alt"></i></div>
+                  <div class="activity-content">
+                    <div class="activity-title">Intrusion Attempt Blocked</div>
+                    <div class="activity-desc">IP: 192.168.1.104 blocked by Firewall</div>
+                    <div class="activity-time">Just now</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon" style="background:var(--norton-yellow-light);color:var(--orange);"><i
+                      class="fas fa-cookie-bite"></i></div>
+                  <div class="activity-content">
+                    <div class="activity-title">Trackers Removed</div>
+                    <div class="activity-desc">14 ad trackers removed from Chrome</div>
+                    <div class="activity-time">2 hours ago</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon" style="background:var(--blue-light);color:var(--blue);"><i
+                      class="fas fa-sync"></i></div>
+                  <div class="activity-content">
+                    <div class="activity-title">Virus Definitions Updated</div>
+                    <div class="activity-desc">Successfully downloaded latest signatures</div>
+                    <div class="activity-time">Today, 08:00 AM</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon" style="background:var(--purple-light);color:var(--purple);"><i
+                      class="fas fa-key"></i></div>
+                  <div class="activity-content">
+                    <div class="activity-title">Password Manager Sync</div>
+                    <div class="activity-desc">Vault synchronized across 3 devices</div>
+                    <div class="activity-time">Yesterday</div>
+                  </div>
                 </div>
               </div>
-              <div class="activity-item">
-                <div class="activity-icon" style="background: var(--norton-yellow-light); color: var(--orange);"><i class="fas fa-cookie-bite"></i></div>
-                <div class="activity-content">
-                  <div class="activity-title">Trackers Removed</div>
-                  <div class="activity-desc">14 ad trackers removed from Chrome</div>
-                  <div class="activity-time">2 hours ago</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon" style="background: var(--blue-light); color: var(--blue);"><i class="fas fa-sync"></i></div>
-                <div class="activity-content">
-                  <div class="activity-title">Virus Definitions Updated</div>
-                  <div class="activity-desc">Successfully downloaded latest signatures</div>
-                  <div class="activity-time">Today, 08:00 AM</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon" style="background: var(--purple-light); color: var(--purple);"><i class="fas fa-key"></i></div>
-                <div class="activity-content">
-                  <div class="activity-title">Password Manager Sync</div>
-                  <div class="activity-desc">Vault synchronized across 3 devices</div>
-                  <div class="activity-time">Yesterday</div>
-                </div>
-              </div>
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- TAB 2: SECURITY -->
-    <div id="tab-security" class="tab-content">
+      <!-- TAB: SECURITY -->
+      <div id="tab-security" class="tab-content">
         <div class="view-header">
-            <h1 class="view-title"><i class="fas fa-shield-alt" style="color: var(--green); margin-right:12px;"></i>Device Security</h1>
+          <h1 class="view-title"><i class="fas fa-shield-alt" style="color:var(--green);margin-right:12px;"></i>Device
+            Security</h1>
         </div>
-        <div class="card" style="max-width: 900px;">
-            <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-virus-slash"></i></div>
-                    <div>
-                        <div class="row-title">Auto-Protect</div>
-                        <div class="row-desc">Running in the background to detect malware instantly.</div>
-                    </div>
-                </div>
-                <input type="checkbox" class="toggle-switch" checked>
-            </div>
-            <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-fire-alt"></i></div>
-                    <div>
-                        <div class="row-title">Smart Firewall</div>
-                        <div class="row-desc">Monitors network traffic to block unauthorized access.</div>
-                    </div>
-                </div>
-                <input type="checkbox" class="toggle-switch" checked>
-            </div>
-            <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-envelope-open-text"></i></div>
-                    <div>
-                        <div class="row-title">Email Protection</div>
-                        <div class="row-desc">Scans attachments and links in local email clients.</div>
-                    </div>
-                </div>
-                <input type="checkbox" class="toggle-switch" checked>
-            </div>
-            <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-globe"></i></div>
-                    <div>
-                        <div class="row-title">Safe Web Surfing</div>
-                        <div class="row-desc">Browser extension blocks malicious and phishing sites.</div>
-                    </div>
-                </div>
-                <input type="checkbox" class="toggle-switch" checked>
-            </div>
-            <div style="margin-top: 32px; display: flex; gap: 16px;">
-                 <button class="btn"><i class="fas fa-search"></i> Quick Scan</button>
-                 <button class="btn btn-outline"><i class="fas fa-microchip"></i> Full System Scan</button>
-            </div>
+        <div class="card" style="max-width:900px;">
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-icon"><i class="fas fa-virus-slash"></i></div>
+              <div>
+                <div class="row-title">Auto-Protect</div>
+                <div class="row-desc">Running in the background to detect malware instantly.</div>
+              </div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-icon"><i class="fas fa-fire-alt"></i></div>
+              <div>
+                <div class="row-title">Smart Firewall</div>
+                <div class="row-desc">Monitors network traffic to block unauthorized access.</div>
+              </div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-icon"><i class="fas fa-envelope-open-text"></i></div>
+              <div>
+                <div class="row-title">Email Protection</div>
+                <div class="row-desc">Scans attachments and links in local email clients.</div>
+              </div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-icon"><i class="fas fa-globe"></i></div>
+              <div>
+                <div class="row-title">Safe Web Surfing</div>
+                <div class="row-desc">Browser extension blocks malicious and phishing sites.</div>
+              </div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div style="margin-top:32px;display:flex;gap:16px;"><button class="btn"><i class="fas fa-search"></i> Quick
+              Scan</button><button class="btn btn-outline"><i class="fas fa-microchip"></i> Full System Scan</button>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- TAB 3: PERFORMANCE -->
-    <div id="tab-performance" class="tab-content">
-         <div class="view-header">
-            <h1 class="view-title"><i class="fas fa-tachometer-alt" style="color: var(--blue); margin-right:12px;"></i>System Performance</h1>
+      <!-- TAB: PERFORMANCE -->
+      <div id="tab-performance" class="tab-content">
+        <div class="view-header">
+          <h1 class="view-title"><i class="fas fa-tachometer-alt"
+              style="color:var(--blue);margin-right:12px;"></i>System Performance</h1>
         </div>
         <div class="grid-2">
-            <div class="card">
-                <h3 style="margin-bottom: 24px;">Optimization Tools</h3>
-                <div class="list-row">
-                    <div class="row-left">
-                        <div class="row-icon" style="background:var(--blue-light); color:var(--blue)"><i class="fas fa-hdd"></i></div>
-                        <div>
-                            <div class="row-title">Optimize Disk</div>
-                            <div class="row-desc">Defragments hard drive to improve read/write speeds.</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-outline" style="padding: 8px 16px; font-size:13px;">Run</button>
+          <div class="card">
+            <h3 style="margin-bottom:24px;">Optimization Tools</h3>
+            <div class="list-row">
+              <div class="row-left">
+                <div class="row-icon" style="background:var(--blue-light);color:var(--blue)"><i class="fas fa-hdd"></i>
                 </div>
-                <div class="list-row">
-                    <div class="row-left">
-                        <div class="row-icon" style="background:var(--purple-light); color:var(--purple)"><i class="fas fa-broom"></i></div>
-                        <div>
-                            <div class="row-title">File Cleanup</div>
-                            <div class="row-desc">Remove 2.4 GB of temporary and junk files.</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-outline" style="padding: 8px 16px; font-size:13px;">Clean</button>
-                </div>
-                <div class="list-row">
-                    <div class="row-left">
-                        <div class="row-icon" style="background:var(--green-light); color:var(--green-dark)"><i class="fas fa-rocket"></i></div>
-                        <div>
-                            <div class="row-title">Startup Manager</div>
-                            <div class="row-desc">Delay 3 apps to improve boot time by 15s.</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-outline" style="padding: 8px 16px; font-size:13px;">Manage</button>
-                </div>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom: 24px;">Live Metrics</h3>
-                <div style="display:flex; flex-direction:column; gap:20px;">
-                    <div class="stat-box">
-                        <div class="stat-info">
-                            <h3>CPU Usage</h3>
-                            <p>Norton is using 0.2%</p>
-                        </div>
-                        <div class="stat-circle" style="border-color: var(--green);">14%</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-info">
-                            <h3>RAM Usage</h3>
-                            <p>12.4 GB / 16.0 GB</p>
-                        </div>
-                        <div class="stat-circle" style="border-color: var(--orange);">78%</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-info">
-                            <h3>Background Tasks</h3>
-                            <p>42 active processes</p>
-                        </div>
-                        <div class="stat-circle" style="border-color: var(--blue);">42</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 4: PRIVACY -->
-    <div id="tab-privacy" class="tab-content">
-         <div class="view-header">
-            <h1 class="view-title"><i class="fas fa-user-ninja" style="color: var(--purple); margin-right:12px;"></i>Online Privacy</h1>
-        </div>
-        <div class="card" style="max-width: 900px;">
-            <div style="background: var(--purple-light); padding: 32px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
                 <div>
-                    <h2 style="color: var(--purple); margin-bottom: 8px;">Secure VPN is ON</h2>
-                    <p style="color: #4a148c;">Your connection is encrypted. IP Address hidden.</p>
-                    <p style="font-size: 13px; font-weight:600; margin-top:12px;">Region: United States (Auto) <a href="#" style="color:var(--purple); margin-left:8px;">ChangeRegion</a></p>
+                  <div class="row-title">Optimize Disk</div>
+                  <div class="row-desc">Defragments hard drive to improve read/write speeds.</div>
                 </div>
-                <input type="checkbox" class="toggle-switch" checked style="transform: scale(1.5);">
-            </div>
-
-            <h3 style="margin-bottom: 16px;">Privacy Protections</h3>
-             <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-video"></i></div>
-                    <div>
-                        <div class="row-title">SafeCam</div>
-                        <div class="row-desc">Alerts you when an app tries to access your webcam.</div>
-                    </div>
-                </div>
-                <input type="checkbox" class="toggle-switch" checked>
+              </div><button class="btn btn-outline" style="padding:8px 16px;font-size:13px;">Run</button>
             </div>
             <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-user-secret"></i></div>
-                    <div>
-                        <div class="row-title">Anti-Tracker</div>
-                        <div class="row-desc">Blocks third-party tracking cookies across browsers.</div>
-                    </div>
+              <div class="row-left">
+                <div class="row-icon" style="background:var(--purple-light);color:var(--purple)"><i
+                    class="fas fa-broom"></i></div>
+                <div>
+                  <div class="row-title">File Cleanup</div>
+                  <div class="row-desc">Remove 2.4 GB of temporary and junk files.</div>
                 </div>
-                <input type="checkbox" class="toggle-switch" checked>
+              </div><button class="btn btn-outline" style="padding:8px 16px;font-size:13px;">Clean</button>
             </div>
-             <div class="list-row">
-                <div class="row-left">
-                    <div class="row-icon"><i class="fas fa-key"></i></div>
-                    <div>
-                        <div class="row-title">Password Manager Vault</div>
-                        <div class="row-desc">142 logins stored securely.</div>
-                    </div>
+            <div class="list-row">
+              <div class="row-left">
+                <div class="row-icon" style="background:var(--green-light);color:var(--green-dark)"><i
+                    class="fas fa-rocket"></i></div>
+                <div>
+                  <div class="row-title">Startup Manager</div>
+                  <div class="row-desc">Delay 3 apps to improve boot time by 15s.</div>
                 </div>
-                <button class="btn btn-outline" style="padding: 8px 16px; font-size:13px;">Open Vault</button>
+              </div><button class="btn btn-outline" style="padding:8px 16px;font-size:13px;">Manage</button>
             </div>
-        </div>
-    </div>
-    
-    <!-- TABS 5-8: IDENTITY, BACKUP, STORE, SETTINGS (Simplified for completeness) -->
-    <div id="tab-identity" class="tab-content">
-        <div class="view-header"><h1 class="view-title"><i class="fas fa-id-card"></i> Identity Theft Protection</h1></div>
-        <div class="card" style="max-width: 900px; text-align: center; padding: 60px 20px;">
-            <i class="fas fa-shield-alt" style="font-size: 64px; color: var(--green); margin-bottom: 24px;"></i>
-            <h2>Your Identity is Monitored</h2>
-            <p style="color: var(--secondary-text); margin: 16px auto 32px; max-width: 500px;">We are actively scanning the dark web, public records, and data brokers for your personal information.</p>
-            <button class="btn">View Identity Dashboard</button>
-        </div>
-    </div>
-
-    <div id="tab-backup" class="tab-content">
-        <div class="view-header"><h1 class="view-title"><i class="fas fa-cloud"></i> Cloud Backup</h1></div>
-         <div class="card" style="max-width: 900px; text-align: center; padding: 60px 20px;">
-            <i class="fas fa-cloud-upload-alt" style="font-size: 64px; color: var(--blue); margin-bottom: 24px;"></i>
-            <h2>25 GB of 50 GB Used</h2>
-            <div class="score-bar" style="max-width: 400px; margin: 20px auto;"><div class="score-fill" style="width: 50%; background: var(--blue);"></div></div>
-            <p style="color: var(--secondary-text); margin-bottom: 32px;">Last backup: Today at 10:00 AM.</p>
-            <button class="btn">Run Backup Now</button>
-        </div>
-    </div>
-
-    <div id="tab-store" class="tab-content">
-        <div class="view-header"><h1 class="view-title"><i class="fas fa-shopping-cart"></i> Add-ons Store</h1></div>
-        <div class="grid-cards">
-            <div class="card" style="text-align: center;">
-                <i class="fas fa-gamepad" style="font-size: 40px; color: var(--orange); margin-bottom: 16px;"></i>
-                <h3>Norton for Gamers</h3>
-                <p style="font-size: 13px; color: var(--secondary-text); margin: 12px 0;">Optimize your PC for gaming while staying protected.</p>
-                <button class="btn btn-outline btn-block">Learn More</button>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:24px;">Live Metrics</h3>
+            <div style="display:flex;flex-direction:column;gap:20px;">
+              <div class="stat-box">
+                <div class="stat-info">
+                  <h3>CPU Usage</h3>
+                  <p>Norton is using 0.2%</p>
+                </div>
+                <div class="stat-circle" style="border-color:var(--green);">14%</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-info">
+                  <h3>RAM Usage</h3>
+                  <p>12.4 GB / 16.0 GB</p>
+                </div>
+                <div class="stat-circle" style="border-color:var(--orange);">78%</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-info">
+                  <h3>Background Tasks</h3>
+                  <p>42 active processes</p>
+                </div>
+                <div class="stat-circle" style="border-color:var(--blue);">42</div>
+              </div>
             </div>
-            <div class="card" style="text-align: center;">
-                <i class="fas fa-mobile-alt" style="font-size: 40px; color: var(--blue); margin-bottom: 16px;"></i>
-                <h3>Mobile Security</h3>
-                <p style="font-size: 13px; color: var(--secondary-text); margin: 12px 0;">Protect your Android or iOS devices.</p>
-                <button class="btn btn-outline btn-block">Add Device</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PRIVACY -->
+      <div id="tab-privacy" class="tab-content">
+        <div class="view-header">
+          <h1 class="view-title"><i class="fas fa-user-ninja" style="color:var(--purple);margin-right:12px;"></i>Online
+            Privacy</h1>
+        </div>
+        <div class="card" style="max-width:900px;">
+          <div class="vpn-banner"
+            style="background:var(--purple-light);padding:32px;border-radius:16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+            <div>
+              <h2 style="color:var(--purple);margin-bottom:8px;">Secure VPN is ON</h2>
+              <p style="color:#4a148c;">Your connection is encrypted. IP Address hidden.</p>
+              <p style="font-size:13px;font-weight:600;margin-top:12px;">Region: United States (Auto)</p>
             </div>
-             <div class="card" style="text-align: center;">
-                <i class="fas fa-child" style="font-size: 40px; color: var(--purple); margin-bottom: 16px;"></i>
-                <h3>Family Premier</h3>
-                <p style="font-size: 13px; color: var(--secondary-text); margin: 12px 0;">Keep your kids safe online with parental controls.</p>
-                <button class="btn btn-outline btn-block">Upgrade</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-settings" class="tab-content">
-        <div class="view-header"><h1 class="view-title"><i class="fas fa-cog"></i> Settings</h1></div>
-        <div class="card" style="max-width: 900px;">
-            <h3 style="margin-bottom: 20px;">General Settings</h3>
-            <div class="list-row">
-                <div class="row-left"><div class="row-title">Silent Mode</div></div>
-                <input type="checkbox" class="toggle-switch">
-            </div>
-            <div class="list-row">
-                <div class="row-left"><div class="row-title">Automatic Updates</div></div>
-                <input type="checkbox" class="toggle-switch" checked>
-            </div>
-            <div class="list-row">
-                <div class="row-left"><div class="row-title">Startup Scan</div></div>
-                <input type="checkbox" class="toggle-switch" checked>
-            </div>
-            <hr style="border:0; height:1px; background:var(--divider); margin: 24px 0;">
-            <button class="btn btn-outline" style="color:var(--red); border-color:var(--red);">Reset to Defaults</button>
-        </div>
-    </div>
-
-  </main>
-</div>
-
-<!-- ================= SMART SCAN MODAL ================= -->
-<div class="modal-overlay" id="scan-modal-overlay">
-  <div class="scan-modal">
-    <button class="scan-close" id="close-modal"><i class="fas fa-times"></i></button>
-    
-    <div class="scan-header">
-      <h2 id="scan-title">Smart Scan</h2>
-      <p id="scan-subtitle">Scanning system for threats and optimization opportunities...</p>
-    </div>
-
-    <div class="scan-animation-container" id="scan-anim-container">
-      <div class="scan-circle">
-        <div class="scan-progress-ring"></div>
-        <i class="fas fa-fingerprint scan-center-icon" id="scan-center-icon"></i>
-      </div>
-      <div id="scan-progress-text" style="position: absolute; bottom: -30px; font-weight: 600; color: var(--blue); font-size: 16px; opacity: 0; transition: var(--transition);">0% Complete</div>
-    </div>
-
-    <div class="scan-steps" style="margin-top: 48px;">
-      <div class="scan-step" id="step-1">
-        <div class="step-left">
-          <div class="step-icon"><i class="fas fa-search-dollar"></i></div>
-          <div class="step-info">Memory & Active Processes</div>
-        </div>
-        <div class="step-status">Pending...</div>
-      </div>
-      
-      <div class="scan-step" id="step-2">
-        <div class="step-left">
-          <div class="step-icon"><i class="fas fa-virus"></i></div>
-          <div class="step-info">Viruses & Malware</div>
-        </div>
-        <div class="step-status">Pending...</div>
-      </div>
-      
-      <div class="scan-step" id="step-3">
-        <div class="step-left">
-          <div class="step-icon"><i class="fas fa-wifi"></i></div>
-          <div class="step-info">Network Vulnerabilities</div>
-        </div>
-        <div class="step-status">Pending...</div>
-      </div>
-      
-      <div class="scan-step" id="step-4">
-        <div class="step-left">
-          <div class="step-icon"><i class="fas fa-tachometer-alt"></i></div>
-          <div class="step-info">Performance & Junk Files</div>
-        </div>
-        <div class="step-status">Pending...</div>
-      </div>
-    </div>
-
-    <button class="btn btn-block" id="btn-resolve" style="margin-top: 32px; display: none;">
-      Resolve Issues & Close
-    </button>
-  </div>
-</div>
-
-<!-- ================= MONTHLY REPORT MODAL ================= -->
-<div class="modal-overlay" id="report-modal-overlay">
-  <div class="scan-modal" style="max-width: 800px;">
-    <button class="scan-close" id="close-report-modal"><i class="fas fa-times"></i></button>
-    
-    <div class="scan-header" style="text-align: left; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--divider); padding-bottom: 24px; margin-bottom: 24px;">
-      <div>
-        <h2 style="font-size: 28px; font-weight: 800; color: var(--blue);">Monthly Protection Report</h2>
-        <p style="color: var(--secondary-text);">April 2026 Overview for Premium User</p>
-      </div>
-      <div class="status-shield" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--blue), var(--cyan)); box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);">
-         <i class="fas fa-chart-line" style="font-size: 24px; color: white;"></i>
-      </div>
-    </div>
-
-    <div class="grid-2" style="grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
-        <div class="card" style="padding: 24px; background: var(--blue-light); border: 1px solid rgba(0, 188, 212, 0.2); box-shadow: none;">
-            <div style="font-size: 14px; color: var(--blue); font-weight: 600; text-transform: uppercase;">Threats Blocked</div>
-            <div style="font-size: 48px; font-weight: 800; color: var(--blue); line-height: 1; margin: 8px 0;">42</div>
-            <div style="font-size: 13px; color: var(--secondary-text);"><i class="fas fa-arrow-down" style="color: var(--green);"></i> 12% lower than last month</div>
-        </div>
-        
-        <div class="card" style="padding: 24px; background: var(--norton-yellow-light); border: 1px solid rgba(255, 209, 0, 0.4); box-shadow: none;">
-             <div style="font-size: 14px; color: var(--orange-dark); font-weight: 600; text-transform: uppercase;">Trackers Removed</div>
-             <div style="font-size: 48px; font-weight: 800; color: var(--orange-dark); line-height: 1; margin: 8px 0;">1,284</div>
-             <div style="font-size: 13px; color: var(--secondary-text);"><i class="fas fa-arrow-up" style="color: var(--orange);"></i> 5% higher than last month</div>
-        </div>
-    </div>
-
-    <h3 style="font-size: 18px; margin-bottom: 16px;">Highlights</h3>
-    <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div class="list-row" style="padding: 12px 16px; background: var(--app-bg); border-radius: 12px; border: none;">
+            <input type="checkbox" class="toggle-switch" checked style="transform:scale(1.5);">
+          </div>
+          <h3 style="margin-bottom:16px;">Privacy Protections</h3>
+          <div class="list-row">
             <div class="row-left">
-                <div class="row-icon" style="background: white; color: var(--green); box-shadow: var(--shadow-sm);"><i class="fas fa-globe"></i></div>
-                <div>
-                     <div class="row-title">Safe Browsing Enabled</div>
-                     <div class="row-desc">You visited 452 safe websites. 3 malicious sites were blocked.</div>
-                </div>
-            </div>
+              <div class="row-icon"><i class="fas fa-video"></i></div>
+              <div>
+                <div class="row-title">SafeCam</div>
+                <div class="row-desc">Alerts you when an app tries to access your webcam.</div>
+              </div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-icon"><i class="fas fa-user-secret"></i></div>
+              <div>
+                <div class="row-title">Anti-Tracker</div>
+                <div class="row-desc">Blocks third-party tracking cookies across browsers.</div>
+              </div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-icon"><i class="fas fa-key"></i></div>
+              <div>
+                <div class="row-title">Password Manager Vault</div>
+                <div class="row-desc">142 logins stored securely.</div>
+              </div>
+            </div><button class="btn btn-outline" style="padding:8px 16px;font-size:13px;">Open Vault</button>
+          </div>
         </div>
-        <div class="list-row" style="padding: 12px 16px; background: var(--app-bg); border-radius: 12px; border: none;">
-             <div class="row-left">
-                 <div class="row-icon" style="background: white; color: var(--purple); box-shadow: var(--shadow-sm);"><i class="fas fa-key"></i></div>
-                 <div>
-                      <div class="row-title">Passwords Secured</div>
-                      <div class="row-desc">You have 142 secure logins. 0 weak passwords detected.</div>
-                 </div>
-             </div>
-         </div>
-    </div>
+      </div>
 
-    <button class="btn btn-outline btn-block" id="btn-share-report" style="margin-top: 32px;">
-      <i class="fas fa-share-alt"></i> Share Report
-    </button>
+      <!-- TAB: IDENTITY -->
+      <div id="tab-identity" class="tab-content">
+        <div class="view-header">
+          <h1 class="view-title"><i class="fas fa-id-card"></i> Identity Theft Protection</h1>
+        </div>
+        <div class="card" style="max-width:900px;text-align:center;padding:60px 20px;">
+          <i class="fas fa-shield-alt" style="font-size:64px;color:var(--green);margin-bottom:24px;"></i>
+          <h2>Your Identity is Monitored</h2>
+          <p style="color:var(--secondary-text);margin:16px auto 32px;max-width:500px;">We are actively scanning the
+            dark web, public records, and data brokers for your personal information.</p>
+          <button class="btn">View Identity Dashboard</button>
+        </div>
+      </div>
+
+      <!-- TAB: BACKUP -->
+      <div id="tab-backup" class="tab-content">
+        <div class="view-header">
+          <h1 class="view-title"><i class="fas fa-cloud"></i> Cloud Backup</h1>
+        </div>
+        <div class="card" style="max-width:900px;text-align:center;padding:60px 20px;">
+          <i class="fas fa-cloud-upload-alt" style="font-size:64px;color:var(--blue);margin-bottom:24px;"></i>
+          <h2>25 GB of 50 GB Used</h2>
+          <div class="score-bar" style="max-width:400px;margin:20px auto;">
+            <div class="score-fill" style="width:50%;background:var(--blue);"></div>
+          </div>
+          <p style="color:var(--secondary-text);margin-bottom:32px;">Last backup: Today at 10:00 AM.</p>
+          <button class="btn">Run Backup Now</button>
+        </div>
+      </div>
+
+      <!-- TAB: STORE -->
+      <div id="tab-store" class="tab-content">
+        <div class="view-header">
+          <h1 class="view-title"><i class="fas fa-shopping-cart"></i> Add-ons Store</h1>
+        </div>
+        <div class="grid-cards">
+          <div class="card" style="text-align:center;"><i class="fas fa-gamepad"
+              style="font-size:40px;color:var(--orange);margin-bottom:16px;"></i>
+            <h3>Norton for Gamers</h3>
+            <p style="font-size:13px;color:var(--secondary-text);margin:12px 0;">Optimize your PC for gaming while
+              staying protected.</p><button class="btn btn-outline btn-block">Learn More</button>
+          </div>
+          <div class="card" style="text-align:center;"><i class="fas fa-mobile-alt"
+              style="font-size:40px;color:var(--blue);margin-bottom:16px;"></i>
+            <h3>Mobile Security</h3>
+            <p style="font-size:13px;color:var(--secondary-text);margin:12px 0;">Protect your Android or iOS devices.
+            </p><button class="btn btn-outline btn-block">Add Device</button>
+          </div>
+          <div class="card" style="text-align:center;"><i class="fas fa-child"
+              style="font-size:40px;color:var(--purple);margin-bottom:16px;"></i>
+            <h3>Family Premier</h3>
+            <p style="font-size:13px;color:var(--secondary-text);margin:12px 0;">Keep your kids safe online with
+              parental controls.</p><button class="btn btn-outline btn-block">Upgrade</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: SETTINGS -->
+      <div id="tab-settings" class="tab-content">
+        <div class="view-header">
+          <h1 class="view-title"><i class="fas fa-cog"></i> Settings</h1>
+        </div>
+        <div class="card" style="max-width:900px;">
+          <h3 style="margin-bottom:20px;">General Settings</h3>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-title">Silent Mode</div>
+            </div><input type="checkbox" class="toggle-switch">
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-title">Automatic Updates</div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <div class="list-row">
+            <div class="row-left">
+              <div class="row-title">Startup Scan</div>
+            </div><input type="checkbox" class="toggle-switch" checked>
+          </div>
+          <hr style="border:0;height:1px;background:var(--divider);margin:24px 0;">
+          <button class="btn btn-outline" style="color:var(--red);border-color:var(--red);">Reset to Defaults</button>
+        </div>
+      </div>
+    </main>
   </div>
-</div>
 
-<script>
-/* =========================
-   TAB SWITCHING LOGIC
-========================= */
-const navItems = document.querySelectorAll('.nav-item');
-const tabContents = document.querySelectorAll('.tab-content');
+  <!-- ===== SMART SCAN MODAL ===== -->
+  <div class="modal-overlay" id="scan-modal-overlay">
+    <div class="scan-modal">
+      <button class="scan-close" id="close-modal"><i class="fas fa-times"></i></button>
+      <div class="scan-header">
+        <h2 id="scan-title">Smart Scan</h2>
+        <p id="scan-subtitle">Scanning system for threats and optimization opportunities...</p>
+      </div>
+      <div class="scan-animation-container" id="scan-anim-container">
+        <div class="scan-circle">
+          <div class="scan-progress-ring"></div><i class="fas fa-fingerprint scan-center-icon"
+            id="scan-center-icon"></i>
+        </div>
+        <div id="scan-progress-text"
+          style="position:absolute;bottom:-30px;font-weight:600;color:var(--blue);font-size:16px;opacity:0;transition:var(--transition);">
+          0% Complete</div>
+      </div>
+      <div class="scan-steps" style="margin-top:48px;">
+        <div class="scan-step" id="step-1">
+          <div class="step-left">
+            <div class="step-icon"><i class="fas fa-search-dollar"></i></div>
+            <div class="step-info">Memory & Active Processes</div>
+          </div>
+          <div class="step-status">Pending...</div>
+        </div>
+        <div class="scan-step" id="step-2">
+          <div class="step-left">
+            <div class="step-icon"><i class="fas fa-virus"></i></div>
+            <div class="step-info">Viruses & Malware</div>
+          </div>
+          <div class="step-status">Pending...</div>
+        </div>
+        <div class="scan-step" id="step-3">
+          <div class="step-left">
+            <div class="step-icon"><i class="fas fa-wifi"></i></div>
+            <div class="step-info">Network Vulnerabilities</div>
+          </div>
+          <div class="step-status">Pending...</div>
+        </div>
+        <div class="scan-step" id="step-4">
+          <div class="step-left">
+            <div class="step-icon"><i class="fas fa-tachometer-alt"></i></div>
+            <div class="step-info">Performance & Junk Files</div>
+          </div>
+          <div class="step-status">Pending...</div>
+        </div>
+      </div>
+      <button class="btn btn-block" id="btn-resolve" style="margin-top:32px;display:none;">Resolve Issues &
+        Close</button>
+    </div>
+  </div>
 
-function switchTab(tabId) {
-    // Update active nav
-    navItems.forEach(nav => {
-        if(nav.dataset.tab === tabId) nav.classList.add('active');
-        else nav.classList.remove('active');
+  <!-- ===== REPORT MODAL ===== -->
+  <div class="modal-overlay" id="report-modal-overlay">
+    <div class="scan-modal" style="max-width:800px;">
+      <button class="scan-close" id="close-report-modal"><i class="fas fa-times"></i></button>
+      <div class="scan-header"
+        style="text-align:left;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--divider);padding-bottom:24px;margin-bottom:24px;">
+        <div>
+          <h2 style="font-size:28px;font-weight:800;color:var(--blue);">Monthly Protection Report</h2>
+          <p style="color:var(--secondary-text);">Overview for <span class="display-user-name">Premium User</span></p>
+        </div>
+        <div class="status-shield"
+          style="width:60px;height:60px;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 4px 12px rgba(0,188,212,0.3);">
+          <i class="fas fa-chart-line" style="font-size:24px;color:white;"></i>
+        </div>
+      </div>
+      <div class="grid-2" style="grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
+        <div class="card"
+          style="padding:24px;background:var(--blue-light);border:1px solid rgba(0,188,212,0.2);box-shadow:none;">
+          <div style="font-size:14px;color:var(--blue);font-weight:600;text-transform:uppercase;">Threats Blocked</div>
+          <div style="font-size:48px;font-weight:800;color:var(--blue);line-height:1;margin:8px 0;">42</div>
+          <div style="font-size:13px;color:var(--secondary-text);"><i class="fas fa-arrow-down"
+              style="color:var(--green);"></i> 12% lower than last month</div>
+        </div>
+        <div class="card"
+          style="padding:24px;background:var(--norton-yellow-light);border:1px solid rgba(255,209,0,0.4);box-shadow:none;">
+          <div style="font-size:14px;color:var(--orange-dark);font-weight:600;text-transform:uppercase;">Trackers
+            Removed</div>
+          <div style="font-size:48px;font-weight:800;color:var(--orange-dark);line-height:1;margin:8px 0;">1,284</div>
+          <div style="font-size:13px;color:var(--secondary-text);"><i class="fas fa-arrow-up"
+              style="color:var(--orange);"></i> 5% higher than last month</div>
+        </div>
+      </div>
+      <h3 style="font-size:18px;margin-bottom:16px;">Highlights</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="list-row" style="padding:12px 16px;background:var(--app-bg);border-radius:12px;border:none;">
+          <div class="row-left">
+            <div class="row-icon" style="background:white;color:var(--green);box-shadow:var(--shadow-sm);"><i
+                class="fas fa-globe"></i></div>
+            <div>
+              <div class="row-title">Safe Browsing Enabled</div>
+              <div class="row-desc">You visited 452 safe websites. 3 malicious sites were blocked.</div>
+            </div>
+          </div>
+        </div>
+        <div class="list-row" style="padding:12px 16px;background:var(--app-bg);border-radius:12px;border:none;">
+          <div class="row-left">
+            <div class="row-icon" style="background:white;color:var(--purple);box-shadow:var(--shadow-sm);"><i
+                class="fas fa-key"></i></div>
+            <div>
+              <div class="row-title">Passwords Secured</div>
+              <div class="row-desc">You have 142 secure logins. 0 weak passwords detected.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-block" id="btn-share-report" style="margin-top:32px;"><i
+          class="fas fa-share-alt"></i> Share Report</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== AUTH ===== */
+    const REQUIRED_KEY = "XKFH9-GJJYK-KKYY3-K7C3W-PKJMM";
+    const loginOverlay = document.getElementById('login-overlay');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    let userData = null;
+
+    function getInitials(name) {
+      return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    function updateUserInfoUI(data) {
+      document.querySelectorAll('.display-user-name').forEach(el => el.textContent = data.name);
+      document.querySelectorAll('.display-user-email').forEach(el => el.textContent = data.email);
+      const initials = getInitials(data.name);
+      document.getElementById('user-avatar').textContent = initials;
+      document.getElementById('popup-avatar').textContent = initials;
+    }
+
+    function checkAuth() {
+      try {
+        const saved = localStorage.getItem('norton_user');
+        if (saved) {
+          userData = JSON.parse(saved);
+          updateUserInfoUI(userData);
+          loginOverlay.classList.add('hidden');
+          setTimeout(() => loginOverlay.style.display = 'none', 500);
+          return true;
+        }
+      } catch (e) { }
+      return false;
+    }
+
+    checkAuth();
+
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('login-name').value.trim();
+      const email = document.getElementById('login-email').value.trim();
+      const key = document.getElementById('login-key').value.trim().toUpperCase();
+      if (key !== REQUIRED_KEY) {
+        loginError.style.display = 'block';
+        document.getElementById('login-key').classList.add('error-input');
+        return;
+      }
+      loginError.style.display = 'none';
+      document.getElementById('login-key').classList.remove('error-input');
+      userData = { name, email };
+      try { localStorage.setItem('norton_user', JSON.stringify(userData)); } catch (e) { }
+      updateUserInfoUI(userData);
+      loginOverlay.classList.add('hidden');
+      setTimeout(() => loginOverlay.style.display = 'none', 500);
     });
 
-    // Update active content
-    tabContents.forEach(content => {
-        if(content.id === 'tab-' + tabId) content.classList.add('active');
-        else content.classList.remove('active');
+    document.getElementById('login-key').addEventListener('input', function () {
+      this.classList.remove('error-input');
+      loginError.style.display = 'none';
     });
-}
 
-navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        switchTab(item.dataset.tab);
+    /* ===== USER POPUP MENU ===== */
+    const sidebarFooterWrap = document.getElementById('sidebar-footer-wrap');
+    const sidebarFooter = document.getElementById('sidebar-footer');
+
+    sidebarFooter.addEventListener('click', function (e) {
+      e.stopPropagation();
+      sidebarFooterWrap.classList.toggle('menu-open');
     });
-});
 
-/* =========================
-   PROTECTION SCORE ANIMATION
-========================= */
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-      const scoreVal = document.getElementById('scoreValue');
-      const scoreMeter = document.getElementById('scoreMeter');
-      let current = 0;
-      const target = 98;
-      
-      // Animate width
-      scoreMeter.style.width = target + '%';
-      
-      // Animate number
-      const interval = setInterval(() => {
+    document.addEventListener('click', function (e) {
+      if (!sidebarFooterWrap.contains(e.target)) {
+        sidebarFooterWrap.classList.remove('menu-open');
+      }
+    });
+
+    /* ===== SIGN OUT ===== */
+    const signoutOverlay = document.getElementById('signout-overlay');
+    const btnSignout = document.getElementById('btn-signout');
+    const signoutCancel = document.getElementById('signout-cancel');
+    const signoutConfirm = document.getElementById('signout-confirm');
+
+    btnSignout.addEventListener('click', function (e) {
+      e.stopPropagation();
+      sidebarFooterWrap.classList.remove('menu-open');
+      signoutOverlay.classList.add('active');
+    });
+
+    signoutCancel.addEventListener('click', function () {
+      signoutOverlay.classList.remove('active');
+    });
+
+    signoutOverlay.addEventListener('click', function (e) {
+      if (e.target === signoutOverlay) signoutOverlay.classList.remove('active');
+    });
+
+    signoutConfirm.addEventListener('click', function () {
+      try { localStorage.removeItem('norton_user'); } catch (e) { }
+      userData = null;
+      signoutOverlay.classList.remove('active');
+
+      // Reset login form
+      loginForm.reset();
+      loginError.style.display = 'none';
+      document.getElementById('login-key').classList.remove('error-input');
+
+      // Show login overlay with animation
+      loginOverlay.style.display = 'flex';
+      loginOverlay.classList.remove('hidden');
+      loginOverlay.style.opacity = '0';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          loginOverlay.style.opacity = '1';
+        });
+      });
+
+      // Reset tab to home
+      switchTab('home');
+    });
+
+    /* ===== TAB SWITCHING ===== */
+    const navItems = document.querySelectorAll('.nav-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function switchTab(tabId) {
+      navItems.forEach(n => n.classList.toggle('active', n.dataset.tab === tabId));
+      tabContents.forEach(c => c.classList.toggle('active', c.id === 'tab-' + tabId));
+      sidebarFooterWrap.classList.remove('menu-open');
+    }
+    navItems.forEach(item => item.addEventListener('click', () => switchTab(item.dataset.tab)));
+
+    /* ===== PROTECTION SCORE ===== */
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const scoreVal = document.getElementById('scoreValue');
+        const scoreMeter = document.getElementById('scoreMeter');
+        let current = 0, target = 98;
+        scoreMeter.style.width = target + '%';
+        const interval = setInterval(() => {
           current += 2;
-          if(current >= target) {
-              current = target;
-              clearInterval(interval);
-          }
+          if (current >= target) { current = target; clearInterval(interval); }
           scoreVal.innerText = current;
-      }, 30);
-  }, 500);
-});
+        }, 30);
+      }, 500);
+    });
 
-/* =========================
-   SMART SCAN LOGIC
-========================= */
-const btnSmartScan = document.getElementById('btn-smart-scan');
-const modalOverlay = document.getElementById('scan-modal-overlay');
-const btnCloseModal = document.getElementById('close-modal');
-const btnResolve = document.getElementById('btn-resolve');
-const scanAnimContainer = document.getElementById('scan-anim-container');
-const scanCenterIcon = document.getElementById('scan-center-icon');
-const scanTitle = document.getElementById('scan-title');
-const scanSubtitle = document.getElementById('scan-subtitle');
-const scanProgressText = document.getElementById('scan-progress-text');
+    /* ===== SMART SCAN ===== */
+    const btnSmartScan = document.getElementById('btn-smart-scan');
+    const modalOverlay = document.getElementById('scan-modal-overlay');
+    const btnCloseModal = document.getElementById('close-modal');
+    const btnResolve = document.getElementById('btn-resolve');
+    const scanAnimContainer = document.getElementById('scan-anim-container');
+    const scanCenterIcon = document.getElementById('scan-center-icon');
+    const scanTitle = document.getElementById('scan-title');
+    const scanSubtitle = document.getElementById('scan-subtitle');
+    const scanProgressText = document.getElementById('scan-progress-text');
+    const steps = [document.getElementById('step-1'), document.getElementById('step-2'), document.getElementById('step-3'), document.getElementById('step-4')];
+    let progressInterval = null, globalProgress = 0;
 
-const steps = [
-    document.getElementById('step-1'),
-    document.getElementById('step-2'),
-    document.getElementById('step-3'),
-    document.getElementById('step-4')
-];
-
-let scanTimeout;
-let globalProgress = 0;
-let progressInterval = null;
-
-function resetModal() {
-    scanAnimContainer.classList.remove('scanning', 'scan-success');
-    scanCenterIcon.className = 'fas fa-fingerprint scan-center-icon';
-    scanTitle.innerText = "Smart Scan";
-    scanTitle.style.color = "var(--primary-text)";
-    scanSubtitle.innerText = "Scanning system for threats and optimization opportunities...";
-    btnResolve.style.display = 'none';
-    btnCloseModal.style.visibility = 'visible';
-    scanProgressText.style.opacity = '0';
-    scanProgressText.innerText = '0% Complete';
-    globalProgress = 0;
-    if (progressInterval) clearInterval(progressInterval);
-
-    steps.forEach(step => {
+    function resetModal() {
+      scanAnimContainer.classList.remove('scanning', 'scan-success');
+      scanCenterIcon.className = 'fas fa-fingerprint scan-center-icon';
+      scanCenterIcon.style.color = '';
+      scanTitle.innerText = "Smart Scan"; scanTitle.style.color = "";
+      scanSubtitle.innerText = "Scanning system for threats and optimization opportunities...";
+      btnResolve.style.display = 'none';
+      scanProgressText.style.opacity = '0'; scanProgressText.innerText = '0% Complete';
+      globalProgress = 0; if (progressInterval) clearInterval(progressInterval);
+      steps.forEach(step => {
         step.className = 'scan-step';
         step.querySelector('.step-status').innerText = 'Pending...';
-        step.querySelector('.step-status').style.color = "var(--secondary-text)";
-        step.querySelector('.step-icon').style.color = "var(--primary-text)";
-    });
-}
+        step.querySelector('.step-status').style.color = "";
+        step.querySelector('.step-icon').style.color = "";
+        step.style.borderLeftColor = "";
+      });
+    }
 
-function updateGlobalProgress() {
-    if (globalProgress >= 100) return;
-    
-    // Increment slowly over time
-    progressInterval = setInterval(() => {
+    function updateGlobalProgress() {
+      progressInterval = setInterval(() => {
         if (globalProgress < 100) {
-            // Speed up slightly at the end
-            globalProgress += (globalProgress > 80) ? 2 : 1; 
-            if (globalProgress > 100) globalProgress = 100;
-            scanProgressText.innerText = `${Math.floor(globalProgress)}% Complete`;
+          globalProgress += (globalProgress > 80) ? 2 : 1;
+          if (globalProgress > 100) globalProgress = 100;
+          scanProgressText.innerText = `${Math.floor(globalProgress)}% Complete`;
         }
-    }, 150); // Updates progress percentage loosely based on total scan time
-}
+      }, 150);
+    }
 
-async function runScan() {
-    resetModal();
-    modalOverlay.classList.add('active');
-    
-    // Start scanning animation
-    setTimeout(() => {
-        scanAnimContainer.classList.add('scanning');
-        scanCenterIcon.className = 'fas fa-search scan-center-icon';
-        scanProgressText.style.opacity = '1';
-        updateGlobalProgress();
-        processStep(0);
-    }, 600);
-}
-
-function processStep(index) {
-    if(index >= steps.length) {
-        // Complete scan
+    function processStep(index) {
+      if (index >= steps.length) {
         setTimeout(() => {
-            clearInterval(progressInterval);
-            scanProgressText.innerText = '100% Complete';
-            scanAnimContainer.classList.remove('scanning');
-            scanAnimContainer.classList.add('scan-success');
-            scanCenterIcon.className = 'fas fa-exclamation-triangle scan-center-icon';
-            scanCenterIcon.style.color = "var(--orange)";
-            scanTitle.innerText = "Scan Complete: Action Needed";
-            scanTitle.style.color = "var(--orange-dark)";
-            scanSubtitle.innerText = "No viruses found. However, 3 network vulnerabilities and 2.4 GB of junk files require your attention.";
-            btnResolve.style.display = 'block';
+          clearInterval(progressInterval);
+          scanProgressText.innerText = '100% Complete';
+          scanAnimContainer.classList.remove('scanning');
+          scanAnimContainer.classList.add('scan-success');
+          scanCenterIcon.className = 'fas fa-exclamation-triangle scan-center-icon';
+          scanCenterIcon.style.color = "var(--orange)";
+          scanTitle.innerText = "Scan Complete: Action Needed";
+          scanTitle.style.color = "var(--orange-dark)";
+          scanSubtitle.innerText = "No viruses found. However, 3 network vulnerabilities and 2.4 GB of junk files require your attention.";
+          btnResolve.style.display = 'block';
         }, 500);
         return;
-    }
-
-    const step = steps[index];
-    step.classList.add('active');
-    const statusText = step.querySelector('.step-status');
-    const stepIcon = step.querySelector('.step-icon');
-    
-    // Simulate checking items
-    let count = 0;
-    statusText.innerText = `Scanning: ${count}`;
-    
-    const countInterval = setInterval(() => {
-        count += Math.floor(Math.random() * 80) + 20;
-        statusText.innerText = `Scanning: ${count}`;
-    }, 100);
-
-    // Dynamic Step Durations
-    const baseDurations = [1500, 3000, 2000, 1800]; // Memory -> Viruses -> Network -> Performance
-    const duration = baseDurations[index] + Math.random() * 500;
-
-    setTimeout(() => {
+      }
+      const step = steps[index];
+      step.classList.add('active');
+      const statusText = step.querySelector('.step-status');
+      let count = 0;
+      const countInterval = setInterval(() => { count += Math.floor(Math.random() * 80) + 20; statusText.innerText = `Scanning: ${count}`; }, 100);
+      const durations = [1500, 3000, 2000, 1800];
+      setTimeout(() => {
         clearInterval(countInterval);
-        step.classList.remove('active');
-        step.classList.add('done');
-        
-        // Add fake warnings to make the UI look alive
-        if(index === 2) {
-            statusText.innerText = "3 Vulnerabilities Found";
-            statusText.style.color = "var(--orange)";
-            stepIcon.style.color = "var(--orange)";
-            step.style.borderLeftColor = "var(--orange)";
-        } else if (index === 3) {
-            statusText.innerText = "2.4 GB Junk Files";
-            statusText.style.color = "var(--orange)";
-            stepIcon.style.color = "var(--orange)";
-            step.style.borderLeftColor = "var(--orange)";
-        } else {
-            statusText.innerText = "Secure";
-            stepIcon.style.color = "var(--green)";
-        }
-        
-        // Keep global progress synced
-        if (index === 0) globalProgress = 15;
-        if (index === 1) globalProgress = 65;
-        if (index === 2) globalProgress = 85;
-        
+        step.classList.remove('active'); step.classList.add('done');
+        if (index === 2) { statusText.innerText = "3 Vulnerabilities Found"; statusText.style.color = "var(--orange)"; step.querySelector('.step-icon').style.color = "var(--orange)"; step.style.borderLeftColor = "var(--orange)"; }
+        else if (index === 3) { statusText.innerText = "2.4 GB Junk Files"; statusText.style.color = "var(--orange)"; step.querySelector('.step-icon').style.color = "var(--orange)"; step.style.borderLeftColor = "var(--orange)"; }
+        else { statusText.innerText = "Secure"; step.querySelector('.step-icon').style.color = "var(--green)"; }
+        if (index === 0) globalProgress = 15; if (index === 1) globalProgress = 65; if (index === 2) globalProgress = 85;
         processStep(index + 1);
-    }, duration);
-}
-
-btnSmartScan.addEventListener('click', runScan);
-
-btnCloseModal.addEventListener('click', () => { 
-    modalOverlay.classList.remove('active'); 
-    clearInterval(progressInterval);
-});
-
-btnResolve.addEventListener('click', () => {
-    btnResolve.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving Issues...';
-    setTimeout(() => {
-        scanCenterIcon.className = 'fas fa-shield-check scan-center-icon';
-        scanCenterIcon.style.color = "var(--green)";
-        scanTitle.innerText = "System Fully Optimized";
-        scanTitle.style.color = "var(--green-dark)";
-        scanSubtitle.innerText = "All network vulnerabilities secured and junk files cleaned.";
-        
-        // Update the steps UI to green
-        document.getElementById('step-3').querySelector('.step-status').innerText = "Secured";
-        document.getElementById('step-3').querySelector('.step-status').style.color = "var(--green)";
-        document.getElementById('step-3').querySelector('.step-icon').style.color = "var(--green)";
-        document.getElementById('step-3').style.borderLeftColor = "var(--green)";
-        
-        document.getElementById('step-4').querySelector('.step-status').innerText = "Cleaned";
-        document.getElementById('step-4').querySelector('.step-status').style.color = "var(--green)";
-        document.getElementById('step-4').querySelector('.step-icon').style.color = "var(--green)";
-        document.getElementById('step-4').style.borderLeftColor = "var(--green)";
-
-        btnResolve.innerHTML = '<i class="fas fa-check"></i> All Done';
-        btnResolve.style.background = "var(--green)";
-        btnResolve.style.borderColor = "var(--green)";
-        
-        setTimeout(() => {
-            modalOverlay.classList.remove('active');
-            setTimeout(() => {
-                btnResolve.innerHTML = 'Resolve Issues & Close';
-                btnResolve.style.background = "";
-                btnResolve.style.borderColor = "";
-            }, 500);
-        }, 2000);
-    }, 2500);
-});
-
-// Close modal on outside click
-modalOverlay.addEventListener('click', (e) => {
-    if(e.target === modalOverlay) {
-        modalOverlay.classList.remove('active');
-        clearInterval(progressInterval);
+      }, durations[index] + Math.random() * 500);
     }
-});
 
-/* =========================
-   GENERIC BUTTON ACTIONS
-========================= */
-document.querySelectorAll('.btn:not(#btn-smart-scan):not(#btn-resolve), .btn-outline').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (this.classList.contains('processing')) return;
-        this.classList.add('processing');
-        
-        const originalText = this.innerHTML;
-        const originalWidth = this.offsetWidth;
-        this.style.width = originalWidth + 'px';
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Working...';
-        this.style.opacity = '0.9';
+    btnSmartScan.addEventListener('click', () => { resetModal(); modalOverlay.classList.add('active'); setTimeout(() => { scanAnimContainer.classList.add('scanning'); scanCenterIcon.className = 'fas fa-search scan-center-icon'; scanProgressText.style.opacity = '1'; updateGlobalProgress(); processStep(0); }, 600); });
+    btnCloseModal.addEventListener('click', () => { modalOverlay.classList.remove('active'); clearInterval(progressInterval); });
+    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); clearInterval(progressInterval); } });
 
-        setTimeout(() => {
-            this.innerHTML = '<i class="fas fa-check"></i> Done';
-            this.style.background = "var(--green)";
-            this.style.color = "white";
-            this.style.borderColor = "var(--green)";
-            
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.style = '';
-                this.classList.remove('processing');
-            }, 2000);
-        }, 1200);
+    btnResolve.addEventListener('click', () => {
+      btnResolve.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving Issues...';
+      setTimeout(() => {
+        scanCenterIcon.className = 'fas fa-check-circle scan-center-icon';
+        scanCenterIcon.style.color = "var(--green)";
+        scanTitle.innerText = "System Fully Optimized"; scanTitle.style.color = "var(--green-dark)";
+        scanSubtitle.innerText = "All network vulnerabilities secured and junk files cleaned.";
+        ['step-3', 'step-4'].forEach(id => {
+          const s = document.getElementById(id);
+          s.querySelector('.step-status').innerText = id === 'step-3' ? "Secured" : "Cleaned";
+          s.querySelector('.step-status').style.color = "var(--green)";
+          s.querySelector('.step-icon').style.color = "var(--green)";
+          s.style.borderLeftColor = "var(--green)";
+        });
+        btnResolve.innerHTML = '<i class="fas fa-check"></i> All Done';
+        btnResolve.style.background = "var(--green)"; btnResolve.style.borderColor = "var(--green)";
+        setTimeout(() => { modalOverlay.classList.remove('active'); setTimeout(() => { btnResolve.innerHTML = 'Resolve Issues & Close'; btnResolve.style.background = ""; btnResolve.style.borderColor = ""; }, 500); }, 2000);
+      }, 2500);
     });
-});
 
-/* =========================
-   TOGGLE SWITCH LOGIC & GLOBAL STATUS
-========================= */
-const riskStyles = document.createElement('style');
-riskStyles.innerHTML = `
-.status-shield.at-risk {
-    background: linear-gradient(135deg, var(--red), #b71c1c) !important;
-    box-shadow: 0 8px 24px rgba(211, 47, 47, 0.3) !important;
-}
-.status-shield.at-risk::before {
-    border-color: var(--red) !important;
-}
-`;
-document.head.appendChild(riskStyles);
+    /* ===== REPORT MODAL ===== */
+    const reportModalOverlay = document.getElementById('report-modal-overlay');
+    const closeReportModal = document.getElementById('close-report-modal');
+    const btnMonthlyReport = document.getElementById('btn-monthly-report');
+    btnMonthlyReport.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); reportModalOverlay.classList.add('active'); });
+    closeReportModal.addEventListener('click', () => reportModalOverlay.classList.remove('active'));
+    reportModalOverlay.addEventListener('click', (e) => { if (e.target === reportModalOverlay) reportModalOverlay.classList.remove('active'); });
 
-function updateSecurityStatus() {
-    const toggles = document.querySelectorAll('.toggle-switch');
-    let disabledFeatures = [];
-    
-    toggles.forEach(toggle => {
+    /* ===== TOGGLE & SECURITY STATUS ===== */
+    function updateSecurityStatus() {
+      const toggles = document.querySelectorAll('.toggle-switch');
+      let disabledFeatures = [];
+      toggles.forEach(toggle => {
         const rowBody = toggle.closest('.list-row') || toggle.parentElement;
         let name = "Protection Feature";
         let titleEl = rowBody.querySelector('.row-title') || rowBody.querySelector('h2');
-        
         if (titleEl) {
-            let baseName = titleEl.innerText.replace(' is ON', '').replace(' is OFF', '');
-            name = baseName;
-            if (titleEl.tagName === 'H2') {
-                titleEl.innerText = toggle.checked ? baseName + ' is ON' : baseName + ' is OFF';
-                titleEl.style.color = toggle.checked ? 'var(--purple)' : 'var(--red)';
-                
-                const descP = rowBody.querySelector('p');
-                if (descP) {
-                    descP.innerText = toggle.checked ? 'Your connection is encrypted. IP Address hidden.' : 'Your connection is exposed. IP Address visible.';
-                    descP.style.color = toggle.checked ? '#4a148c' : 'var(--red)';
-                }
-                if (!toggle.checked) {
-                    rowBody.style.background = 'var(--red-light)';
-                } else {
-                    rowBody.style.background = 'var(--purple-light)';
-                }
-            }
+          let baseName = titleEl.innerText.replace(' is ON', '').replace(' is OFF', '');
+          name = baseName;
+          if (titleEl.tagName === 'H2') {
+            titleEl.innerText = toggle.checked ? baseName + ' is ON' : baseName + ' is OFF';
+            titleEl.style.color = toggle.checked ? 'var(--purple)' : 'var(--red)';
+            const banner = rowBody.closest('.vpn-banner') || rowBody;
+            if (banner) banner.style.background = toggle.checked ? 'var(--purple-light)' : 'var(--red-light)';
+          }
         }
-        
-        if (!toggle.checked) {
-            disabledFeatures.push(name);
-        }
-    });
-
-    const heroTitle = document.querySelector('.status-hero h1');
-    const heroSub = document.querySelector('.status-sub');
-    const heroShield = document.querySelector('.status-shield');
-    const scoreVal = document.getElementById('scoreValue');
-    const scoreMeter = document.getElementById('scoreMeter');
-    const globalScoreLabel = document.querySelector('.score-header .badge');
-
-    if (disabledFeatures.length > 0) {
-        heroTitle.innerText = "You are not protected.";
+        if (!toggle.checked) disabledFeatures.push(name);
+      });
+      const heroTitle = document.querySelector('.hero-greeting');
+      const heroSub = document.querySelector('.status-sub');
+      const heroShield = document.querySelector('.status-shield');
+      const scoreVal = document.getElementById('scoreValue');
+      const scoreMeter = document.getElementById('scoreMeter');
+      const globalScoreLabel = document.querySelector('.score-header .badge');
+      const userName = userData ? userData.name : 'Premium User';
+      if (disabledFeatures.length > 0) {
+        heroTitle.innerHTML = 'You are not protected.';
         heroTitle.style.color = "var(--red)";
-        heroSub.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Turn on the following protection: ${disabledFeatures.join(', ')}`;
+        heroSub.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Turn on: ' + disabledFeatures.join(', ');
         heroShield.classList.add('at-risk');
-        
         let targetScore = Math.max(10, 98 - (disabledFeatures.length * 15));
         scoreVal.innerText = targetScore;
         scoreMeter.style.width = targetScore + '%';
         scoreMeter.style.background = "linear-gradient(90deg, var(--red), var(--orange))";
         scoreVal.style.background = "linear-gradient(135deg, var(--red), var(--orange))";
-        scoreVal.style.webkitBackgroundClip = "text";
-        scoreVal.style.backgroundClip = "text";
-        globalScoreLabel.className = "badge off";
-        globalScoreLabel.innerHTML = "<i class=\"fas fa-exclamation-circle\"></i> At Risk";
-        
-        document.querySelector('.status-shield svg').style.fill = "#fff";
-    } else {
-        heroTitle.innerText = "You are protected, Premium User.";
+        scoreVal.style.webkitBackgroundClip = "text"; scoreVal.style.backgroundClip = "text";
+        globalScoreLabel.className = "badge off"; globalScoreLabel.innerHTML = '<i class="fas fa-exclamation-circle"></i> At Risk';
+      } else {
+        heroTitle.innerHTML = 'You are protected, <span class="display-user-name">' + userName + '</span>.';
         heroTitle.style.color = "var(--green-dark)";
-        heroSub.innerHTML = `<i class="fas fa-check-circle"></i> Last scan: Today at 2:30 PM • 3 threats blocked this week`;
+        heroSub.innerHTML = '<i class="fas fa-check-circle"></i> Last scan: Today at 2:30 PM • 3 threats blocked this week';
         heroShield.classList.remove('at-risk');
-        
-        scoreVal.innerText = "98";
-        scoreMeter.style.width = '98%';
+        scoreVal.innerText = "98"; scoreMeter.style.width = '98%';
         scoreMeter.style.background = "linear-gradient(90deg, var(--green), var(--green-dark))";
         scoreVal.style.background = "linear-gradient(135deg, var(--green), var(--green-dark))";
-        scoreVal.style.webkitBackgroundClip = "text";
-        scoreVal.style.backgroundClip = "text";
-        globalScoreLabel.className = "badge on";
-        globalScoreLabel.innerHTML = "<i class=\"fas fa-star\"></i> Excellent";
+        scoreVal.style.webkitBackgroundClip = "text"; scoreVal.style.backgroundClip = "text";
+        globalScoreLabel.className = "badge on"; globalScoreLabel.innerHTML = '<i class="fas fa-star"></i> Excellent';
+      }
     }
-}
-
-document.querySelectorAll('.toggle-switch').forEach(toggle => {
-    toggle.addEventListener('change', function() {
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+      toggle.addEventListener('change', function () {
         const row = this.closest('.list-row');
-        if(row) {
-            row.style.transform = 'scale(0.98)';
-            setTimeout(() => row.style.transform = 'scale(1)', 150);
-        } else if (this.parentElement) {
-            this.parentElement.style.transform = 'scale(0.98)';
-            setTimeout(() => this.parentElement.style.transform = 'scale(1)', 150);
-        }
+        if (row) { row.style.transform = 'scale(0.98)'; setTimeout(() => row.style.transform = 'scale(1)', 150); }
         updateSecurityStatus();
+      });
     });
-});
 
-/* =========================
-   REPORT MODAL LOGIC
-========================= */
-const btnMonthlyReport = document.getElementById('btn-monthly-report');
-const reportModalOverlay = document.getElementById('report-modal-overlay');
-const closeReportModal = document.getElementById('close-report-modal');
-
-if (btnMonthlyReport && reportModalOverlay) {
-    // Remove the generic click listener for this specific button
-    btnMonthlyReport.replaceWith(btnMonthlyReport.cloneNode(true));
-    const newBtnMonthlyReport = document.getElementById('btn-monthly-report');
-    
-    newBtnMonthlyReport.addEventListener('click', (e) => {
+    /* ===== GENERIC BUTTON CLICK ===== */
+    document.querySelectorAll('.btn:not(#btn-smart-scan):not(#btn-resolve):not(#btn-monthly-report):not(.login-btn):not(#btn-share-report):not(.signout-cancel):not(.signout-confirm)').forEach(btn => {
+      btn.addEventListener('click', function (e) {
         e.preventDefault();
-        reportModalOverlay.classList.add('active');
+        if (this.classList.contains('processing')) return;
+        this.classList.add('processing');
+        const originalText = this.innerHTML;
+        const originalWidth = this.offsetWidth;
+        this.style.width = originalWidth + 'px';
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Working...';
+        this.style.opacity = '0.9';
+        setTimeout(() => {
+          this.innerHTML = '<i class="fas fa-check"></i> Done';
+          this.style.background = "var(--green)"; this.style.color = "white"; this.style.borderColor = "var(--green)";
+          setTimeout(() => { this.innerHTML = originalText; this.style = ''; this.classList.remove('processing'); }, 2000);
+        }, 1200);
+      });
     });
-
-    closeReportModal.addEventListener('click', () => {
-        reportModalOverlay.classList.remove('active');
-    });
-
-    reportModalOverlay.addEventListener('click', (e) => {
-        if(e.target === reportModalOverlay) {
-            reportModalOverlay.classList.remove('active');
-        }
-    });
-}
-</script>
-
+  </script>
 </body>
+
 </html>
