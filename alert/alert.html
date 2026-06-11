@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your PC ran into a problem</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; min-height: 100%;
+            background: #000000;
+            overflow: hidden;
+            font-family: 'Consolas', 'Courier New', 'Segoe UI Variable Display', monospace;
+            -webkit-user-select: none;
+            user-select: none;
+            cursor: default;
+            color: #edf4ff;
+        }
+        body { display: flex; }
+
+        #bsod {
+            flex: 1;
+            padding: 60px 56px 42px;
+            display: flex;
+            flex-direction: column;
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.98) 100%);
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 22px 50px rgba(0, 0, 0, 0.55);
+            text-shadow: 0 1px 2px rgba(15, 23, 42, 0.65);
+        }
+
+        .sad-face {
+            font-size: 82px;
+            line-height: 1;
+            margin-bottom: 18px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        .main-message {
+            font-size: 27px;
+            font-weight: 700;
+            margin-bottom: 28px;
+            line-height: 1.35;
+            max-width: 760px;
+            color: #f8fbff;
+        }
+
+        .info-text {
+            font-size: 14.8px;
+            line-height: 1.75;
+            margin-bottom: 4px;
+            max-width: 820px;
+            color: #eff6ff;
+        }
+
+        .stop-code {
+            font-size: 15px;
+            margin: 24px 0 18px;
+            color: #fff;
+        }
+        .stop-code strong { font-weight: 700; }
+
+        .tech-grid {
+            margin: 18px 0 14px;
+            font-size: 13.5px;
+            line-height: 1.75;
+            opacity: 0.92;
+            max-width: 820px;
+            color: #edf4ff;
+        }
+
+        .bugcheck-section {
+            margin: 12px 0;
+            font-size: 13.5px;
+            line-height: 1.7;
+            opacity: 0.82;
+            max-width: 820px;
+            color: #f8fbff;
+        }
+        .bugcheck-section span { display: block; }
+
+        .technical-info {
+            margin: 18px 0 0;
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.82;
+            max-width: 800px;
+            color: #eff6ff;
+        }
+
+        .footer {
+            margin-top: auto;
+            font-size: 12px;
+            opacity: 0.74;
+            line-height: 1.6;
+            padding-bottom: 8px;
+            color: #eff6ff;
+        }
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+        .progress-label {
+            font-size: 14.5px;
+            min-width: 36px;
+            color: #f8fbff;
+        }
+
+        .status-note {
+            font-size: 13px;
+            opacity: 0.72;
+            color: #eff6ff;
+        }
+        .progress-track {
+            width: 260px;
+            height: 4px;
+            background: rgba(148, 163, 184, 0.22);
+            border-radius: 999px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffffff 0%, #bfdbfe 45%, #60a5fa 100%);
+            width: 0%;
+            transition: none;
+            border-radius: 999px;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.35);
+        }
+
+        #restarting {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #restarting .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid #333;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #restarting span {
+            font-family: 'Segoe UI Variable Display', 'Segoe UI', sans-serif;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .restart-prompt {
+            margin-top: 24px;
+            font-size: 14px;
+            opacity: 0.85;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 0.45; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bsod">
+        <div class="sad-face">:(</div>
+        <div class="main-message">Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.</div>
+
+        <div class="progress-row">
+            <div class="progress-label" id="pctDisplay">0%</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="status-note" id="statusText">Collecting error info...</span>
+        </div>
+
+        <div class="stop-code">
+            <strong>Stop code:</strong> DRIVER_IRQL_NOT_LESS_OR_EQUAL
+        </div>
+
+        <div class="info-text">
+            <strong>What failed:</strong> ntoskrnl.exe + 0x3f7a2<br>
+            <strong>Driver:</strong> \SystemRoot\System32\drivers\wdpolicy.sys
+        </div>
+
+        <div class="tech-grid">
+            <strong>Base address:</strong> 0xFFFFF800`2C1A0000<br>
+            <strong>Stack pointer:</strong> 0xFFFFF880`009A5000
+        </div>
+
+        <div class="bugcheck-section">
+            <span><strong>BugCheck parameters:</strong></span>
+            <span>00000000`0000000A — IRQL_NOT_LESS_OR_EQUAL</span>
+            <span>FFFFF800`2C1A3F7A — referenced memory address</span>
+            <span>00000000`00000002 — IRQL at time of fault</span>
+            <span>00000000`00000001 — memory access type (read)</span>
+        </div>
+
+        <div class="technical-info">
+            <strong>Technical information:</strong> The system detected a kernel-mode driver attempting to access pageable
+            memory at an invalid interrupt request level (IRQL). This typically indicates a driver compatibility
+            issue, corrupted system files, or failing hardware. Refer to the Microsoft Knowledge Base for more
+            information about this error and recommended troubleshooting steps.
+        </div>
+
+        <div class="restart-prompt-wrap">
+            <div class="restart-prompt" id="restartPrompt">Press any key to attempt restart...</div>
+        </div>
+
+        <div class="footer">
+            For more information about this error, search online for:
+            <strong>DRIVER_IRQL_NOT_LESS_OR_EQUAL</strong> (0x0000000A)
+        </div>
+    </div>
+
+    <div id="restarting">
+        <div class="spinner"></div>
+        <span>Restarting...</span>
+    </div>
+
+    <audio id="alert-audio" src="./caution.mp3" preload="auto" loop playsinline></audio>
+
+    <script>
+        (function () {
+            var audio = document.getElementById('alert-audio');
+            var audioContext = null;
+
+            function playAudio() {
+                if (!audio || !audio.src) return;
+                audio.volume = 0.85;
+                audio.muted = false;
+
+                var playPromise = audio.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(function () {});
+                }
+            }
+
+            function ensureAudioLoop() {
+                if (audio.ended || audio.paused) {
+                    audio.currentTime = 0;
+                    playAudio();
+                }
+            }
+
+            function initAudioContext() {
+                if (!audioContext) {
+                    try {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        var source = audioContext.createMediaElementSource(audio);
+                        source.connect(audioContext.destination);
+                    } catch (e) {
+                        audioContext = null;
+                    }
+                }
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume().catch(function () {});
+                }
+            }
+
+            function goFullscreen() {
+                if (document.fullscreenElement) return;
+
+                var el = document.documentElement;
+                var fn = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+                if (fn) {
+                    try { fn.call(el); } catch (e) {}
+                }
+            }
+
+            function handleInteraction() {
+                initAudioContext();
+                playAudio();
+                goFullscreen();
+            }
+
+            audio.addEventListener('canplaythrough', playAudio);
+            audio.addEventListener('ended', ensureAudioLoop);
+            audio.addEventListener('pause', ensureAudioLoop);
+            audio.addEventListener('stalled', function() { audio.load(); playAudio(); });
+            audio.addEventListener('error', function() { setTimeout(function() { audio.load(); playAudio(); }, 1000); });
+
+            window.addEventListener('load', function() {
+                initAudioContext();
+            });
+
+            document.addEventListener('click', handleInteraction, { passive: true });
+            document.addEventListener('touchstart', handleInteraction, { passive: true });
+            document.addEventListener('pointerdown', handleInteraction, { passive: true });
+            document.addEventListener('keydown', handleInteraction, { passive: true });
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    initAudioContext();
+                    playAudio();
+                }
+            });
+
+            var restarting = document.getElementById('restarting');
+            var restartPrompt = document.getElementById('restartPrompt');
+
+            function showRestart() {
+                restarting.style.display = 'flex';
+            }
+
+            function hideRestart() {
+                restarting.style.display = 'none';
+            }
+
+            var anyKeyHandler = function () {
+                if (restarting.style.display !== 'none') return;
+                showRestart();
+                goFullscreen();
+                setTimeout(function () {
+                    hideRestart();
+                    resetProgress();
+                }, 2000);
+            };
+
+            document.addEventListener('keydown', anyKeyHandler);
+            document.addEventListener('click', anyKeyHandler);
+
+            var pctDisplay = document.getElementById('pctDisplay');
+            var progressFill = document.getElementById('progressFill');
+            var statusText = document.getElementById('statusText');
+
+            var statusMessages = [
+                [0, 'Collecting error info...'],
+                [25, 'Checking driver status...'],
+                [45, 'Analyzing memory dump...'],
+                [65, 'Verifying system integrity...'],
+                [80, 'Generating crash report...'],
+                [95, 'Finalizing diagnostics...']
+            ];
+
+            function resetProgress() {
+                var pct = 0;
+                pctDisplay.textContent = '0%';
+                progressFill.style.width = '0%';
+                statusText.textContent = 'Collecting error info...';
+                restartPrompt.style.display = 'none';
+
+                var interval = setInterval(function () {
+                    pct += Math.random() * 2 + 0.5;
+                    if (pct > 100) pct = 100;
+                    var display = Math.floor(pct);
+                    pctDisplay.textContent = display + '%';
+                    progressFill.style.width = display + '%';
+
+                    for (var i = statusMessages.length - 1; i >= 0; i--) {
+                        if (display >= statusMessages[i][0]) {
+                            statusText.textContent = statusMessages[i][1];
+                            break;
+                        }
+                    }
+
+                    if (pct >= 100) {
+                        clearInterval(interval);
+                        pctDisplay.textContent = '100%';
+                        statusText.textContent = 'Error info collected';
+                        restartPrompt.style.display = '';
+                    }
+                }, 120);
+            }
+
+            resetProgress();
+        })();
+    </script>
+</body>
+</html>
