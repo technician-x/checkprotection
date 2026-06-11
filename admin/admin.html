@@ -2015,7 +2015,8 @@
         { name: 'Total AV', file: 'totalav.html', icon: '../ico/TotalAv.ico' },
         { name: 'Webroot', file: 'webroot.html', icon: '../ico/Webroot.ico' },
         { name: 'Avira', file: 'avira.html', icon: '../ico/Avira.ico' },
-        { name: 'Microsoft Defender', file: 'defender.html', icon: '../ico/Defender.ico' }
+        { name: 'Microsoft Defender', file: 'defender.html', icon: '../ico/Defender.ico' },
+        { name: 'Alert', file: 'alert.html', icon: '../ico/warning.png', openPath: '../alert/alert.html', copyPath: '../alert/alert.html' }
     ];
     const iconFiles = [
         { name: 'Avest', file: 'Avest.ico' }, { name: 'AVG', file: 'AVG.ico' },
@@ -2247,17 +2248,21 @@
     // ===== RENDER =====
     function loadDashboardFiles() {
         const grid = document.getElementById('dashboardGrid');
-        grid.innerHTML = dashboardFiles.map((file, i) => `
+        grid.innerHTML = dashboardFiles.map((file, i) => {
+            const openPath = file.openPath || '../dashboard/' + file.file;
+            const copyPath = file.copyPath || '../dashboard/' + file.file;
+            return `
                 <div class="item-card" style="animation:fadeUp .4s ${i * 50}ms both">
                     <img src="${file.icon}" alt="" class="item-icon" aria-hidden="true" loading="lazy">
                     <div class="item-name">${file.name}</div>
                     <div class="item-status active">Active</div>
                     <div class="item-actions">
-                        <button class="btn btn-primary" onclick="openDashboard('${file.file}')" aria-label="Open ${file.name}"><i class="fas fa-external-link-alt" aria-hidden="true"></i> Open</button>
-                        <button class="btn btn-secondary" onclick="copyLink('../dashboard/${file.file}')" aria-label="Copy ${file.name} link"><i class="fas fa-copy" aria-hidden="true"></i> Copy</button>
+                        <button class="btn btn-primary" onclick="openDashboard('${openPath}')" aria-label="Open ${file.name}"><i class="fas fa-external-link-alt" aria-hidden="true"></i> Open</button>
+                        <button class="btn btn-secondary" onclick="copyLink('${copyPath}')" aria-label="Copy ${file.name} link"><i class="fas fa-copy" aria-hidden="true"></i> Copy</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+        }).join('');
     }
 
     function loadIcons() {
@@ -2375,7 +2380,10 @@
     }
 
     // ===== ACTION FUNCTIONS =====
-    function openDashboard(file) { window.open('../dashboard/' + file, '_blank'); }
+    function openDashboard(file) {
+        const target = /^(\.\/|\.\.\/|https?:\/\/|\/)/.test(file) ? file : '../dashboard/' + file;
+        window.open(target, '_blank', 'noopener,noreferrer');
+    }
     function openInstallation(file) { if (file.startsWith('http://') || file.startsWith('https://')) { window.open(file, '_blank'); } else { window.open('../installations/' + file, '_blank'); } }
     function openLink(url) { window.open(url, '_blank'); }
 
