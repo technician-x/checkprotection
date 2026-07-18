@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Real-time IP Security Intelligence Report — System status, encryption integrity, and defensive protocol monitoring.">
+    <title>Security Intelligence — Threat Analysis Dashboard</title>
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextdns.svg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ========================================
+           DESIGN TOKENS
+           Aesthetic: "Orbital Command" — Dark sci-fi
+           with sharp geometric accents and a single
+           vivid accent color (cyan) against obsidian.
+        ======================================== */
+        :root {
+            /* Surfaces */
+            --bg-void: #06060a;
+            --bg-surface: rgba(12, 12, 18, 0.85);
+            --bg-elevated: rgba(18, 18, 26, 0.9);
+            --bg-hover: rgba(25, 25, 38, 0.95);
+
+            /* Borders */
+            --border-dim: rgba(255, 255, 255, 0.04);
+            --border-glow: rgba(0, 229, 255, 0.25);
+            --border-emerald: rgba(52, 211, 153, 0.25);
+
+            /* Accents */
+            --cyan: #00E5FF;
+            --cyan-muted: #0ea5e9;
+            --emerald: #34D399;
+            --emerald-dim: rgba(52, 211, 153, 0.15);
+            --amber: #FBBF24;
+
+            /* Text */
+            --text-1: #F8FAFC;
+            --text-2: #CBD5E1;
+            --text-3: #64748B;
+
+            /* Fonts */
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            /* Radii */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg-void);
+            color: var(--text-1);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient background mesh */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 10% 20%, rgba(0, 229, 255, 0.04), transparent),
+                radial-gradient(ellipse 500px 500px at 90% 80%, rgba(52, 211, 153, 0.03), transparent),
+                radial-gradient(ellipse 800px 300px at 50% 0%, rgba(0, 229, 255, 0.02), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Noise texture overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .dashboard {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: var(--space-xl);
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            grid-template-rows: auto 1fr;
+            gap: var(--space-xl);
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           TOP BAR
+        ======================================== */
+        .top-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--border-dim);
+            animation: fadeSlideDown 0.6s ease-out both;
+        }
+
+        .top-bar__brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .top-bar__logo {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--cyan), var(--emerald));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--bg-void);
+        }
+
+        .top-bar__title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text-1);
+        }
+
+        .top-bar__subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-3);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .top-bar__meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--emerald);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: livePulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--emerald);
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .timestamp-pill {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-3);
+            background: rgba(255,255,255,0.03);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-dim);
+        }
+
+        /* ========================================
+           SIDEBAR
+        ======================================== */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+            animation: fadeSlideRight 0.7s ease-out 0.1s both;
+        }
+
+        /* Score Card */
+        .score-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl) var(--space-xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--emerald), transparent);
+        }
+
+        .score-ring {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto var(--space-xl);
+            position: relative;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-ring__bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.04);
+            stroke-width: 8;
+        }
+
+        .score-ring__fill {
+            fill: none;
+            stroke: url(#scoreGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            animation: scoreReveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        }
+
+        @keyframes scoreReveal {
+            to { stroke-dashoffset: 44; }
+        }
+
+        .score-ring__value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            background: linear-gradient(180deg, var(--text-1), var(--emerald));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-top: var(--space-xs);
+        }
+
+        .score-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--emerald-dim);
+            border: 1px solid var(--border-emerald);
+            border-radius: var(--radius-full);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--emerald);
+            letter-spacing: 0.05em;
+        }
+
+        .score-status i {
+            font-size: 0.6rem;
+        }
+
+        /* Panel */
+        .panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .panel:hover {
+            border-color: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .panel__header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .panel__header i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 229, 255, 0.08);
+            border-radius: var(--radius-sm);
+        }
+
+        /* Data Rows */
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            transition: background 0.2s ease;
+            cursor: default;
+        }
+
+        .data-row:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .data-row + .data-row {
+            border-top: 1px solid var(--border-dim);
+        }
+
+        .data-row__label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: 0.9rem;
+            color: var(--text-2);
+        }
+
+        .data-row__label i {
+            color: var(--text-3);
+            width: 16px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .data-row__value {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-3);
+        }
+
+        .data-row__value.--cyan {
+            color: var(--cyan);
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+            animation: fadeSlideUp 0.7s ease-out 0.2s both;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .main-header__title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .main-header__title span {
+            display: block;
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--text-3);
+            letter-spacing: 0;
+            margin-top: var(--space-xs);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .main-grid .full-span { grid-column: 1 / -1; }
+
+        /* Network Map */
+        .network-map {
+            height: 180px;
+            width: 100%;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.03), transparent 60%),
+                linear-gradient(90deg, var(--border-dim) 1px, transparent 1px) 0 0 / 24px 24px,
+                linear-gradient(var(--border-dim) 1px, transparent 1px) 0 0 / 24px 24px;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-dim);
+        }
+
+        .net-node {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .net-node__core {
+            width: 100%;
+            height: 100%;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .net-node__ping {
+            position: absolute;
+            inset: -8px;
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            border-radius: 50%;
+            animation: pingOut 2.5s ease-out infinite;
+        }
+
+        .net-node:nth-child(2) .net-node__ping { animation-delay: 0.8s; }
+        .net-node:nth-child(3) .net-node__ping { animation-delay: 1.6s; }
+
+        @keyframes pingOut {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .net-node__label {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--text-3);
+            white-space: nowrap;
+        }
+
+        /* Check Row (for security checks) */
+        .check-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) var(--space-md);
+            border-radius: var(--radius-sm);
+            transition: background 0.2s ease;
+        }
+
+        .check-row:hover { background: rgba(255,255,255,0.02); }
+        .check-row + .check-row { border-top: 1px solid var(--border-dim); }
+
+        .check-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        .check-icon.--ok {
+            background: var(--emerald-dim);
+            color: var(--emerald);
+            border: 1px solid var(--border-emerald);
+        }
+
+        .check-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-2);
+        }
+
+        .check-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .check-badge.--active {
+            background: var(--emerald-dim);
+            color: var(--emerald);
+            border: 1px solid var(--border-emerald);
+        }
+
+        .check-badge.--encrypted {
+            background: rgba(0, 229, 255, 0.08);
+            color: var(--cyan);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+        }
+
+        /* Directives (bottom row) */
+        .directive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .directive-card {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            background: rgba(255,255,255,0.015);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .directive-card:hover {
+            border-color: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            transform: translateY(-2px);
+        }
+
+        .directive-card__icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 229, 255, 0.06);
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyan);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .directive-card__text {
+            font-size: 0.85rem;
+            color: var(--text-2);
+            line-height: 1.5;
+        }
+
+        .directive-card__text strong {
+            display: block;
+            color: var(--text-1);
+            font-weight: 600;
+            margin-bottom: 2px;
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .dashboard-footer {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: var(--space-lg) 0;
+            border-top: 1px solid var(--border-dim);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-3);
+            animation: fadeSlideUp 0.7s ease-out 0.5s both;
+        }
+
+        /* ========================================
+           ENTRANCE ANIMATIONS
+        ======================================== */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeSlideRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Staggered panel entrance */
+        .main-grid .panel:nth-child(1) { animation: fadeSlideUp 0.5s ease-out 0.3s both; }
+        .main-grid .panel:nth-child(2) { animation: fadeSlideUp 0.5s ease-out 0.4s both; }
+        .main-grid .panel:nth-child(3) { animation: fadeSlideUp 0.5s ease-out 0.5s both; }
+        .main-grid .panel:nth-child(4) { animation: fadeSlideUp 0.5s ease-out 0.6s both; }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: var(--space-lg);
+            }
+            .sidebar { order: -1; }
+            .top-bar { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .main-header { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
+            .main-header__title { font-size: 1.6rem; }
+            .score-ring { width: 130px; height: 130px; }
+            .score-number { font-size: 2.4rem; }
+            .directive-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Top Navigation Bar -->
+        <nav class="top-bar" role="navigation" aria-label="Dashboard header">
+            <div class="top-bar__brand">
+                <div class="top-bar__logo">
+                    <i class="fas fa-satellite"></i>
+                </div>
+                <div>
+                    <div class="top-bar__title">Microsoft IDPS</div>
+                    <div class="top-bar__subtitle">Threat Intelligence Platform</div>
+                </div>
+            </div>
+            <div class="top-bar__meta">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    MONITORING
+                </div>
+                <div class="timestamp-pill" id="current-date"></div>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="System overview">
+            <!-- Security Score Ring -->
+            <div class="score-card">
+                <div class="score-ring">
+                    <svg viewBox="0 0 160 160">
+                        <defs>
+                            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00E5FF"/>
+                                <stop offset="100%" stop-color="#34D399"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="score-ring__bg" cx="80" cy="80" r="70"/>
+                        <circle class="score-ring__fill" cx="80" cy="80" r="70"/>
+                    </svg>
+                    <div class="score-ring__value">
+                        <div class="score-number">98</div>
+                        <div class="score-label">Security Index</div>
+                    </div>
+                </div>
+                <div class="score-status">
+                    <i class="fas fa-shield-alt"></i>
+                    ALL SYSTEMS NOMINAL
+                </div>
+            </div>
+
+            <!-- Target Profile -->
+            <div class="panel">
+                <div class="panel__header">
+                    <i class="fas fa-crosshairs"></i>
+                    Target Profile
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-network-wired"></i> Primary IP
+                    </div>
+                    <div class="data-row__value --cyan">192.168.1.1</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-map-marker-alt"></i> Zone
+                    </div>
+                    <div class="data-row__value">Private Net</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-clock"></i> Uptime
+                    </div>
+                    <div class="data-row__value --cyan">99.99%</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-microchip"></i> Firewall
+                    </div>
+                    <div class="data-row__value --cyan">Active</div>
+                </div>
+            </div>
+
+            <!-- VPN Status -->
+            <div class="panel">
+                <div class="panel__header">
+                    <i class="fas fa-globe-americas"></i>
+                    VPN Tunnel
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-link"></i> Connection
+                    </div>
+                    <div class="data-row__value --cyan">Established</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-lock"></i> Protocol
+                    </div>
+                    <div class="data-row__value">WireGuard</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-row__label">
+                        <i class="fas fa-tachometer-alt"></i> Latency
+                    </div>
+                    <div class="data-row__value">12ms</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" aria-label="Intelligence report details">
+            <div class="main-header">
+                <h1 class="main-header__title">
+                    Intelligence Report
+                    <span>Full-spectrum security analysis of local network perimeter</span>
+                </h1>
+            </div>
+
+            <div class="main-grid">
+                <!-- Active Connections -->
+                <div class="panel">
+                    <div class="panel__header">
+                        <i class="fas fa-project-diagram"></i>
+                        Active Connections
+                    </div>
+                    <div class="network-map" role="img" aria-label="Network topology visualization showing three connected nodes">
+                        <div class="net-node" style="top: 35%; left: 18%;">
+                            <div class="net-node__core"></div>
+                            <div class="net-node__ping"></div>
+                            <div class="net-node__label">Alpha</div>
+                        </div>
+                        <div class="net-node" style="top: 65%; left: 50%;">
+                            <div class="net-node__core"></div>
+                            <div class="net-node__ping"></div>
+                            <div class="net-node__label">Beta</div>
+                        </div>
+                        <div class="net-node" style="top: 30%; left: 78%;">
+                            <div class="net-node__core"></div>
+                            <div class="net-node__ping"></div>
+                            <div class="net-node__label">Gamma</div>
+                        </div>
+                        <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" aria-hidden="true">
+                            <line x1="18%" y1="35%" x2="50%" y2="65%" stroke="rgba(0,229,255,0.12)" stroke-width="1" stroke-dasharray="4 3"/>
+                            <line x1="50%" y1="65%" x2="78%" y2="30%" stroke="rgba(0,229,255,0.12)" stroke-width="1" stroke-dasharray="4 3"/>
+                            <line x1="18%" y1="35%" x2="78%" y2="30%" stroke="rgba(0,229,255,0.06)" stroke-width="1" stroke-dasharray="4 3"/>
+                        </svg>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-row__label">Node Alpha</div>
+                        <div class="data-row__value --cyan">192.168.1.2</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-row__label">Node Beta</div>
+                        <div class="data-row__value --cyan">192.168.1.3</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-row__label">Node Gamma</div>
+                        <div class="data-row__value --cyan">192.168.1.4</div>
+                    </div>
+                </div>
+
+                <!-- Encryption Integrity -->
+                <div class="panel">
+                    <div class="panel__header">
+                        <i class="fas fa-fingerprint"></i>
+                        Data Encryption
+                    </div>
+                    <div class="check-row">
+                        <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                        <div class="check-text">Personal Information</div>
+                        <div class="check-badge --encrypted">AES-256</div>
+                    </div>
+                    <div class="check-row">
+                        <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                        <div class="check-text">Financial Ledgers</div>
+                        <div class="check-badge --encrypted">AES-256</div>
+                    </div>
+                    <div class="check-row">
+                        <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                        <div class="check-text">Credential Vaults</div>
+                        <div class="check-badge --encrypted">Argon2id</div>
+                    </div>
+                    <div class="check-row">
+                        <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                        <div class="check-text">Biometric Store</div>
+                        <div class="check-badge --encrypted">TPM 2.0</div>
+                    </div>
+                    <div class="check-row">
+                        <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                        <div class="check-text">Device Authorization</div>
+                        <div class="check-badge --active">Verified</div>
+                    </div>
+                </div>
+
+                <!-- Defensive Protocols -->
+                <div class="panel full-span">
+                    <div class="panel__header">
+                        <i class="fas fa-shield-alt"></i>
+                        Defensive Protocols
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 var(--space-xl);">
+                        <div>
+                            <div class="check-row">
+                                <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                                <div class="check-text">Windows Defender Core</div>
+                                <div class="check-badge --active">Active</div>
+                            </div>
+                            <div class="check-row">
+                                <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                                <div class="check-text">End-to-End Encryption</div>
+                                <div class="check-badge --active">Active</div>
+                            </div>
+                            <div class="check-row">
+                                <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                                <div class="check-text">Kernel DMA Protection</div>
+                                <div class="check-badge --active">Active</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="check-row">
+                                <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                                <div class="check-text">Ransomware Heuristics</div>
+                                <div class="check-badge --active">Active</div>
+                            </div>
+                            <div class="check-row">
+                                <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                                <div class="check-text">Keylogger Interception</div>
+                                <div class="check-badge --active">Active</div>
+                            </div>
+                            <div class="check-row">
+                                <div class="check-icon --ok"><i class="fas fa-check"></i></div>
+                                <div class="check-text">VPN Tunneling</div>
+                                <div class="check-badge --active">Active</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Directives -->
+                <div class="panel full-span">
+                    <div class="panel__header">
+                        <i class="fas fa-terminal"></i>
+                        System Directives
+                    </div>
+                    <div class="directive-grid">
+                        <div class="directive-card">
+                            <div class="directive-card__icon"><i class="fas fa-arrows-rotate"></i></div>
+                            <div class="directive-card__text">
+                                <strong>Update Cycle</strong>
+                                Maintain all security patches within 24h of release
+                            </div>
+                        </div>
+                        <div class="directive-card">
+                            <div class="directive-card__icon"><i class="fas fa-key"></i></div>
+                            <div class="directive-card__text">
+                                <strong>Key Rotation</strong>
+                                Cycle encryption keys on a 90-day schedule
+                            </div>
+                        </div>
+                        <div class="directive-card">
+                            <div class="directive-card__icon"><i class="fas fa-eye"></i></div>
+                            <div class="directive-card__text">
+                                <strong>Traffic Analysis</strong>
+                                Monitor inbound/outbound packet flow continuously
+                            </div>
+                        </div>
+                        <div class="directive-card">
+                            <div class="directive-card__icon"><i class="fas fa-magnifying-glass"></i></div>
+                            <div class="directive-card__text">
+                                <strong>Audit Schedule</strong>
+                                Conduct full penetration test every 7 days
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        
+    </div>
+
+    <script>
+        /* Format timestamp as ISO-like display */
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const formatted = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} UTC`;
+        document.getElementById('current-date').textContent = formatted;
+    </script>
+</body>
+</html>
